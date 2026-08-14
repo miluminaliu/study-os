@@ -516,22 +516,391 @@ tr:hover td{background:color-mix(in srgb,var(--soft) 25%,transparent)}
 .course-card-mobile[data-subject="生化"]{border-left:3px solid var(--biochem)}
 .course-card-mobile[data-subject="化學"]{border-left:3px solid var(--chemistry)}
 
+
+/* ===== UX COMPANION PREVIEW ===== */
+:root{
+  --sidebar-wide:236px;
+  --sidebar-rail:68px;
+}
+
+/* Sidebar hierarchy */
+.shell{grid-template-columns:var(--sidebar-wide) 1fr}
+.sidebar{
+  width:var(--sidebar-wide);
+  padding:20px 14px 18px;
+  overflow:visible;
+}
+.brand{
+  position:relative;
+  padding:3px 8px 21px;
+  gap:10px;
+}
+.logo{
+  width:38px;height:38px;border-radius:12px;
+  box-shadow:0 6px 18px color-mix(in srgb,var(--accent) 18%,transparent);
+  flex:0 0 auto;
+}
+.brand-copy{min-width:0}
+.brand-copy h1{font-size:15px;white-space:nowrap}
+.brand-copy small{font-size:9.5px;color:var(--muted2);white-space:nowrap}
+.sidebar-toggle{
+  position:absolute;right:-28px;top:8px;z-index:4;
+  width:28px;height:28px;min-height:28px;padding:0;
+  border:1px solid var(--line);border-radius:50%;
+  background:var(--panel2);color:var(--muted);
+  box-shadow:0 4px 14px rgba(0,0,0,.06);
+  display:grid;place-items:center;font-size:18px;line-height:1;
+  opacity:0;transform:translateX(-3px);
+  transition:.16s var(--ease)
+}
+.sidebar:hover .sidebar-toggle{opacity:1;transform:none}
+.nav-section{margin-top:2px}
+.insight-section{margin-top:18px}
+.nav-section-title{
+  padding:0 11px 7px;
+  font-size:9px;font-weight:760;letter-spacing:.11em;
+  color:var(--muted2);text-transform:uppercase
+}
+.nav{gap:3px}
+.nav-item{
+  position:relative;width:100%;min-height:42px;
+  padding:9px 11px!important;border-radius:11px!important;
+  gap:10px!important;color:var(--muted)!important;
+  font-size:12.5px!important;font-weight:590!important;
+  overflow:visible
+}
+.nav-item .nav-icon{
+  width:20px;height:20px;display:grid;place-items:center;
+  flex:0 0 20px
+}
+.nav-item .nav-icon svg{width:18px;height:18px}
+.nav-item .nav-label{white-space:nowrap}
+.nav-item:hover{
+  background:color-mix(in srgb,var(--accent) 5%,transparent)!important;
+  color:var(--text)!important
+}
+.nav-item.active{
+  background:color-mix(in srgb,var(--accent) 7%,transparent)!important;
+  color:var(--text)!important;
+  font-weight:710!important
+}
+.nav-item.active:before{
+  content:"";position:absolute;left:-14px;top:9px;bottom:9px;
+  width:3px;border-radius:0 3px 3px 0;background:var(--accent)
+}
+.nav-item.active .nav-icon{color:var(--accent)}
+.nav-badge{
+  margin-left:auto;min-width:20px;height:20px;padding:0 6px;
+  border-radius:999px;display:grid;place-items:center;
+  background:var(--redSoft);color:var(--red);
+  font-size:9px;font-weight:800
+}
+.nav-badge.hidden{display:none}
+.sidebar-utility{
+  position:absolute;left:14px;right:14px;bottom:92px;
+  padding-top:11px;border-top:1px solid var(--line)
+}
+.sidebar-foot{left:14px;right:14px;bottom:16px}
+.syncbox{
+  display:grid;grid-template-columns:auto 1fr;
+  align-items:center;gap:0 6px;padding:10px 11px;
+  border-radius:12px;background:transparent;
+  border:1px solid var(--line);font-size:10px
+}
+.syncbox .dot{grid-row:1/3}
+.sync-main{color:var(--text);font-weight:630}
+.sync-sub{color:var(--muted2);font-size:9px}
+
+/* Manual collapsed rail */
+body.sidebar-collapsed .shell{grid-template-columns:var(--sidebar-rail) 1fr}
+body.sidebar-collapsed .sidebar{width:var(--sidebar-rail);padding-left:10px;padding-right:10px}
+body.sidebar-collapsed .brand{justify-content:center;padding-left:0;padding-right:0}
+body.sidebar-collapsed .brand-copy,
+body.sidebar-collapsed .nav-label,
+body.sidebar-collapsed .nav-section-title,
+body.sidebar-collapsed .sync-main,
+body.sidebar-collapsed .sync-sub{display:none}
+body.sidebar-collapsed .brand .logo{width:36px;height:36px}
+body.sidebar-collapsed .nav-item{justify-content:center;padding:9px!important}
+body.sidebar-collapsed .nav-item.active:before{left:-10px}
+body.sidebar-collapsed .nav-badge{
+  position:absolute;right:1px;top:2px;
+  min-width:16px;height:16px;padding:0 4px;font-size:8px
+}
+body.sidebar-collapsed .sidebar-utility{left:10px;right:10px}
+body.sidebar-collapsed .sidebar-foot{left:10px;right:10px}
+body.sidebar-collapsed .syncbox{display:flex;justify-content:center;padding:10px 4px}
+body.sidebar-collapsed .syncbox .dot{margin:0}
+body.sidebar-collapsed .sidebar-toggle{right:-22px;transform:rotate(180deg)}
+body.sidebar-collapsed .nav-item:after{
+  content:attr(data-label);
+  position:absolute;left:calc(100% + 11px);top:50%;
+  transform:translateY(-50%) translateX(-3px);
+  padding:7px 9px;border:1px solid var(--line);
+  border-radius:9px;background:rgba(25,25,28,.92);color:white;
+  font-size:10px;font-weight:650;white-space:nowrap;
+  box-shadow:0 10px 30px rgba(0,0,0,.16);
+  opacity:0;pointer-events:none;transition:.14s var(--ease);z-index:90
+}
+body.sidebar-collapsed .nav-item:hover:after{
+  opacity:1;transform:translateY(-50%) translateX(0)
+}
+
+/* Focus dock – persistent companion control */
+.focus-dock{
+  display:none;
+  position:sticky;top:72px;z-index:17;
+  margin:0 0 14px;padding:10px 12px;
+  border:1px solid color-mix(in srgb,var(--accent) 17%,var(--line));
+  border-radius:16px;
+  background:color-mix(in srgb,var(--panel2) 91%,transparent);
+  box-shadow:0 10px 32px rgba(25,25,40,.07);
+  backdrop-filter:saturate(170%) blur(22px);
+  -webkit-backdrop-filter:saturate(170%) blur(22px)
+}
+.focus-dock.show{display:block;animation:popin .18s var(--ease)}
+.focus-dock-state{
+  display:flex;align-items:center;gap:6px;
+  color:var(--accent);font-size:9px;font-weight:780;
+  letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px
+}
+.focus-live-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 10%,transparent)
+}
+.focus-dock.paused .focus-live-dot{background:var(--amber);box-shadow:none}
+.focus-dock-main{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:12px}
+.focus-dock-copy{min-width:0}
+.focus-dock-copy strong{
+  display:block;font-size:12.5px;font-weight:720;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.focus-dock-copy small{
+  display:block;font-size:9.5px;color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px
+}
+.focus-dock-time{
+  font-size:22px;font-weight:760;letter-spacing:-.035em;
+  font-variant-numeric:tabular-nums
+}
+.focus-dock-actions{display:flex;gap:5px}
+.dock-btn{
+  min-height:32px;padding:6px 9px;border-radius:9px;
+  border:1px solid var(--line);background:transparent;color:var(--text);
+  font-size:9.5px;font-weight:700
+}
+.dock-btn:hover{background:var(--soft)}
+.dock-btn.complete{background:var(--accent);border-color:var(--accent);color:white}
+
+/* Better chart interaction */
+.week-bars .daybar{
+  cursor:pointer;border-radius:10px;
+  transition:background .14s var(--ease);
+  padding:0 4px
+}
+.week-bars .daybar:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.week-bars .daybar:after{
+  content:"";position:absolute;top:4px;bottom:22px;left:50%;
+  width:1px;background:color-mix(in srgb,var(--accent) 22%,transparent);
+  opacity:0;pointer-events:none
+}
+.week-bars .daybar:hover:after{opacity:1}
+.week-bars .daybar.is-today label{
+  color:var(--accent);font-weight:820
+}
+.week-bars .daybar.is-today label:after{
+  content:"";display:block;width:4px;height:4px;border-radius:50%;
+  background:var(--accent);margin:3px auto 0
+}
+.chart-tooltip{
+  position:fixed;z-index:999;display:none;
+  width:190px;padding:11px 12px;
+  border-radius:13px;border:1px solid rgba(255,255,255,.10);
+  background:rgba(24,24,28,.94);color:#fff;
+  box-shadow:0 15px 42px rgba(0,0,0,.22);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  pointer-events:none
+}
+.chart-tooltip.show{display:block;animation:popin .12s var(--ease)}
+.chart-tooltip strong{display:block;font-size:11px;margin-bottom:7px}
+.chart-tip-row{
+  display:flex;justify-content:space-between;gap:10px;
+  font-size:9.5px;color:rgba(255,255,255,.72);margin-top:4px
+}
+.chart-tip-row b{color:#fff;font-size:9.5px}
+.chart-tip-delta{
+  margin-top:8px;padding-top:7px;border-top:1px solid rgba(255,255,255,.12);
+  font-size:9.5px;font-weight:680
+}
+
+/* More native-feeling hover feedback */
+.subject-card{cursor:default}
+.subject-card:hover{
+  border-color:color-mix(in srgb,var(--subject-color,var(--accent)) 24%,var(--line));
+  transform:translateY(-1px)
+}
+.kpi{cursor:default}
+.kpi:hover{border-color:var(--lineStrong)}
+
+/* Desktop narrow window = Companion Mode, NOT mobile site */
+@media (hover:hover) and (pointer:fine) and (max-width:1100px){
+  .shell{grid-template-columns:var(--sidebar-rail) 1fr!important}
+  .sidebar{
+    display:block!important;width:var(--sidebar-rail)!important;
+    padding:18px 10px!important
+  }
+  .main{
+    grid-column:2!important;padding:20px 20px 72px!important
+  }
+  .mobile-nav{display:none!important}
+  .brand{justify-content:center;padding:2px 0 20px}
+  .brand-copy,.nav-label,.nav-section-title,.sync-main,.sync-sub{display:none!important}
+  .brand .logo{width:36px;height:36px}
+  .nav-item{justify-content:center!important;padding:9px!important}
+  .nav-item.active:before{left:-10px}
+  .nav-badge{
+    position:absolute;right:1px;top:2px;
+    min-width:16px;height:16px;padding:0 4px;font-size:8px
+  }
+  .sidebar-utility{left:10px;right:10px}
+  .sidebar-foot{left:10px;right:10px}
+  .syncbox{display:flex;justify-content:center;padding:10px 4px}
+  .syncbox .dot{margin:0}
+  .sidebar-toggle{display:none}
+  .nav-item:after{
+    content:attr(data-label);
+    position:absolute;left:calc(100% + 10px);top:50%;
+    transform:translateY(-50%) translateX(-3px);
+    padding:7px 9px;border-radius:9px;
+    background:rgba(25,25,28,.92);color:#fff;
+    box-shadow:0 10px 28px rgba(0,0,0,.18);
+    font-size:10px;font-weight:650;white-space:nowrap;
+    opacity:0;pointer-events:none;transition:.14s var(--ease);z-index:100
+  }
+  .nav-item:hover:after{opacity:1;transform:translateY(-50%) translateX(0)}
+}
+
+/* True companion layout when Mac/browser window is very narrow */
+@media (hover:hover) and (pointer:fine) and (max-width:720px){
+  :root{--sidebar-rail:60px}
+  .sidebar{width:60px!important;padding-left:8px!important;padding-right:8px!important}
+  .main{padding:14px 12px 54px!important}
+  .topbar{
+    position:sticky;top:0;margin:-14px -2px 10px;
+    padding:13px 2px 9px;
+    background:color-mix(in srgb,var(--bg) 91%,transparent)
+  }
+  .hello h2{font-size:20px}
+  .hello p{font-size:9px}
+  .top-actions{gap:4px}
+  .top-actions .btn{width:36px;height:36px;min-height:36px;padding:0}
+  .top-actions #quickBtn{display:none}
+  .focus-dock{
+    top:59px;margin-bottom:10px;border-radius:14px;padding:9px 10px
+  }
+  .focus-dock-state{display:none}
+  .focus-dock-main{
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:8px
+  }
+  .focus-dock-time{font-size:20px}
+  .focus-dock-actions{
+    grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr)
+  }
+  .dock-btn{min-height:31px}
+  .focus-strip{min-height:auto;padding:16px!important;grid-template-columns:1fr auto}
+  .focus-strip h3{font-size:18px!important;max-width:260px}
+  .focus-strip p{font-size:9.5px!important}
+  .focus-strip .hero-actions{margin-top:13px}
+  .focus-ring{width:54px!important;height:54px!important}
+  .today-mini{gap:6px}
+  .today-mini .mini{padding:11px 9px!important}
+  .today-mini b{font-size:18px!important}
+  .today-mini small{font-size:8.5px}
+  .grid2,.grid-equal,.settings-grid,.review-grid{grid-template-columns:1fr!important}
+  .section{padding:14px!important;border-radius:18px}
+  .section-head h3{font-size:13.5px}
+  .item{padding:11px 12px!important}
+  .item strong{font-size:11.5px!important}
+  .item small{font-size:9px!important}
+  .table-card{display:none!important}
+  .mobile-course-list{display:block!important}
+  .kpis{grid-template-columns:repeat(2,1fr)!important;gap:7px}
+  .kpi{min-height:94px;padding:13px!important}
+  .kpi .value{font-size:23px!important}
+  .subject-grid{grid-template-columns:1fr!important}
+  .toolbar{flex-wrap:wrap}
+  .search{min-width:100%}
+  .quick-fab{display:grid!important;bottom:16px!important}
+}
+
+/* Touch/mobile keeps mobile navigation */
+@media (hover:none), (pointer:coarse){
+  @media(max-width:980px){
+    .sidebar{display:none!important}
+    .shell{grid-template-columns:1fr!important}
+    .main{grid-column:1!important}
+    .mobile-nav{display:grid!important}
+  }
+}
+
 </style>
 </head>
 <body>
 <div class="shell">
-<aside class="sidebar">
-  <div class="brand"><div class="logo">S</div><div><h1>後西醫 Study OS</h1><small>Visual Polish Final</small></div></div>
-  <div class="nav">
-    <button data-view="today" class="active" data-icon="today">今天</button>
-    
-    <button data-view="courses" data-icon="book">課程</button>
-    <button data-view="reviews" data-icon="repeat">複習</button>
-    <button data-view="questions" data-icon="question">題目</button>
-    <button data-view="english" data-icon="globe">英文</button>
-    <button data-view="settings" data-icon="settings">設定</button>
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="logo">S</div>
+    <div class="brand-copy">
+      <h1>後西醫 Study OS</h1>
+      <small>陪讀 × 管理</small>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle" title="收合側邊欄" aria-label="收合側邊欄">‹</button>
   </div>
-  <div class="sidebar-foot"><div class="syncbox" id="syncBox"><span class="dot" id="syncDot"></span><span id="syncText">載入中…</span><br><span id="syncTime">尚未同步</span></div></div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">學習</div>
+    <div class="nav">
+      <button class="nav-item active" data-view="today" data-icon="today" data-label="今天">
+        <span class="nav-icon"></span><span class="nav-label">今天</span>
+      </button>
+      <button class="nav-item" data-view="courses" data-icon="book" data-label="課程">
+        <span class="nav-icon"></span><span class="nav-label">課程</span>
+      </button>
+      <button class="nav-item" data-view="reviews" data-icon="repeat" data-label="複習" id="reviewNav">
+        <span class="nav-icon"></span><span class="nav-label">複習</span><span class="nav-badge hidden" id="reviewNavBadge"></span>
+      </button>
+      <button class="nav-item" data-view="questions" data-icon="question" data-label="題目" id="questionNav">
+        <span class="nav-icon"></span><span class="nav-label">題目</span><span class="nav-badge hidden" id="questionNavBadge"></span>
+      </button>
+      <button class="nav-item" data-view="english" data-icon="globe" data-label="英文">
+        <span class="nav-icon"></span><span class="nav-label">英文</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="nav-section insight-section">
+    <div class="nav-section-title">洞察</div>
+    <div class="nav">
+      <button class="nav-item" data-view="dashboard" data-icon="dash" data-label="統計">
+        <span class="nav-icon"></span><span class="nav-label">統計</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="sidebar-utility">
+    <button class="nav-item" data-view="settings" data-icon="settings" data-label="設定">
+      <span class="nav-icon"></span><span class="nav-label">設定</span>
+    </button>
+  </div>
+
+  <div class="sidebar-foot">
+    <div class="syncbox" id="syncBox">
+      <span class="dot" id="syncDot"></span>
+      <span class="sync-main" id="syncText">載入中…</span>
+      <span class="sync-sub" id="syncTime">尚未同步</span>
+    </div>
+  </div>
 </aside>
 
 <main class="main">
@@ -541,6 +910,22 @@ tr:hover td{background:color-mix(in srgb,var(--soft) 25%,transparent)}
       <button class="btn primary" id="quickBtn">＋ <span class="quick-label">快速紀錄</span></button>
       <button class="btn icon-btn" id="syncBtn" title="立即同步" data-icon="refresh"></button>
       <button class="btn icon-btn" id="themeBtn" title="切換深淺色" data-icon="moon"></button><button class="btn icon-btn" id="settingsBtn" title="設定" data-icon="settings"></button>
+    </div>
+  </div>
+
+  <div class="focus-dock" id="focusDock" aria-live="polite">
+    <div class="focus-dock-state"><span class="focus-live-dot"></span><span id="focusDockState">專注中</span></div>
+    <div class="focus-dock-main">
+      <div class="focus-dock-copy">
+        <strong id="focusDockTitle">尚未開始</strong>
+        <small id="focusDockMeta">開始專注模式後會固定在這裡</small>
+      </div>
+      <div class="focus-dock-time" id="focusDockTime">00:00</div>
+      <div class="focus-dock-actions">
+        <button class="dock-btn" id="focusDockPause">暫停</button>
+        <button class="dock-btn" id="focusDockExpand">展開</button>
+        <button class="dock-btn complete" id="focusDockComplete">完成</button>
+      </div>
     </div>
   </div>
 
@@ -749,6 +1134,17 @@ tr:hover td{background:color-mix(in srgb,var(--soft) 25%,transparent)}
 
 <button class="quick-fab" id="quickFab" aria-label="快速新增">＋</button>
 
+
+<div class="chart-tooltip" id="chartTooltip" role="status"></div>
+
+<div class="modal" id="dayDetailModal"><div class="modal-card" style="width:min(560px,100%)">
+  <div class="modal-head">
+    <div><h3 id="dayDetailTitle">單日紀錄</h3><small id="dayDetailSummary"></small></div>
+    <button class="btn small" data-close="dayDetailModal">關閉</button>
+  </div>
+  <div class="modal-body"><div class="list" id="dayDetailList"></div></div>
+</div></div>
+
 <div class="toast" id="toast"><span id="toastText"></span><button id="toastAction" class="hidden">復原</button></div>
 <div class="update-banner hidden" id="updateBanner">有新版 Study OS 可用　<button class="btn small" id="reloadApp">更新</button></div>
 
@@ -771,7 +1167,12 @@ const ICONS={
  refresh:'<svg viewBox="0 0 24 24"><path d="M20 6v5h-5M4 18v-5h5"/><path d="M6.2 8.5A7 7 0 0 1 18.8 7L20 11M17.8 15.5A7 7 0 0 1 5.2 17L4 13"/></svg>',
  moon:'<svg viewBox="0 0 24 24"><path d="M20 15.5A8 8 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5z"/></svg>'
 };
-document.querySelectorAll("[data-icon]").forEach(x=>x.innerHTML=ICONS[x.dataset.icon]||"");
+document.querySelectorAll("[data-icon]").forEach(x=>{
+  const icon=ICONS[x.dataset.icon]||"";
+  const slot=x.querySelector(".nav-icon");
+  if(slot)slot.innerHTML=icon;
+  else x.innerHTML=icon;
+});
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
@@ -907,7 +1308,18 @@ function renderDashboard(){
     ["刷題",qt,"題"],
     ["正確率",qt?Math.round(qc/qt*100)+"%":"—","本月"]
   ].map(x=>`<div class="metric"><b>${x[1]}</b><small>${x[0]} · ${x[2]}</small></div>`).join("");
-  let labels=["一","二","三","四","五","六","日"],weekRows=labels.map((l,i)=>{let x=new Date(m+"T00:00:00");x.setDate(x.getDate()+i);let day=iso(x),a=acts.filter(y=>y.date===day),pp=a.filter(y=>y.type==="PLAN").reduce((s,y)=>s+mn(y),0),dd=a.filter(y=>y.type==="DONE").reduce((s,y)=>s+mn(y),0);return{l,pp,dd}}),weekMax=Math.max(60,...weekRows.flatMap(x=>[x.pp,x.dd]));$("weekBars").innerHTML=weekRows.map(x=>`<div class="daybar"><span class="day-total">${x.dd?Math.round(x.dd/60*10)/10+"h":""}</span><div class="bars"><i class="bar" title="PLAN ${x.pp}m" style="height:${Math.max(2,x.pp/weekMax*138)}px"></i><i class="bar done" title="DONE ${x.dd}m" style="height:${Math.max(2,x.dd/weekMax*138)}px"></i></div><label>${x.l}</label></div>`).join("");
+  let labels=["一","二","三","四","五","六","日"],weekRows=labels.map((l,i)=>{
+    let x=new Date(m+"T00:00:00");x.setDate(x.getDate()+i);let day=iso(x),a=acts.filter(y=>y.date===day),
+    pp=a.filter(y=>y.type==="PLAN").reduce((s,y)=>s+mn(y),0),
+    dd=a.filter(y=>y.type==="DONE").reduce((s,y)=>s+mn(y),0);
+    return{l,pp,dd,day}
+  }),weekMax=Math.max(60,...weekRows.flatMap(x=>[x.pp,x.dd]));
+  $("weekBars").innerHTML=weekRows.map(x=>`<div class="daybar ${x.day===iso()?"is-today":""}" data-day="${x.day}" tabindex="0">
+    <span class="day-total">${x.dd?Math.round(x.dd/60*10)/10+"h":""}</span>
+    <div class="bars"><i class="bar" title="PLAN ${x.pp}m" style="height:${Math.max(2,x.pp/weekMax*138)}px"></i><i class="bar done" title="DONE ${x.dd}m" style="height:${Math.max(2,x.dd/weekMax*138)}px"></i></div>
+    <label>${x.l}</label>
+  </div>`).join("");
+  bindWeekBarHover(weekRows);
   let pending=today.filter(a=>a.type==="PLAN"&&!completionForPlan(a)).map(a=>["今日 PLAN 尚未 DONE",`${a.subject} · ${a.topic}`]);
   let due=dueCourses().slice(0,4).map(c=>["複習已到期",`${c.subject} ${c.code} · ${c.topic}`]);
   let wrong=questionLog.filter(q=>Number(q.wrong||0)>0&&!truthy(q.reviewed)).slice(-3).reverse().map(q=>["錯題待回看",`${q.subject} · ${q.topic||q.source||"刷題"}`]);
@@ -986,8 +1398,78 @@ function renderSettings(){
   $("webAppUrl").value=settings.webAppUrl||"";$("writeToken").value=settings.writeToken||"";$("cloudState").textContent=settings.webAppUrl&&settings.writeToken?"已設定":"尚未設定";
   [$("r1"),$("r2"),$("r3"),$("r4")].forEach((x,i)=>x.value=settings.reviewIntervals[i]||[3,7,14,30][i]);
 }
+
+function renderNavMeta(){
+  const due=dueCourses().length;
+  const unreviewed=questionLog.filter(q=>String(q.reviewed||"").toLowerCase()!=="true"&&String(q.reviewed||"")!=="1").length;
+  const rb=$("reviewNavBadge"),qb=$("questionNavBadge");
+  if(rb){rb.textContent=due;rb.classList.toggle("hidden",!due)}
+  if(qb){qb.textContent=unreviewed;qb.classList.toggle("hidden",!unreviewed)}
+  if($("reviewNav"))$("reviewNav").dataset.label=due?`複習 · ${due} 堂到期`:"複習";
+  if($("questionNav"))$("questionNav").dataset.label=unreviewed?`題目 · ${unreviewed} 筆待複習`:"題目";
+}
+
+function fmtMinutes(min){
+  min=Math.max(0,Math.round(Number(min)||0));
+  if(min<60)return `${min} 分鐘`;
+  const h=Math.floor(min/60),m=min%60;
+  return m?`${h} 小時 ${m} 分`:`${h} 小時`;
+}
+
+function bindWeekBarHover(rows){
+  const tip=$("chartTooltip");
+  if(!tip)return;
+  const bars=[...document.querySelectorAll("#weekBars .daybar")];
+
+  const hide=()=>tip.classList.remove("show");
+  const move=e=>{
+    const pad=12,w=190,h=128;
+    let x=(e.clientX||0)+14,y=(e.clientY||0)+14;
+    if(x+w>window.innerWidth-pad)x=(e.clientX||0)-w-14;
+    if(y+h>window.innerHeight-pad)y=(e.clientY||0)-h-14;
+    tip.style.left=Math.max(pad,x)+"px";
+    tip.style.top=Math.max(pad,y)+"px";
+  };
+
+  bars.forEach((el,i)=>{
+    const x=rows[i];if(!x)return;
+    const show=e=>{
+      const delta=x.dd-x.pp;
+      const date=new Date(x.day+"T00:00:00").toLocaleDateString("zh-TW",{month:"numeric",day:"numeric",weekday:"short"});
+      tip.innerHTML=`<strong>${date}</strong>
+        <div class="chart-tip-row"><span>PLAN</span><b>${fmtMinutes(x.pp)}</b></div>
+        <div class="chart-tip-row"><span>DONE</span><b>${fmtMinutes(x.dd)}</b></div>
+        <div class="chart-tip-delta">${x.pp===0&&x.dd===0?"今天沒有紀錄":delta===0?"與計畫完全一致":delta>0?`比計畫多 ${fmtMinutes(delta)}`:`比計畫少 ${fmtMinutes(Math.abs(delta))}`}</div>`;
+      tip.classList.add("show");move(e);
+    };
+    el.onmouseenter=show;el.onmousemove=move;el.onmouseleave=hide;
+    el.onfocus=e=>{show({clientX:el.getBoundingClientRect().left+el.offsetWidth/2,clientY:el.getBoundingClientRect().top})};
+    el.onblur=hide;
+    el.onclick=()=>openDayDetail(x.day);
+  });
+}
+
+function openDayDetail(day){
+  const acts=allActivities().filter(a=>a.date===day);
+  const plan=acts.filter(a=>a.type==="PLAN"),done=acts.filter(a=>a.type==="DONE");
+  const pm=plan.reduce((s,a)=>s+mn(a),0),dm=done.reduce((s,a)=>s+mn(a),0);
+  $("dayDetailTitle").textContent=new Date(day+"T00:00:00").toLocaleDateString("zh-TW",{month:"long",day:"numeric",weekday:"long"});
+  $("dayDetailSummary").textContent=`PLAN ${fmtMinutes(pm)} · DONE ${fmtMinutes(dm)}`;
+  $("dayDetailList").innerHTML=done.length?done.map(a=>`<div class="item">
+    <div class="item-main"><strong>${esc(a.subject)} · ${esc(a.activity)} · ${esc(a.topic)}</strong><small>${fmtMinutes(mn(a))}${a.start_time?` · ${String(a.start_time).slice(11,16)}`:""}</small></div>
+    <span class="status-check">✓</span>
+  </div>`).join(""):'<div class="empty">這一天還沒有 DONE 紀錄</div>';
+  openModal("dayDetailModal");
+}
+
+function setSidebarCollapsed(collapsed,save=true){
+  document.body.classList.toggle("sidebar-collapsed",!!collapsed);
+  if(save)localStorage.setItem("studySidebarCollapsed",collapsed?"1":"0");
+  const b=$("sidebarToggle");if(b)b.setAttribute("aria-label",collapsed?"展開側邊欄":"收合側邊欄");
+}
+
 function render(){
-  derive();renderToday();renderDashboard();renderCourses();renderReviews();renderQuestions();renderEnglish();renderSettings();
+  derive();renderToday();renderDashboard();renderCourses();renderReviews();renderQuestions();renderEnglish();renderSettings();renderNavMeta();
 }
 
 function toast(msg,action=null,label="復原"){
@@ -1196,22 +1678,87 @@ function preferredCourse(){
 }
 function openFocusMode(){
   let x=preferredCourse();
-  if(x&&x.c){$("focusSubject").textContent=x.c.subject+" "+x.c.code;$("focusTitle").textContent=x.c.topic;$("focusMeta").textContent=`${x.activity} · 建議 ${x.minutes} 分鐘`;focusState={course:x.c,activity:x.activity,target:x.minutes*60,elapsed:0,running:false,last:0};}
-  else{$("focusSubject").textContent="Study OS";$("focusTitle").textContent="今天沒有待處理項目";$("focusMeta").textContent="可以回課程頁選下一堂。";focusState={course:null,activity:"看課",target:0,elapsed:0,running:false,last:0};}
+  if(!focusState.course){
+    if(x&&x.c){
+      $("focusSubject").textContent=x.c.subject+" "+x.c.code;
+      $("focusTitle").textContent=x.c.topic;
+      $("focusMeta").textContent=`${x.activity} · 建議 ${x.minutes} 分鐘`;
+      focusState={course:x.c,activity:x.activity,target:x.minutes*60,elapsed:0,running:false,last:0,started:false};
+    }else{
+      $("focusSubject").textContent="Study OS";$("focusTitle").textContent="今天沒有待處理項目";$("focusMeta").textContent="可以回課程頁選下一堂。";
+      focusState={course:null,activity:"看課",target:0,elapsed:0,running:false,last:0,started:false};
+    }
+  }else{
+    $("focusSubject").textContent=focusState.course.subject+" "+focusState.course.code;
+    $("focusTitle").textContent=focusState.course.topic;
+    $("focusMeta").textContent=`${focusState.activity} · 建議 ${Math.round(focusState.target/60)} 分鐘`;
+  }
   paintFocusTimer();openModal("focusModal");
 }
-let focusState={course:null,activity:"看課",target:0,elapsed:0,running:false,last:0},focusTicker=null;
-function paintFocusTimer(){let s=Math.max(0,Math.floor(focusState.elapsed)),m=Math.floor(s/60),r=s%60;$("focusTimer").textContent=String(m).padStart(2,"0")+":"+String(r).padStart(2,"0")}
-function tickFocus(){if(!focusState.running)return;let now=Date.now();focusState.elapsed+=(now-focusState.last)/1000;focusState.last=now;paintFocusTimer()}
-function focusStart(){if(focusState.running)return;focusState.running=true;focusState.last=Date.now();clearInterval(focusTicker);focusTicker=setInterval(tickFocus,500);$("focusStart").textContent="進行中"}
-function focusPause(){if(!focusState.running)return;tickFocus();focusState.running=false;clearInterval(focusTicker);$("focusStart").textContent="繼續"}
-function focusComplete(){focusPause();if(focusState.course){closeModal("focusModal");openQuickForCourse(focusState.course,focusState.activity);$("quickMinutes").value=Math.max(1,Math.round(focusState.elapsed/60)||Math.round(focusState.target/60)||30)}else{closeModal("focusModal");setView("courses")}}
+
+let focusState={course:null,activity:"看課",target:0,elapsed:0,running:false,last:0,started:false},focusTicker=null;
+
+function paintFocusTimer(){
+  let s=Math.max(0,Math.floor(focusState.elapsed)),m=Math.floor(s/60),r=s%60;
+  const txt=String(m).padStart(2,"0")+":"+String(r).padStart(2,"0");
+  $("focusTimer").textContent=txt;
+  if($("focusDockTime"))$("focusDockTime").textContent=txt;
+
+  const dock=$("focusDock");
+  if(dock){
+    dock.classList.toggle("show",!!focusState.started&&!!focusState.course);
+    dock.classList.toggle("paused",!!focusState.started&&!focusState.running);
+  }
+  if(focusState.course){
+    $("focusDockTitle").textContent=`${focusState.course.subject} ${focusState.course.code} · ${focusState.course.topic}`;
+    $("focusDockMeta").textContent=`${focusState.activity} · 目標 ${Math.round(focusState.target/60)} 分鐘`;
+    $("focusDockState").textContent=focusState.running?"專注中":"已暫停";
+  }
+  if($("focusDockPause"))$("focusDockPause").textContent=focusState.running?"暫停":"繼續";
+}
+
+function tickFocus(){
+  if(!focusState.running)return;
+  let now=Date.now();focusState.elapsed+=(now-focusState.last)/1000;focusState.last=now;paintFocusTimer()
+}
+
+function focusStart(){
+  if(focusState.running||!focusState.course)return;
+  focusState.started=true;focusState.running=true;focusState.last=Date.now();
+  clearInterval(focusTicker);focusTicker=setInterval(tickFocus,500);
+  $("focusStart").textContent="進行中";paintFocusTimer()
+}
+
+function focusPause(){
+  if(focusState.running){tickFocus();focusState.running=false;clearInterval(focusTicker)}
+  else if(focusState.started&&focusState.course){focusState.running=true;focusState.last=Date.now();clearInterval(focusTicker);focusTicker=setInterval(tickFocus,500)}
+  $("focusStart").textContent=focusState.running?"進行中":"繼續";paintFocusTimer()
+}
+
+function focusComplete(){
+  if(focusState.running){tickFocus();focusState.running=false;clearInterval(focusTicker)}
+  const c=focusState.course,a=focusState.activity,elapsed=focusState.elapsed,target=focusState.target;
+  focusState.started=false;paintFocusTimer();
+  closeModal("focusModal");
+  if(c){
+    openQuickForCourse(c,a);
+    $("quickMinutes").value=Math.max(1,Math.round(elapsed/60)||Math.round(target/60)||30)
+  }else setView("courses");
+  focusState={course:null,activity:"看課",target:0,elapsed:0,running:false,last:0,started:false};
+  paintFocusTimer();
+}
 
 function setView(v){
   document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id==="view-"+v));document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x.dataset.view===v));
   $("pageTitle").textContent={today:"今天",dashboard:"儀表板",courses:"課程進度",reviews:"複習",questions:"題目與錯題",english:"英文輸入",settings:"設定"}[v]||"Study OS";localStorage.setItem("studyView",v)
 }
 document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
+setSidebarCollapsed(localStorage.getItem("studySidebarCollapsed")==="1",false);
+$("sidebarToggle").onclick=()=>setSidebarCollapsed(!document.body.classList.contains("sidebar-collapsed"));
+$("focusDockPause").onclick=focusPause;
+$("focusDockExpand").onclick=()=>openFocusMode();
+$("focusDockComplete").onclick=focusComplete;
+
 $("courseAllBtn").onclick=()=>{courseAttentionOnly=false;localStorage.setItem("studyCourseAttention","0");renderCourses()};
 $("courseAttentionBtn").onclick=()=>{courseAttentionOnly=true;localStorage.setItem("studyCourseAttention","1");renderCourses()};
 $("quickFab").onclick=openActionSheet;

@@ -1,4 +1,4 @@
-const CACHE="study-os-visual-polish-final-v1";
+const CACHE="study-os-ux-companion-preview-v1";
 const CORE=["./","./index.html","./setup.html","./manifest.webmanifest","./icon-180.png","./icon-512.png"];
 self.addEventListener("install",e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
 self.addEventListener("activate",e=>{e.waitUntil(Promise.all([clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))]))});
