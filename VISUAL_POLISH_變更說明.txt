@@ -1,0 +1,21 @@
+Study OS｜Visual Polish Final
+
+這版不加功能、不改同步，只做視覺與觸控體驗。
+
+視覺優化：
+- 更接近 iOS 的背景、毛玻璃、卡片陰影與圓角比例
+- 重新建立字級層級：頁面標題 / 區塊 / KPI / 輔助文字更清楚
+- 增加留白，降低 Dashboard 的「表格感」
+- 四科加入固定視覺識別：
+  物理＝藍、生物＝綠、生化＝紫、化學＝橘
+- 科目進度條與手機課程卡片跟著科目顏色
+- 本週 PLAN × DONE 圖表重新縮放，顯示每天 DONE 小時
+- 按鈕、輸入框、分段控制改成更接近 iOS Control
+- 手機 Modal 改成 Bottom Sheet 手感
+- 手機底部導航改成浮動毛玻璃 Tab Bar
+- iPhone safe-area、44px 觸控區、輸入框 16px 避免 Safari 自動放大
+- 深色模式重新調整成 OLED 風格
+- 支援 Reduced Motion
+
+資料層：
+ActivityLog / ManualProgress / QuickLog / QuestionLog 與私人同步邏輯均維持原樣。

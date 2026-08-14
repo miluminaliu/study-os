@@ -57,15 +57,474 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
 .mobile-nav{display:none}
 @media(max-width:980px){.shell{grid-template-columns:1fr}.sidebar{display:none}.main{grid-column:1;padding:20px 18px 88px}.mobile-nav{display:grid;grid-template-columns:repeat(6,1fr);position:fixed;left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));z-index:60;background:color-mix(in srgb,var(--panel2) 95%,transparent);border:1px solid var(--line);border-radius:18px;box-shadow:0 15px 45px rgba(0,0,0,.14);backdrop-filter:blur(22px);overflow:hidden}.mobile-nav button{padding:9px 2px 8px;display:grid;justify-items:center;gap:3px;font-size:9px}.mobile-nav button.active{color:var(--accent);background:var(--soft)}.kpis{grid-template-columns:repeat(2,1fr)}.grid2,.grid-equal,.settings-grid{grid-template-columns:1fr}.review-grid{grid-template-columns:1fr}.review-list{max-height:360px}.topbar{align-items:flex-start}.top-actions .quick-label{display:none}}
 @media(max-width:620px){.main{padding:16px 12px 88px}.hello h2{font-size:21px}.kpi{padding:15px}.kpi .value{font-size:25px}.subject-grid{grid-template-columns:1fr}.subject-switch-wrap{display:block}.subject-switch{display:grid;grid-template-columns:repeat(4,1fr);margin-bottom:7px}.subject-switch button{padding:8px 4px;font-size:11px}.subject-context{text-align:right}.field-row{grid-template-columns:1fr}.item{align-items:flex-start;flex-direction:column}.item-actions{width:100%}.item-actions .btn{flex:1}.modal{padding:8px}.modal-card{border-radius:18px;max-height:94vh}}
+
+/* ===== UI/UX POLISH FINAL ===== */
+:root{
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+body{transition:background .22s var(--ease),color .22s var(--ease)}
+button,.btn,.item,.subject-card,.review-item,.kpi,.card{transition:transform .16s var(--ease),box-shadow .16s var(--ease),background .16s var(--ease),border-color .16s var(--ease)}
+button:active,.btn:active{transform:scale(.985)}
+.card:hover{box-shadow:0 20px 55px rgba(16,24,40,.09)}
+[data-theme="dark"] .card:hover{box-shadow:0 20px 55px rgba(0,0,0,.34)}
+.focus-strip{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:18px 20px;margin-bottom:13px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,var(--panel)),var(--panel))}
+.focus-strip .eyebrow{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:900}
+.focus-strip h3{margin:5px 0 4px;font-size:18px;line-height:1.35}
+.focus-strip p{margin:0;color:var(--muted);font-size:11px}
+.focus-ring{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) var(--ring,0%),var(--line) 0);position:relative}
+.focus-ring:after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--panel2)}
+.focus-ring strong{position:relative;z-index:1;font-size:15px}
+.today-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:13px}
+.today-mini .mini{padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:var(--panel)}
+.today-mini b{display:block;font-size:20px}.today-mini small{font-size:10px;color:var(--muted)}
+.plan-row.completed{opacity:.62}.plan-row.completed strong{text-decoration:line-through;text-decoration-thickness:1px}
+.status-check{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--greenSoft);color:var(--green);font-size:14px;font-weight:900}
+.attention-toggle{display:inline-flex;gap:5px;padding:4px;border-radius:13px;background:var(--panel);border:1px solid var(--line)}
+.attention-toggle button{border:0;background:transparent;color:var(--muted);padding:7px 10px;border-radius:9px;font-size:11px;font-weight:750}
+.attention-toggle button.active{background:var(--accent);color:#fff}
+.action-sheet-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.action-card{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:16px;text-align:left}
+.action-card b{display:block;font-size:14px}.action-card small{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+.action-icon{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--soft);color:var(--accent);font-weight:900;margin-bottom:11px}
+.mobile-course-list{display:none}
+.course-card-mobile{padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--panel);margin-bottom:9px}
+.course-card-mobile .row1{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.course-card-mobile .code2{font-weight:900;color:var(--accent);font-size:13px}
+.course-card-mobile .topic2{font-weight:780;font-size:13px;margin-top:3px;line-height:1.35}
+.course-card-mobile .meta2{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.course-card-mobile .maturity2{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:10px;color:var(--muted)}
+.course-card-mobile .maturity2 .progress{flex:1;margin:0}
+.time-pill{font-size:10px;font-weight:850;padding:5px 8px;border-radius:999px;background:var(--soft);color:var(--accent)}
+.time-pill.overdue{background:var(--redSoft);color:var(--red)}
+.time-pill.today{background:var(--amberSoft);color:var(--amber)}
+.sync-compact{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:10px}
+.sync-compact .dot{margin:0}
+.quick-fab{display:none;position:fixed;right:16px;bottom:88px;width:54px;height:54px;border-radius:50%;border:0;background:var(--accent);color:white;font-size:25px;box-shadow:0 16px 35px rgba(109,99,242,.33);z-index:58}
+.details-group{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.details-group summary{list-style:none;padding:13px 14px;cursor:pointer;font-size:12px;font-weight:800;background:color-mix(in srgb,var(--panel2) 85%,transparent)}
+.details-group summary::-webkit-details-marker{display:none}
+.details-group .inside{padding:14px}
+.focus-modal .modal-card{width:min(520px,100%)}
+.focus-screen{text-align:center;padding:10px 4px 4px}
+.focus-screen .subject-chip{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--soft);color:var(--accent);font-size:11px;font-weight:850}
+.focus-screen h2{font-size:22px;line-height:1.35;margin:14px 0 8px}
+.focus-screen .timer{font-size:56px;font-weight:900;letter-spacing:-.04em;margin:22px 0 8px}
+.focus-screen p{color:var(--muted);font-size:11px}
+.focus-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.soft-divider{height:1px;background:var(--line);margin:14px 0}
+.skeleton{background:linear-gradient(90deg,var(--line),color-mix(in srgb,var(--line) 60%,transparent),var(--line));background-size:200% 100%;animation:shimmer 1.2s linear infinite;border-radius:8px}
+@keyframes shimmer{to{background-position:-200% 0}}
+@keyframes popin{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.view.active{animation:popin .2s var(--ease)}
+.toast{max-width:min(92vw,520px)}
+@media(max-width:980px){
+  .quick-fab{display:grid;place-items:center}
+  .top-actions #quickBtn{display:none}
+}
+@media(max-width:700px){
+  .table-card{display:none}
+  .mobile-course-list{display:block}
+  .focus-strip{grid-template-columns:1fr auto;padding:16px}
+  .focus-ring{width:58px;height:58px}
+  .today-mini{grid-template-columns:repeat(3,1fr)}
+  .today-mini .mini{padding:11px}
+  .today-mini b{font-size:18px}
+  .action-sheet-grid{grid-template-columns:repeat(2,1fr)}
+  .mobile-nav{grid-template-columns:repeat(5,1fr)}
+  .mobile-nav button[data-view="dashboard"]{display:none}
+  .top-actions{gap:6px}
+}
+
+
+/* ===== VISUAL POLISH FINAL · iOS editorial system ===== */
+:root{
+  --bg:#F2F2F7;
+  --panel:rgba(255,255,255,.88);
+  --panel2:#FFFFFF;
+  --text:#111114;
+  --muted:#74747A;
+  --muted2:#A1A1A8;
+  --line:rgba(60,60,67,.12);
+  --lineStrong:rgba(60,60,67,.18);
+  --accent:#6E62F2;
+  --accent2:#8E84FF;
+  --soft:#EFEDFF;
+  --green:#15855E;
+  --greenSoft:#E8F7F1;
+  --amber:#A96808;
+  --amberSoft:#FFF4DA;
+  --red:#C83B45;
+  --redSoft:#FDECEE;
+  --blue:#3478F6;
+  --shadow:0 1px 2px rgba(0,0,0,.025),0 8px 28px rgba(25,25,35,.055);
+  --shadowFloat:0 18px 55px rgba(18,18,30,.13);
+  --radius:22px;
+  --radiusLarge:28px;
+  --physics:#3478F6;
+  --physicsSoft:#EAF2FF;
+  --biology:#1A9A68;
+  --biologySoft:#E9F8F1;
+  --biochem:#8B5CF6;
+  --biochemSoft:#F2ECFF;
+  --chemistry:#E28324;
+  --chemistrySoft:#FFF2E4;
+}
+[data-theme="dark"]{
+  --bg:#000000;
+  --panel:rgba(28,28,30,.88);
+  --panel2:#1C1C1E;
+  --text:#F5F5F7;
+  --muted:#A1A1AA;
+  --muted2:#73737A;
+  --line:rgba(235,235,245,.11);
+  --lineStrong:rgba(235,235,245,.17);
+  --accent:#A29BFF;
+  --accent2:#BBB5FF;
+  --soft:#29264A;
+  --green:#5CD6A4;
+  --greenSoft:#12362A;
+  --amber:#F1B75D;
+  --amberSoft:#3D2C12;
+  --red:#FF7D83;
+  --redSoft:#411E22;
+  --blue:#74A7FF;
+  --shadow:0 1px 2px rgba(0,0,0,.25),0 12px 35px rgba(0,0,0,.28);
+  --shadowFloat:0 22px 70px rgba(0,0,0,.48);
+  --physics:#70A6FF;
+  --physicsSoft:#142B4E;
+  --biology:#59D5A1;
+  --biologySoft:#12372A;
+  --biochem:#B69AFF;
+  --biochemSoft:#30244C;
+  --chemistry:#F3AD66;
+  --chemistrySoft:#422D17;
+}
+html{-webkit-text-size-adjust:100%;font-feature-settings:"tnum" 1,"cv02" 1,"cv03" 1,"cv04" 1}
+body{
+  background:
+    radial-gradient(circle at 92% -10%,color-mix(in srgb,var(--accent) 5%,transparent),transparent 26rem),
+    var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","PingFang TC","Noto Sans TC","Segoe UI",sans-serif;
+  letter-spacing:-.018em;
+  line-height:1.45;
+}
+::selection{background:color-mix(in srgb,var(--accent) 22%,transparent)}
+button,input,select,textarea{-webkit-tap-highlight-color:transparent}
+button{min-height:40px}
+.shell{grid-template-columns:258px 1fr}
+.sidebar{
+  width:258px;padding:26px 18px;
+  border-right:1px solid var(--line);
+  background:color-mix(in srgb,var(--panel2) 78%,transparent);
+  backdrop-filter:saturate(180%) blur(28px);
+  -webkit-backdrop-filter:saturate(180%) blur(28px)
+}
+.brand{padding:1px 10px 28px;gap:12px}
+.logo{
+  width:42px;height:42px;border-radius:13px;
+  background:linear-gradient(145deg,#7469F5,#5F54E9);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 24px rgba(93,82,232,.24);
+  font-size:17px
+}
+.brand h1{font-size:16px;font-weight:760;letter-spacing:-.025em}
+.brand small{font-size:10px;margin-top:3px;color:var(--muted2)}
+.nav{gap:3px}
+.nav button{
+  min-height:44px;padding:11px 13px;border-radius:12px;
+  font-size:13px;font-weight:590;letter-spacing:-.012em
+}
+.nav button.active{
+  background:color-mix(in srgb,var(--accent) 10%,transparent);
+  color:var(--accent);font-weight:730
+}
+.nav button:hover{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.nav svg{width:18px;height:18px;stroke-width:1.85}
+.sidebar-foot{left:18px;right:18px;bottom:18px}
+.syncbox{
+  border:0;background:color-mix(in srgb,var(--panel2) 68%,transparent);
+  box-shadow:inset 0 0 0 1px var(--line);
+  border-radius:14px;padding:11px 12px;line-height:1.55
+}
+.main{padding:30px 38px 88px;max-width:1500px}
+.topbar{
+  position:sticky;top:0;z-index:18;
+  margin:-30px -10px 26px;padding:24px 10px 14px;
+  background:linear-gradient(var(--bg) 62%,color-mix(in srgb,var(--bg) 86%,transparent));
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)
+}
+.hello h2{font-size:28px;font-weight:770;letter-spacing:-.042em;margin:0 0 3px}
+.hello p{font-size:12px;color:var(--muted)}
+.top-actions{gap:7px}
+.btn{
+  min-height:42px;padding:10px 15px;border-radius:12px;
+  border:1px solid var(--line);background:color-mix(in srgb,var(--panel2) 92%,transparent);
+  font-size:12px;font-weight:700;box-shadow:none
+}
+.btn:hover{box-shadow:0 3px 12px rgba(20,20,35,.055);transform:none}
+.btn.primary{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 92%,white),var(--accent));
+  border-color:transparent;box-shadow:0 5px 14px color-mix(in srgb,var(--accent) 22%,transparent)
+}
+.icon-btn{width:42px;height:42px;border-radius:50%;padding:0}
+.card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--radius);box-shadow:var(--shadow);
+  backdrop-filter:saturate(150%) blur(20px);-webkit-backdrop-filter:saturate(150%) blur(20px)
+}
+.card:hover{box-shadow:var(--shadow)}
+.section{padding:22px}
+.section-head{margin-bottom:17px}
+.section-head h3{font-size:16px;font-weight:740;letter-spacing:-.025em}
+.section-head span{font-size:10.5px;color:var(--muted2);font-weight:550}
+.kpis{gap:14px;margin-bottom:14px}
+.kpi{padding:20px 21px;min-height:120px}
+.kpi .label{
+  color:var(--muted);font-size:10.5px;font-weight:680;
+  letter-spacing:.045em;text-transform:uppercase
+}
+.kpi .value{
+  font-size:31px;font-weight:790;letter-spacing:-.045em;margin-top:13px;
+  font-variant-numeric:tabular-nums
+}
+.kpi .sub{font-size:10.5px;color:var(--muted2);margin-top:4px}
+.grid2,.grid-equal{gap:14px;margin-bottom:14px}
+.focus-strip{
+  min-height:175px;padding:27px 29px;border-radius:var(--radiusLarge);
+  background:
+    radial-gradient(circle at 88% 15%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 16rem),
+    linear-gradient(145deg,color-mix(in srgb,var(--accent) 7%,var(--panel)),var(--panel));
+  border-color:color-mix(in srgb,var(--accent) 12%,var(--line))
+}
+.focus-strip .eyebrow{font-size:9.5px;letter-spacing:.12em;color:var(--accent);opacity:.9}
+.focus-strip h3{font-size:24px;font-weight:775;letter-spacing:-.04em;margin:7px 0 6px;max-width:760px}
+.focus-strip p{font-size:12px;color:var(--muted)}
+.hero-actions{margin-top:20px;gap:8px}
+.focus-ring{width:82px;height:82px;box-shadow:inset 0 0 0 1px var(--line)}
+.focus-ring:after{inset:8px;background:var(--panel2)}
+.focus-ring strong{font-size:16px;font-weight:790;letter-spacing:-.025em}
+.today-mini{gap:10px;margin-bottom:14px}
+.today-mini .mini{
+  padding:16px 17px;border-radius:17px;border:1px solid var(--line);
+  background:color-mix(in srgb,var(--panel2) 82%,transparent)
+}
+.today-mini b{font-size:23px;font-weight:770;letter-spacing:-.04em}
+.today-mini small{font-size:10px;color:var(--muted);font-weight:580}
+.list{gap:9px}
+.item{
+  padding:14px 15px;border-radius:15px;border-color:var(--line);
+  background:color-mix(in srgb,var(--panel2) 76%,transparent)
+}
+.item:hover{background:color-mix(in srgb,var(--panel2) 94%,transparent)}
+.item strong{font-size:13px;font-weight:690;line-height:1.42;letter-spacing:-.018em}
+.item small{font-size:10.5px;color:var(--muted);margin-top:5px}
+.empty{font-size:11px;padding:28px 10px;color:var(--muted2)}
+.status-check{width:28px;height:28px;font-size:13px}
+.subject-grid{gap:12px}
+.subject-card{
+  position:relative;overflow:hidden;padding:17px 17px 16px;border-radius:18px;
+  background:color-mix(in srgb,var(--panel2) 82%,transparent)
+}
+.subject-card:before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--subject-color,var(--accent));opacity:.92
+}
+.subject-card[data-subject="物理"]{--subject-color:var(--physics);--subject-soft:var(--physicsSoft)}
+.subject-card[data-subject="生物"]{--subject-color:var(--biology);--subject-soft:var(--biologySoft)}
+.subject-card[data-subject="生化"]{--subject-color:var(--biochem);--subject-soft:var(--biochemSoft)}
+.subject-card[data-subject="化學"]{--subject-color:var(--chemistry);--subject-soft:var(--chemistrySoft)}
+.subject-card .progress i{background:var(--subject-color,var(--accent))}
+.subject-card .maturity{color:var(--subject-color,var(--green));font-weight:650}
+.subject-name{font-size:14px;font-weight:760}
+.subject-pct{font-size:12px;font-weight:730;color:var(--subject-color,var(--muted))}
+.subject-meta{font-size:10px;color:var(--muted2)}
+.progress{height:6px;background:color-mix(in srgb,var(--lineStrong) 80%,transparent)}
+.progress i{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.subject-switch{
+  border:0;background:color-mix(in srgb,var(--panel2) 74%,transparent);
+  box-shadow:inset 0 0 0 1px var(--line);border-radius:13px;padding:4px
+}
+.subject-switch button{min-height:36px;padding:7px 14px;border-radius:9px;font-size:11px;font-weight:680}
+.subject-switch button.active{box-shadow:0 2px 8px rgba(20,20,30,.08)}
+.subject-switch button[data-course-subject="物理"].active,.subject-switch button[data-review-subject="物理"].active{background:var(--physics)}
+.subject-switch button[data-course-subject="生物"].active,.subject-switch button[data-review-subject="生物"].active{background:var(--biology)}
+.subject-switch button[data-course-subject="生化"].active,.subject-switch button[data-review-subject="生化"].active{background:var(--biochem)}
+.subject-switch button[data-course-subject="化學"].active,.subject-switch button[data-review-subject="化學"].active{background:var(--chemistry)}
+.toolbar{gap:8px;margin-bottom:14px}
+.search input,.field input,.field select,.field textarea,.select{
+  min-height:42px;border-radius:11px;border-color:var(--lineStrong);
+  background:color-mix(in srgb,var(--panel2) 88%,transparent);
+  font-size:12px;padding:10px 12px
+}
+.search input:focus,.field input:focus,.field select:focus,.field textarea:focus,.select:focus{
+  border-color:color-mix(in srgb,var(--accent) 50%,var(--line));
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 10%,transparent)
+}
+.attention-toggle{border:0;box-shadow:inset 0 0 0 1px var(--line);border-radius:12px;background:color-mix(in srgb,var(--panel2) 76%,transparent)}
+.attention-toggle button{min-height:34px;font-size:10.5px}
+.table-card{border-radius:20px}
+th{
+  background:color-mix(in srgb,var(--panel2) 96%,transparent);
+  font-size:9.5px;font-weight:720;letter-spacing:.07em;
+  padding:12px 14px;border-color:var(--line)
+}
+td{padding:13px 14px;font-size:11.5px;border-color:var(--line)}
+tr:hover td{background:color-mix(in srgb,var(--soft) 25%,transparent)}
+.badge{padding:5px 8px;font-size:9.5px;letter-spacing:.01em}
+.review-grid{gap:14px}
+.review-col{padding:18px}
+.review-item{padding:13px 14px;border-radius:14px}
+.review-item strong{font-size:12px;font-weight:700}
+.review-item small{font-size:10px;margin-top:6px}
+.time-pill{padding:4px 7px;font-size:9px;letter-spacing:.01em}
+.metric-row{gap:10px}
+.metric{padding:14px;border-radius:15px;background:color-mix(in srgb,var(--panel2) 76%,transparent)}
+.metric b{font-size:23px;font-weight:770;letter-spacing:-.035em}
+.metric small{font-size:9.5px}
+.week-bars{
+  position:relative;height:190px;gap:14px;padding:16px 5px 0;
+  border-bottom:1px solid var(--line)
+}
+.week-bars:before,.week-bars:after{
+  content:"";position:absolute;left:0;right:0;height:1px;background:var(--line);pointer-events:none
+}
+.week-bars:before{top:42%}.week-bars:after{top:70%}
+.daybar{position:relative;z-index:1;gap:7px}
+.bars{height:142px;gap:5px}
+.bar{width:11px;border-radius:7px 7px 2px 2px;background:color-mix(in srgb,var(--muted2) 28%,transparent)}
+.bar.done{
+  width:13px;background:linear-gradient(180deg,var(--accent2),var(--accent));
+  box-shadow:0 5px 12px color-mix(in srgb,var(--accent) 14%,transparent)
+}
+.daybar label{font-size:9.5px;font-weight:650;color:var(--muted)}
+.day-total{position:absolute;top:-2px;font-size:9px;color:var(--muted2);font-variant-numeric:tabular-nums}
+.source-row{font-size:10.5px;grid-template-columns:92px 1fr 42px}
+.settings-grid{gap:14px}
+.setting-card{padding:21px}
+.note{font-size:10.5px;border-radius:13px;line-height:1.6}
+.modal{
+  background:rgba(0,0,0,.22);
+  backdrop-filter:saturate(120%) blur(18px);
+  -webkit-backdrop-filter:saturate(120%) blur(18px)
+}
+.modal-card{
+  border-radius:26px;border-color:var(--line);
+  box-shadow:var(--shadowFloat);
+  background:color-mix(in srgb,var(--panel2) 96%,transparent)
+}
+.modal-head{padding:16px 18px;background:color-mix(in srgb,var(--panel2) 92%,transparent);backdrop-filter:blur(18px)}
+.modal-head h3{font-size:16px;font-weight:760}
+.action-card{min-height:128px;border-radius:18px;padding:17px;background:color-mix(in srgb,var(--panel2) 84%,transparent)}
+.action-card:hover{background:var(--soft);border-color:color-mix(in srgb,var(--accent) 20%,var(--line))}
+.action-icon{width:39px;height:39px;border-radius:12px}
+.course-card-mobile{
+  border-radius:18px;padding:15px 16px;margin-bottom:10px;
+  box-shadow:0 1px 0 rgba(0,0,0,.015)
+}
+.course-card-mobile .code2{font-size:11px;letter-spacing:.02em}
+.course-card-mobile .topic2{font-size:13px;font-weight:700;line-height:1.42}
+.course-card-mobile .maturity2{font-size:9.5px;margin-top:12px}
+.quick-fab{
+  width:56px;height:56px;right:17px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 92%,white),var(--accent));
+  box-shadow:0 14px 30px color-mix(in srgb,var(--accent) 26%,transparent),inset 0 1px 0 rgba(255,255,255,.26)
+}
+.toast{
+  border-radius:15px;background:rgba(24,24,28,.92);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  font-size:11px;padding:12px 14px
+}
+.details-group{border-radius:16px}
+.details-group summary{font-size:11px;padding:14px}
+.focus-screen .subject-chip{font-size:10px}
+.focus-screen h2{font-size:24px;letter-spacing:-.035em}
+.focus-screen .timer{font-size:62px;font-weight:760;font-variant-numeric:tabular-nums}
+.mobile-nav button{min-height:50px}
+@media(max-width:980px){
+  body{background:var(--bg)}
+  .main{padding:21px 17px calc(102px + env(safe-area-inset-bottom))}
+  .topbar{
+    margin:-21px -5px 20px;padding:calc(14px + env(safe-area-inset-top)) 5px 10px;
+    background:color-mix(in srgb,var(--bg) 88%,transparent)
+  }
+  .hello h2{font-size:27px}
+  .mobile-nav{
+    left:12px;right:12px;bottom:max(10px,env(safe-area-inset-bottom));
+    border-radius:24px;border-color:var(--line);
+    background:color-mix(in srgb,var(--panel2) 78%,transparent);
+    backdrop-filter:saturate(180%) blur(28px);-webkit-backdrop-filter:saturate(180%) blur(28px);
+    box-shadow:0 10px 35px rgba(0,0,0,.12);padding:4px
+  }
+  .mobile-nav button{
+    border-radius:18px;padding:8px 2px 7px;font-size:9px;min-height:51px
+  }
+  .mobile-nav button.active{background:color-mix(in srgb,var(--accent) 11%,transparent)}
+}
+@media(max-width:700px){
+  input,select,textarea{font-size:16px!important}
+  .focus-strip{min-height:166px;padding:21px 19px;border-radius:24px}
+  .focus-strip h3{font-size:21px;max-width:250px}
+  .focus-strip p{font-size:10.5px;max-width:260px}
+  .focus-ring{width:66px;height:66px}
+  .focus-ring strong{font-size:13px}
+  .today-mini{gap:8px}
+  .today-mini .mini{padding:13px 12px;border-radius:16px}
+  .today-mini b{font-size:21px}
+  .section{padding:17px}
+  .section-head{margin-bottom:13px}
+  .section-head h3{font-size:15px}
+  .item{padding:13px 14px}
+  .item strong{font-size:12.5px}
+  .item small{font-size:10px}
+  .kpis{gap:9px}
+  .kpi{padding:16px;min-height:104px}
+  .kpi .value{font-size:26px}
+  .subject-switch-wrap{margin-bottom:12px}
+  .subject-switch{width:100%;display:grid;grid-template-columns:repeat(4,1fr)}
+  .subject-switch button{padding:7px 3px;min-height:36px}
+  .toolbar{gap:7px}
+  .action-sheet-grid{gap:8px}
+  .action-card{min-height:112px;padding:15px}
+  .modal{align-items:flex-end;padding:0}
+  .modal-card{
+    width:100%!important;max-height:88vh;border-radius:28px 28px 0 0;
+    border-left:0;border-right:0;border-bottom:0;
+    padding-bottom:env(safe-area-inset-bottom);
+    animation:sheetUp .25s var(--ease)
+  }
+  .focus-modal{align-items:center;padding:12px}
+  .focus-modal .modal-card{border:1px solid var(--line);border-radius:26px;padding-bottom:0}
+  .modal-head:before{
+    content:"";position:absolute;top:7px;left:50%;transform:translateX(-50%);
+    width:34px;height:5px;border-radius:99px;background:var(--lineStrong)
+  }
+  .modal-head{position:relative;padding-top:22px}
+  .quick-fab{bottom:calc(88px + env(safe-area-inset-bottom))}
+}
+@keyframes sheetUp{from{transform:translateY(22px);opacity:.65}to{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+
+
+.subject-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:1px;background:var(--accent)}
+.subject-dot[data-subject="物理"]{background:var(--physics)}
+.subject-dot[data-subject="生物"]{background:var(--biology)}
+.subject-dot[data-subject="生化"]{background:var(--biochem)}
+.subject-dot[data-subject="化學"]{background:var(--chemistry)}
+.course-card-mobile[data-subject="物理"]{border-left:3px solid var(--physics)}
+.course-card-mobile[data-subject="生物"]{border-left:3px solid var(--biology)}
+.course-card-mobile[data-subject="生化"]{border-left:3px solid var(--biochem)}
+.course-card-mobile[data-subject="化學"]{border-left:3px solid var(--chemistry)}
+
 </style>
 </head>
 <body>
 <div class="shell">
 <aside class="sidebar">
-  <div class="brand"><div class="logo">S</div><div><h1>後西醫 Study OS</h1><small>Final · Private Sync</small></div></div>
+  <div class="brand"><div class="logo">S</div><div><h1>後西醫 Study OS</h1><small>Visual Polish Final</small></div></div>
   <div class="nav">
     <button data-view="today" class="active" data-icon="today">今天</button>
-    <button data-view="dashboard" data-icon="dash">儀表板</button>
+    
     <button data-view="courses" data-icon="book">課程</button>
     <button data-view="reviews" data-icon="repeat">複習</button>
     <button data-view="questions" data-icon="question">題目</button>
@@ -86,12 +545,16 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
   </div>
 
   <section class="view active" id="view-today">
-    <div class="hero card">
-      <h3 id="todayHero">今天先把最重要的做完</h3>
-      <p id="todayHeroSub">同步後會整理今天的 PLAN、待複習和已完成。</p>
-      <div class="hero-actions"><button class="btn primary" id="nextBtn">開始下一項</button><button class="btn" id="todayQuickBtn">＋ 快速紀錄</button></div>
+    <div class="focus-strip card">
+      <div>
+        <div class="eyebrow">NEXT UP</div>
+        <h3 id="todayHero">今天先把最重要的做完</h3>
+        <p id="todayHeroSub">同步後會整理今天的 PLAN、待複習和已完成。</p>
+        <div class="hero-actions"><button class="btn primary" id="nextBtn">開始下一項</button><button class="btn" id="focusModeBtn">專注模式</button></div>
+      </div>
+      <div class="focus-ring" id="todayRing" style="--ring:0%"><strong id="todayRingText">0%</strong></div>
     </div>
-    <div class="kpis" id="todayKpis"></div>
+    <div class="today-mini" id="todayMini"></div>
     <div class="grid2">
       <div class="card section"><div class="section-head"><h3>今天預計</h3><span id="todayPlanCount"></span></div><div class="list" id="todayPlans"></div></div>
       <div class="card section"><div class="section-head"><h3>今天待複習</h3><span id="todayReviewCount"></span></div><div class="list" id="todayReviews"></div></div>
@@ -106,7 +569,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
       <div class="card section"><div class="section-head"><h3>本月輸出</h3><span>累積</span></div><div class="metric-row" id="monthMetrics"></div></div>
     </div>
     <div class="grid2">
-      <div class="card section"><div class="section-head"><h3>本週 PLAN × DONE</h3><span>灰＝PLAN　紫＝DONE</span></div><div class="week-bars" id="weekBars"></div></div>
+      <div class="card section"><div class="section-head"><h3>本週 PLAN × DONE</h3><span>PLAN ○　DONE ●</span></div><div class="week-bars" id="weekBars"></div></div>
       <div class="card section"><div class="section-head"><h3>接下來最值得做</h3><span>自動排序</span></div><div class="list" id="nextActions"></div></div>
     </div>
   </section>
@@ -115,14 +578,14 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
     <div class="subject-switch-wrap"><div class="subject-switch" id="courseSubjectSwitch">
       <button data-course-subject="物理">物理</button><button data-course-subject="生物">生物</button><button data-course-subject="生化">生化</button><button data-course-subject="化學">化學</button>
     </div><div class="subject-context" id="courseSubjectContext"></div></div>
-    <div class="toolbar">
+    <div class="toolbar"><div class="attention-toggle"><button id="courseAllBtn" class="active">全部</button><button id="courseAttentionBtn">只看需要處理</button></div>
       <button class="btn primary" id="openManualBtn">＋ 補登已完成</button>
       <div class="search"><input id="courseSearch" placeholder="搜尋堂次、主題…"></div>
       <select class="select" id="typeFilter"><option value="">全部類型</option></select>
       <select class="select" id="priorityFilter"><option value="">全部優先</option><option value="A高">重點</option><option value="B中">一般</option></select>
       <select class="select" id="statusFilter"><option value="">全部狀態</option><option>已看課</option><option>進行中</option><option>未開始</option></select>
     </div>
-    <div class="card table-card"><div class="table-wrap"><table><thead><tr><th>堂次</th><th>主題</th><th>類型</th><th>優先</th><th>狀態</th><th>成熟度</th><th>複習</th><th>最近</th></tr></thead><tbody id="courseBody"></tbody></table></div></div>
+    <div class="card table-card"><div class="table-wrap"><table><thead><tr><th>堂次</th><th>主題</th><th>類型</th><th>優先</th><th>狀態</th><th>成熟度</th><th>複習</th><th>最近</th></tr></thead><tbody id="courseBody"></tbody></table></div></div><div class="mobile-course-list" id="mobileCourseList"></div>
   </section>
 
   <section class="view" id="view-reviews">
@@ -157,11 +620,11 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
 
   <section class="view" id="view-settings">
     <div class="settings-grid">
-      <div class="card setting-card">
+      <details class="details-group" open><summary>進階同步設定</summary><div class="inside">
         <div class="section-head"><h3>Google Sheet 讀取</h3><span>ActivityLog + 3</span></div>
         <div class="note">四個工作表全部透過 Apps Script 私人同步；Google Sheet 不需要公開。同步失敗時保留上次成功資料。</div>
         <div class="field"><label>Google Sheet ID</label><input id="sheetId"></div>
-        <div class="field-row"><div class="field"><label>ActivityLog</label><input id="activitySheet"></div><div class="field"><label>ManualProgress</label><input id="manualSheet"></div></div>
+        <div class="field-row"><div class="field"><label>ActivityLog</label><input id="activitySheet"></div><div class="field"><label>ManualProgress</label><input id="manualSheet"></div></div></details>
         <div class="field-row"><div class="field"><label>QuickLog</label><input id="quickSheet"></div><div class="field"><label>QuestionLog</label><input id="questionSheet"></div></div>
         <div class="field"><label>自動刷新（分鐘）</label><input id="refreshMin" type="number" min="1" max="60"></div>
       </div>
@@ -185,7 +648,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
         <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="backupBtn">下載完整備份</button><button class="btn" id="restoreBtn">匯入備份</button><input id="restoreInput" type="file" accept=".json,application/json" hidden></div>
       </div>
       <div class="card setting-card">
-        <div class="section-head"><h3>PWA / iPhone</h3><span>像 App 使用</span></div>
+        <div class="section-head"><h3>PWA / iPhone</h3><span>像 App 使用</span></div><div class="note">手機版已改成課程卡片、浮動＋按鈕與五個主要分頁，技術設定都放在次要層。</div>
         <div class="note">iPhone Safari：分享 →「加入主畫面」。之後可直接從主畫面開 Study OS；離線時會顯示最後一次成功同步資料。</div>
         <div class="helper" id="pwaStatus">Service Worker 狀態檢查中…</div>
       </div>
@@ -254,6 +717,38 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
   <div class="modal-body" id="detailBody"></div>
 </div></div>
 
+
+<div class="modal" id="actionSheet"><div class="modal-card" style="width:min(520px,100%)">
+  <div class="modal-head"><h3>快速新增</h3><button class="btn small" data-close="actionSheet">關閉</button></div>
+  <div class="modal-body">
+    <div class="action-sheet-grid">
+      <button class="action-card" data-action-type="watch"><div class="action-icon">▶</div><b>看課 DONE</b><small>完成一堂課</small></button>
+      <button class="action-card" data-action-type="review"><div class="action-icon">↻</div><b>複習 DONE</b><small>完成一次複習</small></button>
+      <button class="action-card" data-action-type="english"><div class="action-icon">EN</div><b>英文輸入</b><small>文章／影片／Podcast</small></button>
+      <button class="action-card" data-action-type="question"><div class="action-icon">Q</div><b>刷題</b><small>題數、正確率、錯題</small></button>
+    </div>
+  </div>
+</div></div>
+
+<div class="modal focus-modal" id="focusModal"><div class="modal-card">
+  <div class="modal-head"><h3>專注模式</h3><button class="btn small" data-close="focusModal">結束</button></div>
+  <div class="modal-body">
+    <div class="focus-screen">
+      <span class="subject-chip" id="focusSubject">Study OS</span>
+      <h2 id="focusTitle">選擇下一項後開始</h2>
+      <p id="focusMeta">這裡只保留目前要做的事情。</p>
+      <div class="timer" id="focusTimer">00:00</div>
+      <div class="focus-actions">
+        <button class="btn primary" id="focusStart">開始</button>
+        <button class="btn" id="focusPause">暫停</button>
+        <button class="btn" id="focusComplete">完成並記錄</button>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<button class="quick-fab" id="quickFab" aria-label="快速新增">＋</button>
+
 <div class="toast" id="toast"><span id="toastText"></span><button id="toastAction" class="hidden">復原</button></div>
 <div class="update-banner hidden" id="updateBanner">有新版 Study OS 可用　<button class="btn small" id="reloadApp">更新</button></div>
 
@@ -299,6 +794,7 @@ let questionLog=js(localStorage.getItem("studyQuestionLog"),[])||[];
 let manualOverrides=js(localStorage.getItem("studyManualProgress"),{})||{};
 let derived=[],timer=null,lastSync=null;
 let courseSubject=localStorage.getItem("studyCourseSubject")||"生物";
+let courseAttentionOnly=localStorage.getItem("studyCourseAttention")==="1";
 let reviewSubject=localStorage.getItem("studyReviewSubject")||courseSubject;
 let manualSelected=new Set(),toastTimer=null,undoFn=null;
 
@@ -362,24 +858,33 @@ function upcomingReviews(subject=null){
 function renderToday(){
   let t=iso(),ta=allActivities().filter(a=>a.date===t),plans=ta.filter(a=>a.type==="PLAN"),done=ta.filter(a=>a.type==="DONE"),pending=plans.filter(p=>!completionForPlan(p));
   let pmin=plans.reduce((s,a)=>s+mn(a),0),dmin=done.reduce((s,a)=>s+mn(a),0),due=dueCourses();
-  $("todayKpis").innerHTML=[
-    ["PLAN",(pmin/60).toFixed(1),"小時"],
-    ["DONE",(dmin/60).toFixed(1),"小時"],
-    ["完成項目",done.length,`剩 ${pending.length} 項 PLAN`],
-    ["待複習",due.length,due.length?"到期 / 逾期":"目前清空"]
-  ].map(x=>`<div class="card kpi"><div class="label">${x[0]}</div><div class="value">${x[1]}</div><div class="sub">${x[2]}</div></div>`).join("");
+  let totalTasks=Math.max(plans.length,done.length),completedPlans=plans.filter(completionForPlan).length;
+  let pct=plans.length?Math.round(completedPlans/plans.length*100):(done.length?100:0);
+  $("todayRing").style.setProperty("--ring",pct+"%");$("todayRingText").textContent=pct+"%";
+  $("todayMini").innerHTML=[
+    ["PLAN",plans.length,`${pmin}m`],
+    ["DONE",done.length,`${dmin}m`],
+    ["複習",due.length,"到期"]
+  ].map(x=>`<div class="mini"><b>${x[1]}</b><small>${x[0]} · ${x[2]}</small></div>`).join("");
+
   let next=pending[0]||null;
-  if(next){$("todayHero").textContent=`下一項：${next.subject} · ${next.topic}`;$("todayHeroSub").textContent=`PLAN ${mn(next)} 分鐘${next.start_time?` · ${String(next.start_time).slice(11,16)}`:""}`;}
-  else if(due[0]){$("todayHero").textContent=`下一項：${due[0].subject} ${due[0].code} 複習`;$("todayHeroSub").textContent=`${due[0].topic} · ${due[0].overdueDays>0?`逾期 ${due[0].overdueDays} 天`:"今天到期"}`;}
+  if(next){$("todayHero").textContent=`${next.subject} · ${next.topic}`;$("todayHeroSub").textContent=`下一項 · ${mn(next)} 分鐘${next.start_time?` · ${String(next.start_time).slice(11,16)}`:""}`;}
+  else if(due[0]){$("todayHero").textContent=`${due[0].subject} ${due[0].code} · 複習`;$("todayHeroSub").textContent=`下一項 · ${due[0].topic} · ${due[0].overdueDays>0?`逾期 ${due[0].overdueDays} 天`:"今天到期"}`;}
   else{$("todayHero").textContent="今天的必要項目已清空";$("todayHeroSub").textContent="可以安排下一堂課、英文輸入，或休息。";}
-  $("todayPlans").innerHTML=plans.length?plans.map(p=>`<div class="item"><div class="item-main"><strong>${esc(p.subject)} · ${esc(p.topic)}</strong><small>${mn(p)} 分鐘 ${completionForPlan(p)?"· 已有 DONE":"· 尚未 DONE"}</small></div><div class="item-actions">${completionForPlan(p)?'<span class="badge done">完成</span>':`<button class="btn small" data-plan-complete="${esc(p.event_id||"")}">記錄完成</button>`}</div></div>`).join(""):'<div class="empty">今天沒有 PLAN</div>';
-  $("todayPlanCount").textContent=`${plans.length} 項`;
-  $("todayReviews").innerHTML=due.length?due.slice(0,10).map(c=>`<div class="item"><div class="item-main"><strong>${esc(c.subject)} ${esc(c.code)} · ${esc(c.topic)}</strong><small class="${c.overdueDays>0?"due":""}">${c.overdueDays>0?`逾期 ${c.overdueDays} 天`:"今天到期"} · 第 ${c.reviews.length+1} 次</small></div><div class="item-actions"><button class="btn small" data-review-done="${esc(courseKey(c))}">完成複習</button></div></div>`).join(""):'<div class="empty">今天沒有到期複習 🎉</div>';
+
+  $("todayPlans").innerHTML=plans.length?plans.map(p=>{let comp=completionForPlan(p);return`<div class="item plan-row ${comp?"completed":""}"><div class="item-main"><strong>${esc(p.subject)} · ${esc(p.topic)}</strong><small>${mn(p)} 分鐘${p.start_time?` · ${String(p.start_time).slice(11,16)}`:""}</small></div><div class="item-actions">${comp?'<span class="status-check">✓</span>':`<button class="btn small" data-plan-complete="${esc(p.event_id||"")}">完成</button>`}</div></div>`}).join(""):'<div class="empty">今天沒有 PLAN<br><button class="btn small" style="margin-top:9px" id="emptyQuick">＋ 記錄一項</button></div>';
+  $("todayPlanCount").textContent=`${completedPlans}/${plans.length} 完成`;
+
+  $("todayReviews").innerHTML=due.length?due.slice(0,10).map(c=>`<div class="item"><div class="item-main"><strong>${esc(c.subject)} ${esc(c.code)} · ${esc(c.topic)}</strong><small><span class="time-pill ${c.overdueDays>0?"overdue":"today"}">${c.overdueDays>0?`逾期 ${c.overdueDays} 天`:"今天"}</span> · 第 ${c.reviews.length+1} 次</small></div><div class="item-actions"><button class="btn small" data-review-done="${esc(courseKey(c))}">完成</button></div></div>`).join(""):'<div class="empty">今天沒有到期複習 🎉<br><button class="btn small" style="margin-top:9px" id="showUpcoming">查看下一個 7 天</button></div>';
   $("todayReviewCount").textContent=`${due.length} 堂`;
-  $("todayDone").innerHTML=done.length?done.sort((a,b)=>String(b.start_time||"").localeCompare(String(a.start_time||""))).map(a=>`<div class="item"><div class="item-main"><strong>${esc(a.subject)} · ${esc(a.activity)} · ${esc(a.topic)}</strong><small>${mn(a)} 分鐘${a.status?` · ${esc(a.status)}`:""}</small></div></div>`).join(""):'<div class="empty">今天還沒有 DONE</div>';
+
+  $("todayDone").innerHTML=done.length?done.sort((a,b)=>String(b.start_time||"").localeCompare(String(a.start_time||""))).map(a=>`<div class="item"><div class="item-main"><strong>${esc(a.subject)} · ${esc(a.activity)} · ${esc(a.topic)}</strong><small>${mn(a)} 分鐘${a.status?` · ${esc(a.status)}`:""}</small></div><span class="status-check">✓</span></div>`).join(""):'<div class="empty">今天還沒有 DONE</div>';
   $("todayDoneCount").textContent=`${done.length} 筆`;
+
   document.querySelectorAll("[data-plan-complete]").forEach(b=>b.onclick=()=>{let p=plans.find(x=>String(x.event_id||"")===b.dataset.planComplete);openQuickFromPlan(p)});
   document.querySelectorAll("[data-review-done]").forEach(b=>b.onclick=()=>{let c=derived.find(x=>courseKey(x)===b.dataset.reviewDone);openQuickForCourse(c,"複習")});
+  if($("emptyQuick"))$("emptyQuick").onclick=openActionSheet;
+  if($("showUpcoming"))$("showUpcoming").onclick=()=>{setView("reviews");toast("已切到複習頁，查看下一輪")};
 }
 function renderDashboard(){
   let t=iso(),m=monday(),mo=monthStart(),acts=allActivities();
@@ -392,7 +897,7 @@ function renderDashboard(){
     ["本週 DONE",(weekDone/60).toFixed(1),"小時"],
     ["本月 DONE",(monthDone/60).toFixed(1),"小時"]
   ].map(x=>`<div class="card kpi"><div class="label">${x[0]}</div><div class="value">${x[1]}</div><div class="sub">${x[2]}</div></div>`).join("");
-  let ss=courseStats();$("subjectGrid").innerHTML=ss.map(x=>`<div class="subject-card"><div class="subject-top"><span class="subject-name">${x.s}</span><span class="subject-pct">${Math.round(x.rate*100)}%</span></div><div class="progress"><i style="width:${x.rate*100}%"></i></div><div class="subject-meta"><span>${x.watched}/${x.total} 已看課</span><span>重點待完成 ${x.high}</span></div><div class="maturity">平均成熟度 ${Math.round(x.maturity)}%</div></div>`).join("");
+  let ss=courseStats();$("subjectGrid").innerHTML=ss.map(x=>`<div class="subject-card" data-subject="${esc(x.s)}"><div class="subject-top"><span class="subject-name">${x.s}</span><span class="subject-pct">${Math.round(x.rate*100)}%</span></div><div class="progress"><i style="width:${x.rate*100}%"></i></div><div class="subject-meta"><span>${x.watched}/${x.total} 已看課</span><span>重點待完成 ${x.high}</span></div><div class="maturity">平均成熟度 ${Math.round(x.maturity)}%</div></div>`).join("");
   $("courseSummary").textContent=`${derived.filter(c=>c.status==="已看課").length}/${derived.length} 已看課`;
   let qM=questionLog.filter(q=>q.date>=mo),qt=qM.reduce((s,q)=>s+Number(q.total_questions||0),0),qc=qM.reduce((s,q)=>s+Number(q.correct||0),0);
   let en=acts.filter(a=>a.type==="DONE"&&a.subject==="英文"&&a.date>=mo),emin=en.reduce((s,a)=>s+mn(a),0);
@@ -402,7 +907,7 @@ function renderDashboard(){
     ["刷題",qt,"題"],
     ["正確率",qt?Math.round(qc/qt*100)+"%":"—","本月"]
   ].map(x=>`<div class="metric"><b>${x[1]}</b><small>${x[0]} · ${x[2]}</small></div>`).join("");
-  let labels=["一","二","三","四","五","六","日"];$("weekBars").innerHTML=labels.map((l,i)=>{let x=new Date(m+"T00:00:00");x.setDate(x.getDate()+i);let day=iso(x),a=acts.filter(y=>y.date===day),pp=a.filter(y=>y.type==="PLAN").reduce((s,y)=>s+mn(y),0),dd=a.filter(y=>y.type==="DONE").reduce((s,y)=>s+mn(y),0);return`<div class="daybar"><div class="bars"><i class="bar" title="PLAN ${pp}m" style="height:${Math.max(2,Math.min(125,pp/180*125))}px"></i><i class="bar done" title="DONE ${dd}m" style="height:${Math.max(2,Math.min(125,dd/180*125))}px"></i></div><label>${l}</label></div>`}).join("");
+  let labels=["一","二","三","四","五","六","日"],weekRows=labels.map((l,i)=>{let x=new Date(m+"T00:00:00");x.setDate(x.getDate()+i);let day=iso(x),a=acts.filter(y=>y.date===day),pp=a.filter(y=>y.type==="PLAN").reduce((s,y)=>s+mn(y),0),dd=a.filter(y=>y.type==="DONE").reduce((s,y)=>s+mn(y),0);return{l,pp,dd}}),weekMax=Math.max(60,...weekRows.flatMap(x=>[x.pp,x.dd]));$("weekBars").innerHTML=weekRows.map(x=>`<div class="daybar"><span class="day-total">${x.dd?Math.round(x.dd/60*10)/10+"h":""}</span><div class="bars"><i class="bar" title="PLAN ${x.pp}m" style="height:${Math.max(2,x.pp/weekMax*138)}px"></i><i class="bar done" title="DONE ${x.dd}m" style="height:${Math.max(2,x.dd/weekMax*138)}px"></i></div><label>${x.l}</label></div>`).join("");
   let pending=today.filter(a=>a.type==="PLAN"&&!completionForPlan(a)).map(a=>["今日 PLAN 尚未 DONE",`${a.subject} · ${a.topic}`]);
   let due=dueCourses().slice(0,4).map(c=>["複習已到期",`${c.subject} ${c.code} · ${c.topic}`]);
   let wrong=questionLog.filter(q=>Number(q.wrong||0)>0&&!truthy(q.reviewed)).slice(-3).reverse().map(q=>["錯題待回看",`${q.subject} · ${q.topic||q.source||"刷題"}`]);
@@ -414,17 +919,33 @@ function paintSubjectSwitch(){
 }
 function renderCourses(){
   paintSubjectSwitch();
+  $("courseAllBtn")?.classList.toggle("active",!courseAttentionOnly);
+  $("courseAttentionBtn")?.classList.toggle("active",courseAttentionOnly);
+
   let subjectRows=derived.filter(c=>c.subject===courseSubject),types=[...new Set(subjectRows.map(c=>c.type).filter(Boolean))].sort(),oldType=$("typeFilter").value;
   $("typeFilter").innerHTML='<option value="">全部類型</option>'+types.map(x=>`<option>${esc(x)}</option>`).join("");if(types.includes(oldType))$("typeFilter").value=oldType;
+
   let q=$("courseSearch").value.trim().toLowerCase(),tf=$("typeFilter").value,pf=$("priorityFilter").value,sf=$("statusFilter").value;
   let rows=subjectRows.filter(c=>(!tf||c.type===tf)&&(!pf||c.priority===pf)&&(!sf||c.status===sf)&&(!q||`${c.code} ${c.topic} ${c.description}`.toLowerCase().includes(q)));
-  let watched=subjectRows.filter(c=>c.status==="已看課").length;$("courseSubjectContext").textContent=`${courseSubject} · ${watched}/${subjectRows.length} 已看課`;
+  if(courseAttentionOnly)rows=rows.filter(c=>(c.priority==="A高"&&c.status!=="已看課")||(c.nextDue&&c.nextDue<=iso())||(c.totalQ>0&&c.accuracy!=null&&c.accuracy<.8));
+
+  let watched=subjectRows.filter(c=>c.status==="已看課").length;$("courseSubjectContext").textContent=`${courseSubject} · ${watched}/${subjectRows.length} 已看課${courseAttentionOnly?` · ${rows.length} 待處理`:""}`;
+
   $("courseBody").innerHTML=rows.map(c=>`<tr data-course-key="${esc(courseKey(c))}"><td class="code">${esc(c.code)}</td><td>${esc(c.topic||c.description)}</td><td>${esc(c.type)}</td><td>${c.priority==="A高"?'<span class="badge high">重點</span>':'一般'}</td><td>${badge(c.status)}</td><td><div style="display:flex;align-items:center;gap:7px"><div class="progress" style="width:78px;margin:0"><i style="width:${c.progress}%"></i></div><span>${Math.round(c.progress)}%</span></div></td><td>${c.reviews.length} 次</td><td>${fd(c.recent)}</td></tr>`).join("")||'<tr><td colspan="8" class="empty">沒有符合條件的課程</td></tr>';
+
+  $("mobileCourseList").innerHTML=rows.length?rows.map(c=>`<div class="course-card-mobile" data-course-key="${esc(courseKey(c))}" data-subject="${esc(c.subject)}">
+    <div class="row1"><div><div class="code2"><span class="subject-dot" data-subject="${esc(c.subject)}"></span>${esc(c.code)}</div><div class="topic2">${esc(c.topic||c.description)}</div></div><div>${badge(c.status)}</div></div>
+    <div class="meta2">${c.priority==="A高"?'<span class="badge high">重點</span>':""}<span class="badge blue">${esc(c.type)}</span>${c.nextDue&&c.nextDue<=iso()?`<span class="time-pill overdue">複習逾期 ${Math.max(0,c.overdueDays)} 天</span>`:""}</div>
+    <div class="maturity2"><span>成熟度 ${Math.round(c.progress)}%</span><div class="progress"><i style="width:${c.progress}%"></i></div><span>${c.reviews.length} 次</span></div>
+  </div>`).join(""):'<div class="empty">沒有符合條件的課程</div>';
+
   document.querySelectorAll("[data-course-key]").forEach(r=>r.onclick=()=>openCourseDetail(r.dataset.courseKey));
 }
 function reviewItem(c){
-  let label=c.overdueDays>0?`逾期 ${c.overdueDays} 天`:c.overdueDays===0?"今天到期":`還有 ${Math.abs(c.overdueDays)} 天`;
-  return `<div class="review-item"><strong>${esc(c.code)} · ${esc(c.topic)}</strong><small class="${c.overdueDays>0?"due":c.overdueDays>=-2?"soon":""}">${label} · 第 ${c.reviews.length+1} 次</small><button class="btn small" style="margin-top:7px" data-review-done="${esc(courseKey(c))}">完成複習</button></div>`;
+  let days=c.overdueDays;
+  let label=days>0?`逾期 ${days} 天`:days===0?"今天":` ${Math.abs(days)} 天後`;
+  let cls=days>0?"overdue":days===0?"today":"";
+  return `<div class="review-item"><strong>${esc(c.code)} · ${esc(c.topic)}</strong><small><span class="time-pill ${cls}">${label}</span> · 第 ${c.reviews.length+1} 次複習</small><button class="btn small" style="margin-top:7px" data-review-done="${esc(courseKey(c))}">完成複習</button></div>`;
 }
 function renderReviews(){
   paintSubjectSwitch();
@@ -665,17 +1186,51 @@ function restoreBackupFile(file){
 }
 function persistAll(){localStorage.setItem("studyActivities",JSON.stringify(activityLog));localStorage.setItem("studyQuickLog",JSON.stringify(quickLog));localStorage.setItem("studyQuestionLog",JSON.stringify(questionLog));localStorage.setItem("studyManualProgress",JSON.stringify(manualOverrides));localStorage.setItem("studySettings",JSON.stringify(settings))}
 
+
+function openActionSheet(){openModal("actionSheet")}
+function preferredCourse(){
+  let t=iso(),p=allActivities().find(a=>a.date===t&&a.type==="PLAN"&&!completionForPlan(a));
+  if(p){let c=derived.find(x=>x.subject===p.subject&&String(p.topic||"").includes(x.code));if(c)return{c,activity:p.activity||"看課",minutes:mn(p)||60,title:p.topic}}
+  let d=dueCourses()[0];if(d)return{c:d,activity:"複習",minutes:30,title:d.topic};
+  return null;
+}
+function openFocusMode(){
+  let x=preferredCourse();
+  if(x&&x.c){$("focusSubject").textContent=x.c.subject+" "+x.c.code;$("focusTitle").textContent=x.c.topic;$("focusMeta").textContent=`${x.activity} · 建議 ${x.minutes} 分鐘`;focusState={course:x.c,activity:x.activity,target:x.minutes*60,elapsed:0,running:false,last:0};}
+  else{$("focusSubject").textContent="Study OS";$("focusTitle").textContent="今天沒有待處理項目";$("focusMeta").textContent="可以回課程頁選下一堂。";focusState={course:null,activity:"看課",target:0,elapsed:0,running:false,last:0};}
+  paintFocusTimer();openModal("focusModal");
+}
+let focusState={course:null,activity:"看課",target:0,elapsed:0,running:false,last:0},focusTicker=null;
+function paintFocusTimer(){let s=Math.max(0,Math.floor(focusState.elapsed)),m=Math.floor(s/60),r=s%60;$("focusTimer").textContent=String(m).padStart(2,"0")+":"+String(r).padStart(2,"0")}
+function tickFocus(){if(!focusState.running)return;let now=Date.now();focusState.elapsed+=(now-focusState.last)/1000;focusState.last=now;paintFocusTimer()}
+function focusStart(){if(focusState.running)return;focusState.running=true;focusState.last=Date.now();clearInterval(focusTicker);focusTicker=setInterval(tickFocus,500);$("focusStart").textContent="進行中"}
+function focusPause(){if(!focusState.running)return;tickFocus();focusState.running=false;clearInterval(focusTicker);$("focusStart").textContent="繼續"}
+function focusComplete(){focusPause();if(focusState.course){closeModal("focusModal");openQuickForCourse(focusState.course,focusState.activity);$("quickMinutes").value=Math.max(1,Math.round(focusState.elapsed/60)||Math.round(focusState.target/60)||30)}else{closeModal("focusModal");setView("courses")}}
+
 function setView(v){
   document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id==="view-"+v));document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x.dataset.view===v));
   $("pageTitle").textContent={today:"今天",dashboard:"儀表板",courses:"課程進度",reviews:"複習",questions:"題目與錯題",english:"英文輸入",settings:"設定"}[v]||"Study OS";localStorage.setItem("studyView",v)
 }
 document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$("courseAllBtn").onclick=()=>{courseAttentionOnly=false;localStorage.setItem("studyCourseAttention","0");renderCourses()};
+$("courseAttentionBtn").onclick=()=>{courseAttentionOnly=true;localStorage.setItem("studyCourseAttention","1");renderCourses()};
+$("quickFab").onclick=openActionSheet;
+$("focusModeBtn").onclick=openFocusMode;
+$("focusStart").onclick=focusStart;$("focusPause").onclick=focusPause;$("focusComplete").onclick=focusComplete;
+document.querySelectorAll("[data-action-type]").forEach(b=>b.onclick=()=>{
+  let t=b.dataset.actionType;closeModal("actionSheet");
+  if(t==="watch")openQuick({subject:courseSubject,activity:"看課",minutes:60});
+  if(t==="review"){let d=dueCourses()[0];d?openQuickForCourse(d,"複習"):openQuick({subject:courseSubject,activity:"複習",minutes:30})}
+  if(t==="english")openQuick({subject:"英文",activity:"文章",minutes:20});
+  if(t==="question")openQuestion();
+});
+
 document.querySelectorAll("[data-course-subject]").forEach(b=>b.onclick=()=>{courseSubject=b.dataset.courseSubject;localStorage.setItem("studyCourseSubject",courseSubject);$("typeFilter").value="";renderCourses()});
 document.querySelectorAll("[data-review-subject]").forEach(b=>b.onclick=()=>{reviewSubject=b.dataset.reviewSubject;localStorage.setItem("studyReviewSubject",reviewSubject);renderReviews()});
 ["courseSearch","typeFilter","priorityFilter","statusFilter"].forEach(id=>$(id).addEventListener(id==="courseSearch"?"input":"change",renderCourses));
 ["manualSearch","manualSubject","manualMode"].forEach(id=>$(id).addEventListener(id==="manualSearch"?"input":"change",renderManual));
 $("openManualBtn").onclick=openManual;$("selectVisible").onclick=()=>{manualFiltered().forEach(c=>manualSelected.add(courseKey(c)));renderManual()};$("clearSelected").onclick=()=>{manualSelected.clear();renderManual()};$("saveManual").onclick=saveManual;$("removeManual").onclick=removeManual;
-$("quickBtn").onclick=()=>openQuick();$("todayQuickBtn").onclick=()=>openQuick();$("englishQuickBtn").onclick=()=>openQuick({subject:"英文",activity:"文章",minutes:20});$("quickSubject").onchange=updateQuickFields;$("saveQuick").onclick=saveQuick;
+$("quickBtn").onclick=openActionSheet;$("englishQuickBtn").onclick=()=>openQuick({subject:"英文",activity:"文章",minutes:20});$("quickSubject").onchange=updateQuickFields;$("saveQuick").onclick=saveQuick;
 $("questionBtn").onclick=openQuestion;$("qSubject").onchange=updateQuestionCourse;$("saveQuestion").onclick=saveQuestion;$("questionSubjectFilter").onchange=renderQuestions;$("englishPeriod").onchange=renderEnglish;
 $("nextBtn").onclick=()=>{let t=iso(),p=allActivities().filter(a=>a.date===t&&a.type==="PLAN"&&!completionForPlan(a))[0];if(p)return openQuickFromPlan(p);let d=dueCourses()[0];if(d)return openQuickForCourse(d,"複習");setView("courses");toast("今天沒有未完成 PLAN / 到期複習，可以安排下一堂課")};
 $("syncBtn").onclick=()=>sync(true);$("settingsBtn").onclick=()=>setView("settings");
