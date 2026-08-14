@@ -844,6 +844,267 @@ body.sidebar-collapsed .nav-item:hover:after{
   }
 }
 
+
+/* ===== UX MASTER FINAL ===== */
+
+/* Date navigator / lightweight history */
+.date-navigator{
+  display:grid;grid-template-columns:34px minmax(0,1fr) 34px auto;
+  align-items:center;gap:7px;margin-bottom:11px
+}
+.date-arrow,.today-return{
+  min-height:34px;border:1px solid var(--line);border-radius:10px;
+  background:color-mix(in srgb,var(--panel2) 82%,transparent);
+  color:var(--text);font-size:13px;font-weight:700
+}
+.date-arrow{width:34px;padding:0;font-size:20px;color:var(--muted)}
+.today-return{padding:6px 10px;font-size:9.5px;color:var(--accent)}
+.today-return.hidden{display:none}
+.date-window{
+  min-width:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px
+}
+.date-chip{
+  min-width:0;padding:7px 9px;border-radius:11px;border:1px solid transparent;
+  text-align:center;color:var(--muted);background:transparent;
+  transition:.14s var(--ease);cursor:pointer
+}
+.date-chip:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.date-chip.active{
+  background:color-mix(in srgb,var(--accent) 8%,transparent);
+  border-color:color-mix(in srgb,var(--accent) 13%,var(--line));
+  color:var(--text)
+}
+.date-chip b{display:block;font-size:11px;white-space:nowrap}
+.date-chip small{display:block;font-size:8.5px;color:var(--muted2);margin-top:1px}
+.date-chip.today b:after{
+  content:"";display:inline-block;width:4px;height:4px;margin-left:5px;
+  border-radius:50%;background:var(--accent);vertical-align:2px
+}
+
+/* Generic progressive disclosure tooltip */
+.smart-tooltip{
+  position:fixed;z-index:1000;display:none;
+  width:min(260px,calc(100vw - 24px));padding:12px 13px;
+  border-radius:14px;border:1px solid rgba(255,255,255,.10);
+  background:rgba(24,24,28,.95);color:#fff;
+  box-shadow:0 18px 50px rgba(0,0,0,.25);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  pointer-events:none
+}
+.smart-tooltip.show{display:block;animation:popin .12s var(--ease)}
+.smart-tooltip strong{display:block;font-size:11px;margin-bottom:7px}
+.smart-tooltip .tip-grid{
+  display:grid;grid-template-columns:1fr auto;gap:5px 12px;
+  font-size:9.5px;color:rgba(255,255,255,.68)
+}
+.smart-tooltip .tip-grid b{font-size:9.5px;color:#fff}
+.smart-tooltip .tip-note{
+  margin-top:8px;padding-top:7px;border-top:1px solid rgba(255,255,255,.11);
+  font-size:9px;line-height:1.5;color:rgba(255,255,255,.72)
+}
+
+/* Context menu */
+.context-menu{
+  position:fixed;z-index:1100;display:none;min-width:170px;
+  padding:5px;border-radius:13px;border:1px solid var(--line);
+  background:color-mix(in srgb,var(--panel2) 96%,transparent);
+  box-shadow:0 18px 50px rgba(0,0,0,.18);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)
+}
+.context-menu.show{display:grid;animation:popin .12s var(--ease)}
+.context-menu button{
+  text-align:left;min-height:35px;padding:7px 10px;border:0;border-radius:9px;
+  background:transparent;color:var(--text);font-size:10.5px;font-weight:620
+}
+.context-menu button:hover{background:var(--soft);color:var(--accent)}
+
+/* Course progressive disclosure */
+.course-row-wrap{position:relative}
+.course-quick-actions{
+  display:flex;gap:4px;justify-content:flex-end;
+  opacity:0;transform:translateX(4px);
+  transition:.14s var(--ease);pointer-events:none
+}
+tr[data-course-key]:hover .course-quick-actions,
+.course-card-mobile:hover .course-quick-actions{
+  opacity:1;transform:none;pointer-events:auto
+}
+.course-mini-action{
+  min-height:28px!important;padding:4px 7px!important;
+  border:1px solid var(--line);border-radius:8px;
+  background:var(--panel2);color:var(--muted);
+  font-size:8.5px;font-weight:700
+}
+.course-mini-action:hover{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 25%,var(--line))}
+.maturity-label{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:9px;font-weight:700;color:var(--muted)
+}
+.maturity-dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.progress[data-progress-tip]{cursor:help}
+.search-highlight{
+  background:color-mix(in srgb,var(--amber) 20%,transparent);
+  color:inherit;border-radius:3px;padding:0 1px
+}
+
+/* Swipe reveal on touch */
+.course-card-mobile{position:relative;overflow:hidden;touch-action:pan-y}
+.course-card-mobile .swipe-bg{
+  position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;
+  padding:0 14px;font-size:10px;font-weight:800;pointer-events:none;opacity:0;
+  transition:opacity .12s var(--ease)
+}
+.course-card-mobile.swiping .swipe-bg{opacity:1}
+.course-card-mobile .swipe-bg .left{color:var(--green)}
+.course-card-mobile .swipe-bg .right{color:var(--accent)}
+.course-card-mobile .course-card-inner{
+  position:relative;z-index:1;background:var(--panel);
+  margin:-15px -16px;padding:15px 16px;
+  transform:translateX(0);transition:transform .18s var(--ease)
+}
+.course-card-mobile.swipe-left .course-card-inner{transform:translateX(-72px)}
+.course-card-mobile.swipe-right .course-card-inner{transform:translateX(72px)}
+.course-card-mobile .swipe-actions{
+  position:absolute;top:0;bottom:0;display:flex;align-items:center;z-index:0
+}
+.course-card-mobile .swipe-actions.left{left:7px}
+.course-card-mobile .swipe-actions.right{right:7px}
+.swipe-action-btn{
+  border:0;min-height:40px;padding:7px 9px;border-radius:10px;
+  background:transparent;font-size:9px;font-weight:800
+}
+.swipe-actions.left .swipe-action-btn{color:var(--green)}
+.swipe-actions.right .swipe-action-btn{color:var(--accent)}
+
+/* Completion feedback */
+@keyframes completedFlash{
+  0%{transform:scale(.99);background:color-mix(in srgb,var(--greenSoft) 92%,transparent)}
+  55%{transform:scale(1.006)}
+  100%{transform:none;background:color-mix(in srgb,var(--panel2) 76%,transparent)}
+}
+.recent-complete{animation:completedFlash .58s var(--ease)}
+.toast{overflow:hidden}
+.toast:after{
+  content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;
+  background:rgba(255,255,255,.45);transform-origin:left;
+  animation:toastCountdown 8s linear forwards
+}
+@keyframes toastCountdown{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+
+/* Loading / skeleton */
+.sync-loading #syncBtn svg{animation:spin .85s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.initial-skeleton{
+  display:none;position:absolute;inset:0;z-index:6;padding:0;
+  background:var(--bg)
+}
+body.initial-loading .view.active{position:relative;min-height:420px}
+body.initial-loading .view.active>.initial-skeleton{display:block}
+.skeleton-stack{display:grid;gap:12px}
+.skeleton-card{height:96px;border-radius:20px;background:var(--line);position:relative;overflow:hidden}
+.skeleton-card.large{height:160px}
+.skeleton-card:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--panel2) 65%,transparent),transparent);
+  transform:translateX(-100%);animation:skeletonMove 1.15s infinite
+}
+@keyframes skeletonMove{to{transform:translateX(100%)}}
+
+/* Compact sync status richer on hover */
+.syncbox{position:relative;cursor:default}
+.sync-hover-detail{
+  position:absolute;left:0;bottom:calc(100% + 8px);
+  width:205px;padding:10px 11px;border:1px solid var(--line);
+  border-radius:12px;background:var(--panel2);box-shadow:0 16px 45px rgba(0,0,0,.14);
+  opacity:0;transform:translateY(4px);pointer-events:none;
+  transition:.14s var(--ease);z-index:120;font-size:9px
+}
+.syncbox:hover .sync-hover-detail{opacity:1;transform:none}
+.sync-hover-detail .sync-detail-row{
+  display:flex;justify-content:space-between;gap:9px;margin-top:4px;color:var(--muted)
+}
+.sync-hover-detail b{color:var(--text);font-weight:700}
+
+/* Filter memory + clear */
+.filter-clear{
+  min-height:26px;padding:4px 7px;margin-left:7px;
+  border:0;background:transparent;color:var(--accent);
+  font-size:9px;font-weight:700
+}
+.filter-clear.hidden{display:none}
+
+/* KPI: tooltip/click/sparkline */
+.kpi[data-kpi-action],.metric[data-kpi-action]{cursor:pointer}
+.kpi[data-kpi-action]:hover,.metric[data-kpi-action]:hover{
+  border-color:color-mix(in srgb,var(--accent) 20%,var(--line))
+}
+.kpi .label .info-dot{
+  display:inline-grid;place-items:center;width:14px;height:14px;margin-left:4px;
+  border:1px solid var(--lineStrong);border-radius:50%;font-size:8px;color:var(--muted2)
+}
+.kpi-trend{
+  display:flex;align-items:center;gap:5px;margin-top:6px;
+  font-size:9px;font-weight:680;color:var(--muted)
+}
+.kpi-trend.up{color:var(--green)}
+.kpi-trend.down{color:var(--red)}
+.sparkline{
+  height:24px;display:flex;align-items:flex-end;gap:2px;margin-top:8px
+}
+.sparkline i{
+  flex:1;min-width:3px;max-width:9px;border-radius:3px 3px 1px 1px;
+  background:color-mix(in srgb,var(--accent) 34%,var(--line))
+}
+.sparkline i:last-child{background:var(--accent)}
+
+/* Dashboard inline disclosure */
+.inline-dashboard-detail{
+  margin-top:10px;padding:12px 13px;border-radius:14px;
+  background:color-mix(in srgb,var(--soft) 45%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 10%,var(--line));
+  animation:popin .14s var(--ease)
+}
+.inline-dashboard-detail.hidden{display:none}
+.inline-dashboard-detail h4{margin:0 0 8px;font-size:11px}
+.inline-dashboard-detail .mini-row{
+  display:flex;justify-content:space-between;gap:12px;
+  padding:7px 0;border-top:1px solid var(--line);font-size:9.5px
+}
+.next-action-clickable{cursor:pointer}
+.next-action-clickable:hover{background:color-mix(in srgb,var(--accent) 5%,var(--panel2))}
+
+/* Smart empty state */
+.smart-empty-next{
+  margin-top:8px;font-size:9.5px;color:var(--muted)
+}
+.smart-empty-next b{color:var(--text)}
+
+/* Today hover preview */
+.item[data-preview-type]{cursor:default}
+.item[data-preview-type]:hover{border-color:var(--lineStrong)}
+
+/* Scroll return indicator */
+.scroll-memory-note{
+  position:fixed;right:14px;bottom:14px;z-index:40;
+  padding:7px 9px;border-radius:9px;background:rgba(24,24,28,.88);
+  color:#fff;font-size:9px;opacity:0;pointer-events:none
+}
+
+/* Mobile/compact UX refinements */
+@media(max-width:720px){
+  .date-navigator{grid-template-columns:30px minmax(0,1fr) 30px}
+  .today-return{grid-column:1/-1;justify-self:center}
+  .date-window{gap:3px}
+  .date-chip{padding:6px 4px}
+  .date-chip b{font-size:9.5px}
+  .date-chip small{font-size:7.5px}
+}
+@media(hover:none),(pointer:coarse){
+  .course-quick-actions{display:none}
+  .smart-tooltip{display:none!important}
+  .context-menu{max-width:calc(100vw - 24px)}
+}
+
 </style>
 </head>
 <body>
@@ -853,7 +1114,7 @@ body.sidebar-collapsed .nav-item:hover:after{
     <div class="logo">S</div>
     <div class="brand-copy">
       <h1>後西醫 Study OS</h1>
-      <small>陪讀 × 管理</small>
+      <small>陪讀 × 管理 × 洞察</small>
     </div>
     <button class="sidebar-toggle" id="sidebarToggle" title="收合側邊欄" aria-label="收合側邊欄">‹</button>
   </div>
@@ -930,6 +1191,12 @@ body.sidebar-collapsed .nav-item:hover:after{
   </div>
 
   <section class="view active" id="view-today">
+    <div class="date-navigator" id="dateNavigator">
+      <button class="date-arrow" id="prevStudyDay" aria-label="前一天">‹</button>
+      <div class="date-window" id="dateWindow"></div>
+      <button class="date-arrow" id="nextStudyDay" aria-label="後一天">›</button>
+      <button class="today-return hidden" id="returnToday">回今天</button>
+    </div>
     <div class="focus-strip card">
       <div>
         <div class="eyebrow">NEXT UP</div>
@@ -955,7 +1222,7 @@ body.sidebar-collapsed .nav-item:hover:after{
     </div>
     <div class="grid2">
       <div class="card section"><div class="section-head"><h3>本週 PLAN × DONE</h3><span>PLAN ○　DONE ●</span></div><div class="week-bars" id="weekBars"></div></div>
-      <div class="card section"><div class="section-head"><h3>接下來最值得做</h3><span>自動排序</span></div><div class="list" id="nextActions"></div></div>
+      <div class="card section"><div class="section-head"><h3>接下來最值得做</h3><span>自動排序</span></div><div class="list" id="nextActions"></div><div class="inline-dashboard-detail hidden" id="inlineDashboardDetail"></div></div>
     </div>
   </section>
 
@@ -1135,6 +1402,16 @@ body.sidebar-collapsed .nav-item:hover:after{
 <button class="quick-fab" id="quickFab" aria-label="快速新增">＋</button>
 
 
+
+<div class="smart-tooltip" id="smartTooltip" role="status"></div>
+
+<div class="context-menu" id="courseContextMenu">
+  <button data-context-action="detail">查看課程詳情</button>
+  <button data-context-action="watch">完成看課</button>
+  <button data-context-action="review">記錄複習</button>
+  <button data-context-action="question">記錄刷題</button>
+</div>
+
 <div class="chart-tooltip" id="chartTooltip" role="status"></div>
 
 <div class="modal" id="dayDetailModal"><div class="modal-card" style="width:min(560px,100%)">
@@ -1257,73 +1534,131 @@ function upcomingReviews(subject=null){
 }
 
 function renderToday(){
-  let t=iso(),ta=allActivities().filter(a=>a.date===t),plans=ta.filter(a=>a.type==="PLAN"),done=ta.filter(a=>a.type==="DONE"),pending=plans.filter(p=>!completionForPlan(p));
-  let pmin=plans.reduce((s,a)=>s+mn(a),0),dmin=done.reduce((s,a)=>s+mn(a),0),due=dueCourses();
-  let totalTasks=Math.max(plans.length,done.length),completedPlans=plans.filter(completionForPlan).length;
+  renderDateNavigator();
+  let t=selectedStudyDate,ta=allActivities().filter(a=>a.date===t),plans=ta.filter(a=>a.type==="PLAN"),done=ta.filter(a=>a.type==="DONE"),isToday=t===iso();
+  let pending=plans.filter(p=>!completionForPlan(p));
+  let pmin=plans.reduce((s,a)=>s+mn(a),0),dmin=done.reduce((s,a)=>s+mn(a),0),due=isToday?dueCourses():[];
+  let completedPlans=plans.filter(completionForPlan).length;
   let pct=plans.length?Math.round(completedPlans/plans.length*100):(done.length?100:0);
   $("todayRing").style.setProperty("--ring",pct+"%");$("todayRingText").textContent=pct+"%";
   $("todayMini").innerHTML=[
     ["PLAN",plans.length,`${pmin}m`],
     ["DONE",done.length,`${dmin}m`],
-    ["複習",due.length,"到期"]
+    [isToday?"複習":"日期",isToday?due.length:shortDate(t),isToday?"到期":dayName(t)]
   ].map(x=>`<div class="mini"><b>${x[1]}</b><small>${x[0]} · ${x[2]}</small></div>`).join("");
 
   let next=pending[0]||null;
-  if(next){$("todayHero").textContent=`${next.subject} · ${next.topic}`;$("todayHeroSub").textContent=`下一項 · ${mn(next)} 分鐘${next.start_time?` · ${String(next.start_time).slice(11,16)}`:""}`;}
-  else if(due[0]){$("todayHero").textContent=`${due[0].subject} ${due[0].code} · 複習`;$("todayHeroSub").textContent=`下一項 · ${due[0].topic} · ${due[0].overdueDays>0?`逾期 ${due[0].overdueDays} 天`:"今天到期"}`;}
-  else{$("todayHero").textContent="今天的必要項目已清空";$("todayHeroSub").textContent="可以安排下一堂課、英文輸入，或休息。";}
+  if(!isToday){
+    $("todayHero").textContent=`${shortDate(t)} · 學習回顧`;
+    $("todayHeroSub").textContent=`PLAN ${fmtMinutes(pmin)} · DONE ${fmtMinutes(dmin)}${pmin?` · ${dmin>=pmin?"達成":"少 "+fmtMinutes(pmin-dmin)}`:""}`;
+  }else if(next){
+    $("todayHero").textContent=`${next.subject} · ${next.topic}`;
+    $("todayHeroSub").textContent=`下一項 · ${mn(next)} 分鐘${next.start_time?` · ${String(next.start_time).slice(11,16)}`:""}`;
+  }else if(due[0]){
+    $("todayHero").textContent=`${due[0].subject} ${due[0].code} · 複習`;
+    $("todayHeroSub").textContent=`下一項 · ${due[0].topic} · ${due[0].overdueDays>0?`逾期 ${due[0].overdueDays} 天`:"今天到期"}`;
+  }else{
+    $("todayHero").textContent="今天的必要項目已清空";
+    $("todayHeroSub").textContent="可以安排下一堂課、英文輸入，或休息。";
+  }
 
-  $("todayPlans").innerHTML=plans.length?plans.map(p=>{let comp=completionForPlan(p);return`<div class="item plan-row ${comp?"completed":""}"><div class="item-main"><strong>${esc(p.subject)} · ${esc(p.topic)}</strong><small>${mn(p)} 分鐘${p.start_time?` · ${String(p.start_time).slice(11,16)}`:""}</small></div><div class="item-actions">${comp?'<span class="status-check">✓</span>':`<button class="btn small" data-plan-complete="${esc(p.event_id||"")}">完成</button>`}</div></div>`}).join(""):'<div class="empty">今天沒有 PLAN<br><button class="btn small" style="margin-top:9px" id="emptyQuick">＋ 記錄一項</button></div>';
+  $("todayPlans").innerHTML=plans.length?plans.map(p=>{
+    let comp=completionForPlan(p);
+    return`<div class="item plan-row ${comp?"completed":""}" data-preview-type="plan" data-plan-preview="${esc(p.event_id||"")}">
+      <div class="item-main"><strong>${esc(p.subject)} · ${esc(p.topic)}</strong><small>${mn(p)} 分鐘${p.start_time?` · ${String(p.start_time).slice(11,16)}`:""}</small></div>
+      <div class="item-actions">${comp?'<span class="status-check">✓</span>':isToday?`<button class="btn small" data-plan-complete="${esc(p.event_id||"")}">完成</button>`:""}</div>
+    </div>`}).join(""):`<div class="empty">${isToday?"今天沒有 PLAN":"這一天沒有 PLAN"}${isToday?'<br><button class="btn small" style="margin-top:9px" id="emptyQuick">＋ 記錄一項</button>':""}</div>`;
   $("todayPlanCount").textContent=`${completedPlans}/${plans.length} 完成`;
 
-  $("todayReviews").innerHTML=due.length?due.slice(0,10).map(c=>`<div class="item"><div class="item-main"><strong>${esc(c.subject)} ${esc(c.code)} · ${esc(c.topic)}</strong><small><span class="time-pill ${c.overdueDays>0?"overdue":"today"}">${c.overdueDays>0?`逾期 ${c.overdueDays} 天`:"今天"}</span> · 第 ${c.reviews.length+1} 次</small></div><div class="item-actions"><button class="btn small" data-review-done="${esc(courseKey(c))}">完成</button></div></div>`).join(""):'<div class="empty">今天沒有到期複習 🎉<br><button class="btn small" style="margin-top:9px" id="showUpcoming">查看下一個 7 天</button></div>';
-  $("todayReviewCount").textContent=`${due.length} 堂`;
+  if(isToday){
+    if(due.length){
+      $("todayReviews").innerHTML=due.slice(0,10).map(c=>`<div class="item" data-preview-type="course" data-course-preview="${esc(courseKey(c))}">
+        <div class="item-main"><strong>${esc(c.subject)} ${esc(c.code)} · ${esc(c.topic)}</strong><small><span class="time-pill ${c.overdueDays>0?"overdue":"today"}">${c.overdueDays>0?`逾期 ${c.overdueDays} 天`:"今天"}</span> · 第 ${c.reviews.length+1} 次 · ${maturityState(c.progress)}</small></div>
+        <div class="item-actions"><button class="btn small" data-review-done="${esc(courseKey(c))}">完成</button></div>
+      </div>`).join("");
+    }else{
+      const upcoming=derived.filter(c=>c.nextDue&&c.nextDue>iso()).sort((a,b)=>a.nextDue.localeCompare(b.nextDue))[0];
+      $("todayReviews").innerHTML=`<div class="empty">今天沒有到期複習 🎉${upcoming?`<div class="smart-empty-next">下一堂：<b>${esc(upcoming.subject)} ${esc(upcoming.code)} · ${esc(upcoming.topic)}</b> · ${daysBetween(iso(),upcoming.nextDue)===1?"明天":`${daysBetween(iso(),upcoming.nextDue)} 天後`}</div>`:""}<button class="btn small" style="margin-top:9px" id="showUpcoming">查看下一個 7 天</button></div>`;
+    }
+    $("todayReviewCount").textContent=`${due.length} 堂`;
+  }else{
+    $("todayReviews").innerHTML='<div class="empty">回顧模式只顯示當天 PLAN / DONE。<div class="smart-empty-next">歷史「到期複習」不回推，以避免用今天的成熟度誤判過去狀態。</div></div>';
+    $("todayReviewCount").textContent="回顧";
+  }
 
-  $("todayDone").innerHTML=done.length?done.sort((a,b)=>String(b.start_time||"").localeCompare(String(a.start_time||""))).map(a=>`<div class="item"><div class="item-main"><strong>${esc(a.subject)} · ${esc(a.activity)} · ${esc(a.topic)}</strong><small>${mn(a)} 分鐘${a.status?` · ${esc(a.status)}`:""}</small></div><span class="status-check">✓</span></div>`).join(""):'<div class="empty">今天還沒有 DONE</div>';
+  $("todayDone").innerHTML=done.length?done.sort((a,b)=>String(b.start_time||"").localeCompare(String(a.start_time||""))).map(a=>`<div class="item" data-done-id="${esc(a.event_id||"")}">
+    <div class="item-main"><strong>${esc(a.subject)} · ${esc(a.activity)} · ${esc(a.topic)}</strong><small>${mn(a)} 分鐘${a.start_time?` · ${String(a.start_time).slice(11,16)}`:""}${a.status?` · ${esc(a.status)}`:""}</small></div><span class="status-check">✓</span></div>`).join(""):`<div class="empty">${isToday?"今天還沒有 DONE":"這一天沒有 DONE"}</div>`;
   $("todayDoneCount").textContent=`${done.length} 筆`;
 
   document.querySelectorAll("[data-plan-complete]").forEach(b=>b.onclick=()=>{let p=plans.find(x=>String(x.event_id||"")===b.dataset.planComplete);openQuickFromPlan(p)});
   document.querySelectorAll("[data-review-done]").forEach(b=>b.onclick=()=>{let c=derived.find(x=>courseKey(x)===b.dataset.reviewDone);openQuickForCourse(c,"複習")});
   if($("emptyQuick"))$("emptyQuick").onclick=openActionSheet;
   if($("showUpcoming"))$("showUpcoming").onclick=()=>{setView("reviews");toast("已切到複習頁，查看下一輪")};
+  bindTodayPreview();
+  document.querySelectorAll("[data-course-preview]").forEach(el=>{let c=derived.find(x=>courseKey(x)===el.dataset.coursePreview);if(c)bindGenericHover(el,()=>courseTooltipHTML(c))});
+  applyTodayAnimation();
 }
 function renderDashboard(){
   let t=iso(),m=monday(),mo=monthStart(),acts=allActivities();
   let today=acts.filter(a=>a.date===t),p=today.filter(a=>a.type==="PLAN").reduce((s,a)=>s+mn(a),0),d=today.filter(a=>a.type==="DONE").reduce((s,a)=>s+mn(a),0);
   let weekDone=acts.filter(a=>a.type==="DONE"&&a.date>=m).reduce((s,a)=>s+mn(a),0),monthDone=acts.filter(a=>a.type==="DONE"&&a.date>=mo).reduce((s,a)=>s+mn(a),0);
+  let prevM=previousMonday(),prevWeekDone=acts.filter(a=>a.type==="DONE"&&a.date>=prevM&&a.date<m).reduce((s,a)=>s+mn(a),0);
   let planAccuracy=p?Math.max(0,1-Math.abs(d-p)/p):null;
+
+  let last7=[...Array(7)].map((_,i)=>{let dd=new Date();dd.setDate(dd.getDate()-(6-i));let day=iso(dd);return acts.filter(a=>a.date===day&&a.type==="DONE").reduce((s,a)=>s+mn(a),0)});
+  let prevDelta=(weekDone-prevWeekDone)/60;
+
   $("dashKpis").innerHTML=[
-    ["今日達成",p?Math.round(Math.min(d/p,1)*100)+"%":"—",`${d}/${p||0} 分鐘`],
-    ["規劃準確",planAccuracy==null?"—":Math.round(planAccuracy*100)+"%","越接近 PLAN 越高"],
-    ["本週 DONE",(weekDone/60).toFixed(1),"小時"],
-    ["本月 DONE",(monthDone/60).toFixed(1),"小時"]
-  ].map(x=>`<div class="card kpi"><div class="label">${x[0]}</div><div class="value">${x[1]}</div><div class="sub">${x[2]}</div></div>`).join("");
-  let ss=courseStats();$("subjectGrid").innerHTML=ss.map(x=>`<div class="subject-card" data-subject="${esc(x.s)}"><div class="subject-top"><span class="subject-name">${x.s}</span><span class="subject-pct">${Math.round(x.rate*100)}%</span></div><div class="progress"><i style="width:${x.rate*100}%"></i></div><div class="subject-meta"><span>${x.watched}/${x.total} 已看課</span><span>重點待完成 ${x.high}</span></div><div class="maturity">平均成熟度 ${Math.round(x.maturity)}%</div></div>`).join("");
+    {title:"今日達成",value:p?Math.round(Math.min(d/p,1)*100)+"%":"—",sub:`${d}/${p||0} 分鐘`,tip:"今日 DONE 時間 ÷ 今日 PLAN 時間；超過 100% 仍顯示為 100%。",action:"today",spark:last7},
+    {title:"規劃準確",value:planAccuracy==null?"—":Math.round(planAccuracy*100)+"%",sub:"DONE 越接近 PLAN 越高",tip:"計算方式：1 − |DONE − PLAN| ÷ PLAN。用來看時間估計是否貼近實際。",action:"today",spark:last7},
+    {title:"本週 DONE",value:(weekDone/60).toFixed(1),sub:"小時",tip:"本週一到今天所有 DONE 的實際分鐘總和。",action:"today",spark:last7,trend:trendText(prevDelta,"h")},
+    {title:"本月 DONE",value:(monthDone/60).toFixed(1),sub:"小時",tip:"本月所有 DONE 的實際分鐘總和。",action:"today",spark:last7}
+  ].map(x=>`<div class="card kpi" data-kpi-tip="${esc(x.tip)}" data-kpi-title="${esc(x.title)}" data-kpi-action="${x.action}">
+    <div class="label">${x.title}<span class="info-dot">i</span></div><div class="value">${x.value}</div><div class="sub">${x.sub}</div>${x.trend||""}${sparkHTML(x.spark)}
+  </div>`).join("");
+
+  let ss=courseStats();
+  $("subjectGrid").innerHTML=ss.map(x=>`<div class="subject-card" data-subject="${esc(x.s)}">
+    <div class="subject-top"><span class="subject-name">${x.s}</span><span class="subject-pct">${Math.round(x.rate*100)}%</span></div>
+    <div class="progress"><i style="width:${x.rate*100}%"></i></div>
+    <div class="subject-meta"><span>${x.watched}/${x.total} 已看課</span><span>重點待完成 ${x.high}</span></div>
+    <div class="maturity">平均成熟度 ${Math.round(x.maturity)}% · ${maturityState(x.maturity)}</div>
+  </div>`).join("");
   $("courseSummary").textContent=`${derived.filter(c=>c.status==="已看課").length}/${derived.length} 已看課`;
+
   let qM=questionLog.filter(q=>q.date>=mo),qt=qM.reduce((s,q)=>s+Number(q.total_questions||0),0),qc=qM.reduce((s,q)=>s+Number(q.correct||0),0);
   let en=acts.filter(a=>a.type==="DONE"&&a.subject==="英文"&&a.date>=mo),emin=en.reduce((s,a)=>s+mn(a),0);
   $("monthMetrics").innerHTML=[
-    ["DONE",`${(monthDone/60).toFixed(1)}h`,"總學習"],
-    ["英文",`${emin}m`,"輸入時間"],
-    ["刷題",qt,"題"],
-    ["正確率",qt?Math.round(qc/qt*100)+"%":"—","本月"]
-  ].map(x=>`<div class="metric"><b>${x[1]}</b><small>${x[0]} · ${x[2]}</small></div>`).join("");
+    {label:"DONE",value:`${(monthDone/60).toFixed(1)}h`,sub:"總學習",action:"today"},
+    {label:"英文",value:`${emin}m`,sub:"輸入時間",action:"english"},
+    {label:"刷題",value:qt,sub:"題",action:"questions"},
+    {label:"正確率",value:qt?Math.round(qc/qt*100)+"%":"—",sub:"本月",action:"questions"}
+  ].map(x=>`<div class="metric" data-kpi-action="${x.action}"><b>${x.value}</b><small>${x.label} · ${x.sub}</small></div>`).join("");
+
   let labels=["一","二","三","四","五","六","日"],weekRows=labels.map((l,i)=>{
     let x=new Date(m+"T00:00:00");x.setDate(x.getDate()+i);let day=iso(x),a=acts.filter(y=>y.date===day),
     pp=a.filter(y=>y.type==="PLAN").reduce((s,y)=>s+mn(y),0),
     dd=a.filter(y=>y.type==="DONE").reduce((s,y)=>s+mn(y),0);
-    return{l,pp,dd,day}
+    const doneActs=a.filter(y=>y.type==="DONE");
+    const byActivity={};doneActs.forEach(y=>byActivity[y.activity]=(byActivity[y.activity]||0)+mn(y));
+    return{l,pp,dd,day,byActivity}
   }),weekMax=Math.max(60,...weekRows.flatMap(x=>[x.pp,x.dd]));
+
   $("weekBars").innerHTML=weekRows.map(x=>`<div class="daybar ${x.day===iso()?"is-today":""}" data-day="${x.day}" tabindex="0">
     <span class="day-total">${x.dd?Math.round(x.dd/60*10)/10+"h":""}</span>
-    <div class="bars"><i class="bar" title="PLAN ${x.pp}m" style="height:${Math.max(2,x.pp/weekMax*138)}px"></i><i class="bar done" title="DONE ${x.dd}m" style="height:${Math.max(2,x.dd/weekMax*138)}px"></i></div>
+    <div class="bars"><i class="bar" style="height:${Math.max(2,x.pp/weekMax*138)}px"></i><i class="bar done" style="height:${Math.max(2,x.dd/weekMax*138)}px"></i></div>
     <label>${x.l}</label>
   </div>`).join("");
   bindWeekBarHover(weekRows);
-  let pending=today.filter(a=>a.type==="PLAN"&&!completionForPlan(a)).map(a=>["今日 PLAN 尚未 DONE",`${a.subject} · ${a.topic}`]);
-  let due=dueCourses().slice(0,4).map(c=>["複習已到期",`${c.subject} ${c.code} · ${c.topic}`]);
-  let wrong=questionLog.filter(q=>Number(q.wrong||0)>0&&!truthy(q.reviewed)).slice(-3).reverse().map(q=>["錯題待回看",`${q.subject} · ${q.topic||q.source||"刷題"}`]);
-  let all=[...pending,...due,...wrong].slice(0,7);$("nextActions").innerHTML=all.length?all.map(x=>`<div class="item"><div class="item-main"><strong>${esc(x[0])}</strong><small>${esc(x[1])}</small></div></div>`).join(""):'<div class="empty">目前沒有需要追的項目</div>';
+
+  let pending=today.filter(a=>a.type==="PLAN"&&!completionForPlan(a)).map(a=>({type:"plan",title:"今日 PLAN 尚未 DONE",detail:`${a.subject} · ${a.topic}`}));
+  let due=dueCourses().slice(0,4).map(c=>({type:"due",title:"複習已到期",detail:`${c.subject} ${c.code} · ${c.topic}`}));
+  let wrong=questionLog.filter(q=>Number(q.wrong||0)>0&&!truthy(q.reviewed)).slice(-3).reverse().map(q=>({type:"wrong",title:"錯題待回看",detail:`${q.subject} · ${q.topic||q.source||"刷題"}`}));
+  let all=[...pending,...due,...wrong].slice(0,7);
+  $("nextActions").innerHTML=all.length?all.map(x=>`<div class="item next-action-clickable" data-inline-type="${x.type}"><div class="item-main"><strong>${esc(x.title)}</strong><small>${esc(x.detail)}</small></div></div>`).join(""):'<div class="empty">目前沒有需要追的項目<div class="smart-empty-next">下一步可以直接從「今天」開始下一項。</div></div>';
+  document.querySelectorAll("[data-inline-type]").forEach(el=>el.onclick=()=>showInlineDashboard(el.dataset.inlineType));
+
+  bindDashboardHover();bindKpiActions()
 }
 function paintSubjectSwitch(){
   document.querySelectorAll("[data-course-subject]").forEach(b=>b.classList.toggle("active",b.dataset.courseSubject===courseSubject));
@@ -1334,24 +1669,65 @@ function renderCourses(){
   $("courseAllBtn")?.classList.toggle("active",!courseAttentionOnly);
   $("courseAttentionBtn")?.classList.toggle("active",courseAttentionOnly);
 
-  let subjectRows=derived.filter(c=>c.subject===courseSubject),types=[...new Set(subjectRows.map(c=>c.type).filter(Boolean))].sort(),oldType=$("typeFilter").value;
-  $("typeFilter").innerHTML='<option value="">全部類型</option>'+types.map(x=>`<option>${esc(x)}</option>`).join("");if(types.includes(oldType))$("typeFilter").value=oldType;
+  let subjectRows=derived.filter(c=>c.subject===courseSubject),types=[...new Set(subjectRows.map(c=>c.type).filter(Boolean))].sort(),oldType=$("typeFilter").value||courseFilterState.type||"";
+  $("typeFilter").innerHTML='<option value="">全部類型</option>'+types.map(x=>`<option>${esc(x)}</option>`).join("");
+  if(types.includes(oldType))$("typeFilter").value=oldType;
 
   let q=$("courseSearch").value.trim().toLowerCase(),tf=$("typeFilter").value,pf=$("priorityFilter").value,sf=$("statusFilter").value;
-  let rows=subjectRows.filter(c=>(!tf||c.type===tf)&&(!pf||c.priority===pf)&&(!sf||c.status===sf)&&(!q||`${c.code} ${c.topic} ${c.description}`.toLowerCase().includes(q)));
+  let rows=subjectRows.filter(c=>(!tf||c.type===tf)&&(!pf||c.priority===pf)&&(!sf||c.status===sf)&&courseSearchMatch(c,q));
   if(courseAttentionOnly)rows=rows.filter(c=>(c.priority==="A高"&&c.status!=="已看課")||(c.nextDue&&c.nextDue<=iso())||(c.totalQ>0&&c.accuracy!=null&&c.accuracy<.8));
 
-  let watched=subjectRows.filter(c=>c.status==="已看課").length;$("courseSubjectContext").textContent=`${courseSubject} · ${watched}/${subjectRows.length} 已看課${courseAttentionOnly?` · ${rows.length} 待處理`:""}`;
+  let watched=subjectRows.filter(c=>c.status==="已看課").length;
+  $("courseSubjectContext").textContent=`${courseSubject} · ${watched}/${subjectRows.length} 已看課${courseAttentionOnly?` · ${rows.length} 待處理`:""}`;
+  $("clearCourseFilters")?.classList.toggle("hidden",!filtersActive());
 
-  $("courseBody").innerHTML=rows.map(c=>`<tr data-course-key="${esc(courseKey(c))}"><td class="code">${esc(c.code)}</td><td>${esc(c.topic||c.description)}</td><td>${esc(c.type)}</td><td>${c.priority==="A高"?'<span class="badge high">重點</span>':'一般'}</td><td>${badge(c.status)}</td><td><div style="display:flex;align-items:center;gap:7px"><div class="progress" style="width:78px;margin:0"><i style="width:${c.progress}%"></i></div><span>${Math.round(c.progress)}%</span></div></td><td>${c.reviews.length} 次</td><td>${fd(c.recent)}</td></tr>`).join("")||'<tr><td colspan="8" class="empty">沒有符合條件的課程</td></tr>';
+  $("courseBody").innerHTML=rows.map(c=>`<tr data-course-key="${esc(courseKey(c))}">
+    <td class="code">${highlightMatch(c.code,q)}</td>
+    <td>${highlightMatch(c.topic||c.description,q)}</td>
+    <td>${esc(c.type)}</td>
+    <td>${c.priority==="A高"?'<span class="badge high">重點</span>':'一般'}</td>
+    <td>${badge(c.status)}</td>
+    <td>
+      <div style="display:flex;align-items:center;gap:7px">
+        <div class="progress" data-progress-tip="${esc(courseKey(c))}" style="width:76px;margin:0"><i style="width:${c.progress}%"></i></div>
+        <span>${Math.round(c.progress)}%</span>
+      </div>
+      <span class="maturity-label"><i class="maturity-dot"></i>${maturityState(c.progress)}</span>
+    </td>
+    <td>${c.reviews.length} 次</td>
+    <td>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:7px">
+        <span>${fd(c.recent)}</span>
+        <span class="course-quick-actions">
+          <button class="course-mini-action" data-course-action="watch" data-course-key="${esc(courseKey(c))}">看課</button>
+          <button class="course-mini-action" data-course-action="review" data-course-key="${esc(courseKey(c))}">複習</button>
+          <button class="course-mini-action" data-course-action="question" data-course-key="${esc(courseKey(c))}">刷題</button>
+        </span>
+      </div>
+    </td>
+  </tr>`).join("")||'<tr><td colspan="8" class="empty">沒有符合條件的課程</td></tr>';
 
   $("mobileCourseList").innerHTML=rows.length?rows.map(c=>`<div class="course-card-mobile" data-course-key="${esc(courseKey(c))}" data-subject="${esc(c.subject)}">
-    <div class="row1"><div><div class="code2"><span class="subject-dot" data-subject="${esc(c.subject)}"></span>${esc(c.code)}</div><div class="topic2">${esc(c.topic||c.description)}</div></div><div>${badge(c.status)}</div></div>
-    <div class="meta2">${c.priority==="A高"?'<span class="badge high">重點</span>':""}<span class="badge blue">${esc(c.type)}</span>${c.nextDue&&c.nextDue<=iso()?`<span class="time-pill overdue">複習逾期 ${Math.max(0,c.overdueDays)} 天</span>`:""}</div>
-    <div class="maturity2"><span>成熟度 ${Math.round(c.progress)}%</span><div class="progress"><i style="width:${c.progress}%"></i></div><span>${c.reviews.length} 次</span></div>
+    <div class="swipe-bg"><span class="left">完成看課</span><span class="right">記錄複習</span></div>
+    <div class="swipe-actions left"><button class="swipe-action-btn" data-swipe-action="watch" data-course-key="${esc(courseKey(c))}">完成</button></div>
+    <div class="swipe-actions right"><button class="swipe-action-btn" data-swipe-action="review" data-course-key="${esc(courseKey(c))}">複習</button></div>
+    <div class="course-card-inner">
+      <div class="row1"><div><div class="code2"><span class="subject-dot" data-subject="${esc(c.subject)}"></span>${highlightMatch(c.code,q)}</div><div class="topic2">${highlightMatch(c.topic||c.description,q)}</div></div><div>${badge(c.status)}</div></div>
+      <div class="meta2">${c.priority==="A高"?'<span class="badge high">重點</span>':""}<span class="badge blue">${esc(c.type)}</span>${c.nextDue&&c.nextDue<=iso()?`<span class="time-pill overdue">複習逾期 ${Math.max(0,c.overdueDays)} 天</span>`:""}</div>
+      <div class="maturity2"><span>${maturityState(c.progress)} · ${Math.round(c.progress)}%</span><div class="progress" data-progress-tip="${esc(courseKey(c))}"><i style="width:${c.progress}%"></i></div><span>${c.reviews.length} 次</span></div>
+      <div class="course-quick-actions" style="margin-top:9px;justify-content:flex-start">
+        <button class="course-mini-action" data-course-action="watch" data-course-key="${esc(courseKey(c))}">看課 DONE</button>
+        <button class="course-mini-action" data-course-action="review" data-course-key="${esc(courseKey(c))}">複習</button>
+        <button class="course-mini-action" data-course-action="question" data-course-key="${esc(courseKey(c))}">刷題</button>
+      </div>
+    </div>
   </div>`).join(""):'<div class="empty">沒有符合條件的課程</div>';
 
-  document.querySelectorAll("[data-course-key]").forEach(r=>r.onclick=()=>openCourseDetail(r.dataset.courseKey));
+  document.querySelectorAll("[data-course-key]").forEach(r=>{
+    if(r.matches("button"))return;
+    r.onclick=e=>{if(e.target.closest("button"))return;openCourseDetail(r.dataset.courseKey)}
+  });
+  wireCourseQuickActions();bindCourseHover();wireSwipeAndLongPress();saveCourseFilters()
 }
 function reviewItem(c){
   let days=c.overdueDays;
@@ -1417,36 +1793,33 @@ function fmtMinutes(min){
 }
 
 function bindWeekBarHover(rows){
-  const tip=$("chartTooltip");
-  if(!tip)return;
+  const tip=$("chartTooltip");if(!tip)return;
   const bars=[...document.querySelectorAll("#weekBars .daybar")];
-
   const hide=()=>tip.classList.remove("show");
   const move=e=>{
-    const pad=12,w=190,h=128;
+    const pad=12,w=210,h=180;
     let x=(e.clientX||0)+14,y=(e.clientY||0)+14;
     if(x+w>window.innerWidth-pad)x=(e.clientX||0)-w-14;
     if(y+h>window.innerHeight-pad)y=(e.clientY||0)-h-14;
-    tip.style.left=Math.max(pad,x)+"px";
-    tip.style.top=Math.max(pad,y)+"px";
+    tip.style.left=Math.max(pad,x)+"px";tip.style.top=Math.max(pad,y)+"px";
   };
-
   bars.forEach((el,i)=>{
     const x=rows[i];if(!x)return;
     const show=e=>{
       const delta=x.dd-x.pp;
       const date=new Date(x.day+"T00:00:00").toLocaleDateString("zh-TW",{month:"numeric",day:"numeric",weekday:"short"});
-      tip.innerHTML=`<strong>${date}</strong>
+      const acts=Object.entries(x.byActivity||{}).sort((a,b)=>b[1]-a[1]).slice(0,4);
+      tip.innerHTML=`<strong>${date}${x.day===iso()?" · 今天":""}</strong>
         <div class="chart-tip-row"><span>PLAN</span><b>${fmtMinutes(x.pp)}</b></div>
         <div class="chart-tip-row"><span>DONE</span><b>${fmtMinutes(x.dd)}</b></div>
-        <div class="chart-tip-delta">${x.pp===0&&x.dd===0?"今天沒有紀錄":delta===0?"與計畫完全一致":delta>0?`比計畫多 ${fmtMinutes(delta)}`:`比計畫少 ${fmtMinutes(Math.abs(delta))}`}</div>`;
+        ${acts.map(a=>`<div class="chart-tip-row"><span>${esc(a[0])}</span><b>${fmtMinutes(a[1])}</b></div>`).join("")}
+        <div class="chart-tip-delta">${x.pp===0&&x.dd===0?"這天沒有紀錄":delta===0?"與計畫完全一致":delta>0?`比計畫多 ${fmtMinutes(delta)}`:`比計畫少 ${fmtMinutes(Math.abs(delta))}`}</div>`;
       tip.classList.add("show");move(e);
     };
     el.onmouseenter=show;el.onmousemove=move;el.onmouseleave=hide;
-    el.onfocus=e=>{show({clientX:el.getBoundingClientRect().left+el.offsetWidth/2,clientY:el.getBoundingClientRect().top})};
-    el.onblur=hide;
-    el.onclick=()=>openDayDetail(x.day);
-  });
+    el.onfocus=e=>show({clientX:el.getBoundingClientRect().left+el.offsetWidth/2,clientY:el.getBoundingClientRect().top});
+    el.onblur=hide;el.onclick=()=>openDayDetail(x.day)
+  })
 }
 
 function openDayDetail(day){
@@ -1468,19 +1841,316 @@ function setSidebarCollapsed(collapsed,save=true){
   const b=$("sidebarToggle");if(b)b.setAttribute("aria-label",collapsed?"展開側邊欄":"收合側邊欄");
 }
 
+
+let selectedStudyDate=iso();
+let lastAddedEventId="";
+let courseContextKey="";
+let activeSmartTooltipTarget=null;
+let courseFilterState=(()=>{try{return JSON.parse(localStorage.getItem("studyCourseFilters")||"{}")||{}}catch{return{}}})();
+let scrollMemory=(()=>{try{return JSON.parse(sessionStorage.getItem("studyScrollMemory")||"{}")||{}}catch{return{}}})();
+let currentView=localStorage.getItem("studyView")||"today";
+
+function addDaysISO(day,delta){
+  const d=new Date(day+"T00:00:00");d.setDate(d.getDate()+delta);return iso(d)
+}
+function daysBetween(a,b){
+  return Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000)
+}
+function shortDate(day){
+  return new Date(day+"T00:00:00").toLocaleDateString("zh-TW",{month:"numeric",day:"numeric"})
+}
+function dayName(day){
+  return new Date(day+"T00:00:00").toLocaleDateString("zh-TW",{weekday:"short"})
+}
+function renderDateNavigator(){
+  if(!$("dateWindow"))return;
+  const days=[addDaysISO(selectedStudyDate,-1),selectedStudyDate,addDaysISO(selectedStudyDate,1)];
+  $("dateWindow").innerHTML=days.map(d=>`<button class="date-chip ${d===selectedStudyDate?"active":""} ${d===iso()?"today":""}" data-study-date="${d}">
+    <b>${d===iso()?"今天":shortDate(d)}</b><small>${dayName(d)}</small>
+  </button>`).join("");
+  document.querySelectorAll("[data-study-date]").forEach(b=>b.onclick=()=>{selectedStudyDate=b.dataset.studyDate;renderToday();renderDateNavigator()});
+  $("returnToday")?.classList.toggle("hidden",selectedStudyDate===iso())
+}
+function maturityState(p){
+  p=Number(p)||0;
+  if(p>=95)return"高熟練";
+  if(p>=80)return"穩定";
+  if(p>=65)return"初步熟悉";
+  if(p>=45)return"已看課";
+  if(p>=20)return"進行中";
+  return"尚未開始";
+}
+function maturityBreakdown(c){
+  const parts=[];
+  if(c.progress>=20)parts.push("建立進度 +20%");
+  if(c.status==="已看課")parts.push("完成看課 → 至少 45%");
+  if(c.reviews?.length>=1)parts.push("第 1 次複習 → 約 65%");
+  if(c.reviews?.length>=2)parts.push("第 2 次複習 → 約 80%");
+  if(c.reviews?.length>=3)parts.push("第 3 次複習 → 約 95%");
+  if(c.questionBonus)parts.push(`題目表現 +${c.questionBonus}%`);
+  return parts.length?parts.join("<br>"):"尚未產生成熟度紀錄";
+}
+function escapeRegex(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}
+function highlightMatch(value,q){
+  let safe=esc(value||"");
+  let terms=String(q||"").trim().split(/\s+/).filter(Boolean).filter(x=>!["物理","生物","生化","化學"].includes(x));
+  terms.sort((a,b)=>b.length-a.length).forEach(t=>{
+    const re=new RegExp(`(${escapeRegex(esc(t))})`,"ig");safe=safe.replace(re,'<mark class="search-highlight">$1</mark>')
+  });
+  return safe
+}
+function courseSearchMatch(c,q){
+  const terms=String(q||"").trim().toLowerCase().split(/\s+/).filter(Boolean);
+  if(!terms.length)return true;
+  const hay=`${c.subject} ${c.code} ${c.topic} ${c.description} ${c.type}`.toLowerCase();
+  return terms.every(t=>hay.includes(t));
+}
+function showSmartTooltip(target,htmlContent,e){
+  const tip=$("smartTooltip");if(!tip)return;
+  activeSmartTooltipTarget=target;tip.innerHTML=htmlContent;tip.classList.add("show");moveSmartTooltip(e)
+}
+function moveSmartTooltip(e){
+  const tip=$("smartTooltip");if(!tip||!tip.classList.contains("show"))return;
+  const rect=tip.getBoundingClientRect(),pad=12;
+  let x=(e.clientX||pad)+14,y=(e.clientY||pad)+14;
+  if(x+rect.width>innerWidth-pad)x=(e.clientX||0)-rect.width-14;
+  if(y+rect.height>innerHeight-pad)y=(e.clientY||0)-rect.height-14;
+  tip.style.left=Math.max(pad,x)+"px";tip.style.top=Math.max(pad,y)+"px"
+}
+function hideSmartTooltip(){activeSmartTooltipTarget=null;$("smartTooltip")?.classList.remove("show")}
+document.addEventListener("mousemove",e=>{if(activeSmartTooltipTarget)moveSmartTooltip(e)});
+document.addEventListener("scroll",hideSmartTooltip,{passive:true});
+
+function bindGenericHover(el,htmlFn){
+  if(!el||matchMedia("(hover:none)").matches)return;
+  el.addEventListener("mouseenter",e=>showSmartTooltip(el,htmlFn(),e));
+  el.addEventListener("mousemove",moveSmartTooltip);
+  el.addEventListener("mouseleave",hideSmartTooltip)
+}
+function courseTooltipHTML(c){
+  const thisWeek=allActivities().filter(a=>a.type==="DONE"&&a.date>=monday()&&match(c,a)).reduce((s,a)=>s+mn(a),0);
+  return `<strong>${esc(c.subject)} ${esc(c.code)} · ${esc(c.topic)}</strong>
+    <div class="tip-grid">
+      <span>狀態</span><b>${esc(c.status)}</b>
+      <span>成熟度</span><b>${Math.round(c.progress)}% · ${maturityState(c.progress)}</b>
+      <span>複習</span><b>${c.reviews.length} 次</b>
+      <span>本週投入</span><b>${fmtMinutes(thisWeek)}</b>
+      <span>刷題</span><b>${c.totalQ||0} 題</b>
+    </div>
+    <div class="tip-note">${c.nextDue?`下一次複習：${fd(c.nextDue)}${c.overdueDays>0?` · 逾期 ${c.overdueDays} 天`:""}`:"尚無下一次複習日期"}</div>`
+}
+function progressTooltipHTML(c){
+  return `<strong>成熟度 ${Math.round(c.progress)}% · ${maturityState(c.progress)}</strong>
+    <div class="tip-note">${maturityBreakdown(c)}</div>`
+}
+function subjectTooltipHTML(subject){
+  const rows=derived.filter(c=>c.subject===subject),watched=rows.filter(c=>c.status==="已看課").length,due=rows.filter(c=>c.nextDue&&c.nextDue<=iso()).length;
+  const week=allActivities().filter(a=>a.type==="DONE"&&a.subject===subject&&a.date>=monday()).reduce((s,a)=>s+mn(a),0);
+  const avg=rows.length?Math.round(rows.reduce((s,c)=>s+c.progress,0)/rows.length):0;
+  return `<strong>${esc(subject)}</strong><div class="tip-grid">
+    <span>已看課</span><b>${watched}/${rows.length}</b>
+    <span>到期複習</span><b>${due}</b>
+    <span>本週投入</span><b>${fmtMinutes(week)}</b>
+    <span>平均成熟度</span><b>${avg}%</b>
+  </div>`
+}
+function bindDashboardHover(){
+  document.querySelectorAll("#subjectGrid .subject-card").forEach(el=>{
+    const s=el.dataset.subject;bindGenericHover(el,()=>subjectTooltipHTML(s))
+  });
+  document.querySelectorAll("[data-kpi-tip]").forEach(el=>bindGenericHover(el,()=>`<strong>${esc(el.dataset.kpiTitle||"指標說明")}</strong><div class="tip-note">${el.dataset.kpiTip}</div>`))
+}
+function bindCourseHover(){
+  document.querySelectorAll("[data-course-key]").forEach(el=>{
+    const c=derived.find(x=>courseKey(x)===el.dataset.courseKey);if(!c)return;
+    if(!el.closest(".course-card-mobile"))bindGenericHover(el,()=>courseTooltipHTML(c))
+  });
+  document.querySelectorAll("[data-progress-tip]").forEach(el=>{
+    const c=derived.find(x=>courseKey(x)===el.dataset.progressTip);if(c)bindGenericHover(el,()=>progressTooltipHTML(c))
+  })
+}
+
+function openCourseContext(key,x,y){
+  const menu=$("courseContextMenu");courseContextKey=key;if(!menu)return;
+  menu.classList.add("show");
+  const r=menu.getBoundingClientRect(),pad=10;
+  menu.style.left=Math.min(x,innerWidth-r.width-pad)+"px";
+  menu.style.top=Math.min(y,innerHeight-r.height-pad)+"px"
+}
+function closeCourseContext(){$("courseContextMenu")?.classList.remove("show");courseContextKey=""}
+document.addEventListener("click",e=>{if(!e.target.closest("#courseContextMenu"))closeCourseContext()});
+document.addEventListener("contextmenu",e=>{
+  const row=e.target.closest("[data-course-key]");if(!row)return;
+  e.preventDefault();openCourseContext(row.dataset.courseKey,e.clientX,e.clientY)
+});
+document.querySelectorAll("#courseContextMenu [data-context-action]").forEach(b=>b.onclick=()=>{
+  const c=derived.find(x=>courseKey(x)===courseContextKey),a=b.dataset.contextAction;closeCourseContext();if(!c)return;
+  if(a==="detail")openCourseDetail(courseKey(c));
+  if(a==="watch")openQuickForCourse(c,"看課");
+  if(a==="review")openQuickForCourse(c,"複習");
+  if(a==="question"){openQuestion();$("qSubject").value=c.subject;updateQuestionCourse();$("qCourse").value=courseKey(c)}
+});
+
+function wireCourseQuickActions(){
+  document.querySelectorAll("[data-course-action]").forEach(b=>{
+    b.onclick=e=>{
+      e.stopPropagation();
+      const c=derived.find(x=>courseKey(x)===b.dataset.courseKey);if(!c)return;
+      const a=b.dataset.courseAction;
+      if(a==="watch")openQuickForCourse(c,"看課");
+      if(a==="review")openQuickForCourse(c,"複習");
+      if(a==="question"){openQuestion();$("qSubject").value=c.subject;updateQuestionCourse();$("qCourse").value=courseKey(c)}
+    }
+  })
+}
+
+function wireSwipeAndLongPress(){
+  if(matchMedia("(hover:hover)").matches)return;
+  document.querySelectorAll(".course-card-mobile").forEach(card=>{
+    let sx=0,sy=0,dx=0,timerLong=null,moved=false;
+    const inner=card.querySelector(".course-card-inner");
+    card.addEventListener("touchstart",e=>{
+      const t=e.touches[0];sx=t.clientX;sy=t.clientY;dx=0;moved=false;
+      timerLong=setTimeout(()=>{if(!moved)openCourseContext(card.dataset.courseKey,Math.min(sx,innerWidth-190),Math.min(sy,innerHeight-180))},520)
+    },{passive:true});
+    card.addEventListener("touchmove",e=>{
+      const t=e.touches[0];dx=t.clientX-sx;const dy=t.clientY-sy;
+      if(Math.abs(dx)>9||Math.abs(dy)>9){moved=true;clearTimeout(timerLong)}
+      if(Math.abs(dx)>24&&Math.abs(dx)>Math.abs(dy)){
+        card.classList.add("swiping");
+        card.classList.toggle("swipe-right",dx>0);
+        card.classList.toggle("swipe-left",dx<0)
+      }
+    },{passive:true});
+    card.addEventListener("touchend",()=>{
+      clearTimeout(timerLong);
+      if(Math.abs(dx)<45)card.classList.remove("swiping","swipe-left","swipe-right")
+    },{passive:true})
+  });
+  document.querySelectorAll("[data-swipe-action]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();const c=derived.find(x=>courseKey(x)===b.dataset.courseKey);if(!c)return;
+    b.closest(".course-card-mobile")?.classList.remove("swiping","swipe-left","swipe-right");
+    if(b.dataset.swipeAction==="watch")openQuickForCourse(c,"看課");
+    if(b.dataset.swipeAction==="review")openQuickForCourse(c,"複習")
+  })
+}
+
+function saveCourseFilters(){
+  courseFilterState={
+    search:$("courseSearch")?.value||"",
+    type:$("typeFilter")?.value||"",
+    priority:$("priorityFilter")?.value||"",
+    status:$("statusFilter")?.value||"",
+    subject:courseSubject,
+    attention:courseAttentionOnly
+  };
+  localStorage.setItem("studyCourseFilters",JSON.stringify(courseFilterState))
+}
+function filtersActive(){
+  return !!(($("courseSearch")?.value||"")||($("typeFilter")?.value||"")||($("priorityFilter")?.value||"")||($("statusFilter")?.value||"")||courseAttentionOnly)
+}
+function clearCourseFilters(){
+  $("courseSearch").value="";$("typeFilter").value="";$("priorityFilter").value="";$("statusFilter").value="";
+  courseAttentionOnly=false;saveCourseFilters();renderCourses()
+}
+
+function sparkHTML(values){
+  const max=Math.max(1,...values);return `<div class="sparkline">${values.map(v=>`<i style="height:${Math.max(3,v/max*22)}px"></i>`).join("")}</div>`
+}
+function previousMonday(){
+  const d=new Date(monday()+"T00:00:00");d.setDate(d.getDate()-7);return iso(d)
+}
+function trendText(delta,unit="h"){
+  if(Math.abs(delta)<0.05)return `<span class="kpi-trend">→ 與上期接近</span>`;
+  return `<span class="kpi-trend ${delta>0?"up":"down"}">${delta>0?"↑":"↓"} ${Math.abs(delta).toFixed(1)}${unit} vs 上期</span>`
+}
+function bindKpiActions(){
+  document.querySelectorAll("[data-kpi-action]").forEach(el=>el.onclick=()=>{
+    const a=el.dataset.kpiAction;
+    if(a==="today")setView("today");
+    if(a==="english")setView("english");
+    if(a==="questions")setView("questions");
+    if(a==="reviews"){setView("reviews")}
+  })
+}
+function showInlineDashboard(type){
+  const box=$("inlineDashboardDetail");if(!box)return;
+  let rows=[],title="";
+  if(type==="due"){rows=dueCourses().slice(0,8).map(c=>[`${c.subject} ${c.code}`,c.topic]);title="到期複習"}
+  if(type==="plan"){rows=allActivities().filter(a=>a.date===iso()&&a.type==="PLAN"&&!completionForPlan(a)).map(a=>[a.subject,a.topic]);title="今日尚未完成 PLAN"}
+  if(type==="wrong"){rows=questionLog.filter(q=>Number(q.wrong||0)>0&&!truthy(q.reviewed)).slice(-8).reverse().map(q=>[q.subject,q.topic||q.source||"刷題"]);title="錯題待回看"}
+  box.innerHTML=`<h4>${title}</h4>${rows.length?rows.map(x=>`<div class="mini-row"><span>${esc(x[0])}</span><b>${esc(x[1])}</b></div>`).join(""):'<div class="empty">目前沒有項目</div>'}`;
+  box.classList.remove("hidden")
+}
+
+function rememberScroll(){
+  scrollMemory[currentView]=window.scrollY;
+  sessionStorage.setItem("studyScrollMemory",JSON.stringify(scrollMemory))
+}
+function restoreScroll(view){
+  requestAnimationFrame(()=>window.scrollTo({top:Number(scrollMemory[view]||0),behavior:"instant"}))
+}
+window.addEventListener("beforeunload",rememberScroll);
+
+function setInitialLoading(on){
+  document.body.classList.toggle("initial-loading",!!on)
+}
+function injectSkeletons(){
+  document.querySelectorAll(".view").forEach(v=>{
+    if(v.querySelector(".initial-skeleton"))return;
+    const sk=document.createElement("div");sk.className="initial-skeleton";
+    sk.innerHTML='<div class="skeleton-stack"><div class="skeleton-card large"></div><div class="skeleton-card"></div><div class="skeleton-card"></div></div>';
+    v.prepend(sk)
+  })
+}
+injectSkeletons();
+
+function renderSyncHover(){
+  const box=$("syncBox");if(!box)return;
+  let d=box.querySelector(".sync-hover-detail");
+  if(!d){d=document.createElement("div");d.className="sync-hover-detail";box.appendChild(d)}
+  d.innerHTML=`<b>同步狀態</b>
+    <div class="sync-detail-row"><span>ActivityLog</span><b>${activityLog.length}</b></div>
+    <div class="sync-detail-row"><span>ManualProgress</span><b>${Object.keys(manualOverrides).length}</b></div>
+    <div class="sync-detail-row"><span>QuickLog</span><b>${quickLog.length}</b></div>
+    <div class="sync-detail-row"><span>QuestionLog</span><b>${questionLog.length}</b></div>
+    <div class="sync-detail-row"><span>最後同步</span><b>${lastSync?new Date(lastSync).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"}):"—"}</b></div>`
+}
+
+function bindTodayPreview(){
+  document.querySelectorAll("[data-plan-preview]").forEach(el=>{
+    const p=allActivities().find(a=>String(a.event_id||"")===el.dataset.planPreview);if(!p)return;
+    const c=derived.find(x=>x.subject===p.subject&&String(p.topic||"").includes(x.code));
+    bindGenericHover(el,()=>`<strong>${esc(p.subject)} · ${esc(p.topic)}</strong><div class="tip-grid">
+      <span>預計開始</span><b>${p.start_time?String(p.start_time).slice(11,16):"未指定"}</b>
+      <span>預計時間</span><b>${fmtMinutes(mn(p))}</b>
+      <span>成熟度</span><b>${c?Math.round(c.progress)+"% · "+maturityState(c.progress):"—"}</b>
+      <span>上次學習</span><b>${c&&c.recent?fd(c.recent):"—"}</b>
+    </div>`)
+  })
+}
+
+function applyTodayAnimation(){
+  if(!lastAddedEventId)return;
+  const el=document.querySelector(`[data-done-id="${CSS.escape(lastAddedEventId)}"]`);
+  if(el){el.classList.add("recent-complete");setTimeout(()=>el.classList.remove("recent-complete"),700)}
+}
+
+
 function render(){
-  derive();renderToday();renderDashboard();renderCourses();renderReviews();renderQuestions();renderEnglish();renderSettings();renderNavMeta();
+  derive();renderToday();renderDashboard();renderCourses();renderReviews();renderQuestions();renderEnglish();renderSettings();renderNavMeta();renderSyncHover();
 }
 
 function toast(msg,action=null,label="復原"){
-  clearTimeout(toastTimer);undoFn=action;$("toastText").textContent=msg;$("toastAction").textContent=label;$("toastAction").classList.toggle("hidden",!action);$("toast").classList.add("show");toastTimer=setTimeout(()=>{$("toast").classList.remove("show");undoFn=null},5000)
+  clearTimeout(toastTimer);undoFn=action;$("toastText").textContent=msg;$("toastAction").textContent=label;$("toastAction").classList.toggle("hidden",!action);$("toast").classList.add("show");toastTimer=setTimeout(()=>{$("toast").classList.remove("show");undoFn=null},8000)
 }
 $("toastAction").onclick=async()=>{let f=undoFn;undoFn=null;$("toast").classList.remove("show");if(f)await f()};
 
 function setSync(okCount,total=4){
   let d=okCount===total?"":okCount>0?"warn":"bad";$("syncDot").className="dot "+d;
-  $("syncText").textContent=okCount===total?`已同步 ${total}/${total}`:okCount?`部分同步 ${okCount}/${total}`:"使用本機資料";
-  $("syncTime").textContent=lastSync?`最後同步 ${new Date(lastSync).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})}`:"尚未同步";
+  $("syncText").textContent=okCount===total?"已同步":okCount?`部分同步 ${okCount}/${total}`:"使用本機資料";
+  $("syncTime").textContent=lastSync?`${new Date(lastSync).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})}`:"尚未同步";
+  renderSyncHover()
 }
 function csvParse(text){
   let rows=[],row=[],f="",q=false;for(let i=0;i<text.length;i++){let c=text[i];if(q){if(c=='"'&&text[i+1]=='"'){f+='"';i++}else if(c=='"')q=false;else f+=c}else if(c=='"')q=true;else if(c==","){row.push(f);f=""}else if(c=="\n"){row.push(f.replace(/\r$/,""));rows.push(row);row=[];f=""}else f+=c}if(f||row.length){row.push(f);rows.push(row)}
@@ -1522,6 +2192,8 @@ function privateSync(){
 }
 
 async function sync(show=true){
+  document.body.classList.add("sync-loading");
+  const firstLoad=!allActivities().length;if(firstLoad)setInitialLoading(true);
   const saveBtn=$("saveSettings");
   const oldText=saveBtn?.textContent||"儲存並測試同步";
   if(show&&saveBtn){
@@ -1557,10 +2229,8 @@ async function sync(show=true){
     setSync(0,4);
     if(show)toast(`同步失敗：${e?.message||e}`);
   }finally{
-    if(show&&saveBtn){
-      saveBtn.disabled=false;
-      saveBtn.textContent=oldText;
-    }
+    if(show&&saveBtn){saveBtn.disabled=false;saveBtn.textContent=oldText;}
+    document.body.classList.remove("sync-loading");setInitialLoading(false);
     clearInterval(timer);
     timer=setInterval(()=>sync(false),Math.max(1,Number(settings.refreshMin)||5)*60000);
   }
@@ -1625,7 +2295,7 @@ async function saveQuick(){
   if(en){topic=$("quickEnglishTitle").value.trim();if(!topic)return toast("請輸入英文內容標題");format=activity;source=$("quickSource").value.trim();domain=$("quickDomain").value.trim();understanding=$("quickUnderstanding").value;url=$("quickUrl").value.trim()}
   else{let c=COURSES.find(x=>courseKey(x)===$("quickCourse").value);if(!c)return toast("請選課程");topic=`${c.subject}_${c.code}_${c.topic}`}
   let item={event_id:uid("WEB"),date:$("quickDate").value||iso(),type:"DONE",subject:s,activity,topic,minutes:Number($("quickMinutes").value)||0,status:"完成",format,source,platform:source,domain,understanding:Number(understanding)||"",url,notes:"source=Study OS Web",updated_at:new Date().toISOString()};
-  quickLog.push(item);quickLog=dedupeRows(quickLog,"event_id");localStorage.setItem("studyQuickLog",JSON.stringify(quickLog));let cloud=await postCloud("quick_add",[item]);render();closeModal("quickModal");
+  quickLog.push(item);quickLog=dedupeRows(quickLog,"event_id");lastAddedEventId=item.event_id;localStorage.setItem("studyQuickLog",JSON.stringify(quickLog));let cloud=await postCloud("quick_add",[item]);render();closeModal("quickModal");
   toast(`已記錄 ${s} · ${activity}${cloud?" · 已送往雲端":""}`,async()=>{quickLog=quickLog.filter(x=>x.event_id!==item.event_id);localStorage.setItem("studyQuickLog",JSON.stringify(quickLog));await postCloud("quick_remove",[{event_id:item.event_id}]);render();toast("已復原紀錄")})
 }
 
@@ -1648,11 +2318,11 @@ function openCourseDetail(key){
   let h=allActivities().filter(a=>match(c,a)).sort((a,b)=>`${b.date}${b.start_time||""}`.localeCompare(`${a.date}${a.start_time||""}`));
   let qs=questionLog.filter(q=>questionMatch(c,q)).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
   $("detailBody").innerHTML=`
-    <div class="subject-card" style="margin-bottom:13px"><div class="subject-top"><span class="subject-name">${esc(c.topic)}</span><span>${badge(c.status)}</span></div><div class="progress"><i style="width:${c.progress}%"></i></div><div class="subject-meta"><span>成熟度 ${Math.round(c.progress)}%</span><span>${c.reviews.length} 次複習</span></div><div class="maturity">${c.nextDue?`下一次：${fd(c.nextDue)}${c.overdueDays>0?`（逾期 ${c.overdueDays} 天）`:""}`:"尚無可計算的複習日期"}${c.questionBonus?` · 題目加成 +${c.questionBonus}%`:""}</div></div>
+    <div class="subject-card" data-subject="${esc(c.subject)}" style="margin-bottom:13px"><div class="subject-top"><span class="subject-name">${esc(c.topic)}</span><span>${badge(c.status)}</span></div><div class="progress" data-progress-tip="${esc(courseKey(c))}"><i style="width:${c.progress}%"></i></div><div class="subject-meta"><span>成熟度 ${Math.round(c.progress)}% · ${maturityState(c.progress)}</span><span>${c.reviews.length} 次複習</span></div><div class="maturity">${c.nextDue?`下一次：${fd(c.nextDue)}${c.overdueDays>0?`（逾期 ${c.overdueDays} 天）`:""}`:"尚無可計算的複習日期"}${c.questionBonus?` · 題目加成 +${c.questionBonus}%`:""}</div><div class="note" style="margin-top:10px">${maturityBreakdown(c)}</div></div>
     <div class="chips" style="margin-bottom:13px"><button class="btn small" id="detailWatch">＋ 看課 DONE</button><button class="btn small" id="detailReview">＋ 複習 DONE</button></div>
     <div class="section-head"><h3>學習歷史</h3><span>${h.length} 筆</span></div><div class="detail-history">${h.length?h.map(a=>`<div class="history-row ${a.type==="DONE"?"done":"plan"}"><strong>${fd(a.date)} · ${esc(a.type)} · ${esc(a.activity)}</strong><br><small>${mn(a)} 分鐘 · ${esc(a.status||"")}</small></div>`).join(""):'<div class="empty">沒有 Activity 紀錄</div>'}</div>
     <div class="section-head" style="margin-top:17px"><h3>題目紀錄</h3><span>${qs.length} 組</span></div><div class="detail-history">${qs.length?qs.map(q=>`<div class="history-row"><strong>${fd(q.date)} · ${q.correct}/${q.total_questions}</strong><br><small>${Math.round(Number(q.accuracy||0)*100)}% · ${esc(q.source||"")}</small></div>`).join(""):'<div class="empty">還沒有刷題紀錄</div>'}</div>`;
-  $("detailWatch").onclick=()=>{closeModal("detailModal");openQuickForCourse(c,"看課")};$("detailReview").onclick=()=>{closeModal("detailModal");openQuickForCourse(c,"複習")};openModal("detailModal")
+  $("detailWatch").onclick=()=>{closeModal("detailModal");openQuickForCourse(c,"看課")};$("detailReview").onclick=()=>{closeModal("detailModal");openQuickForCourse(c,"複習")};openModal("detailModal");setTimeout(()=>{let p=$("detailBody").querySelector("[data-progress-tip]");if(p)bindGenericHover(p,()=>progressTooltipHTML(c))},0)
 }
 
 function csvDownload(rows,name,headers){
@@ -1749,8 +2419,13 @@ function focusComplete(){
 }
 
 function setView(v){
-  document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id==="view-"+v));document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x.dataset.view===v));
-  $("pageTitle").textContent={today:"今天",dashboard:"儀表板",courses:"課程進度",reviews:"複習",questions:"題目與錯題",english:"英文輸入",settings:"設定"}[v]||"Study OS";localStorage.setItem("studyView",v)
+  if(currentView&&currentView!==v)rememberScroll();
+  currentView=v;
+  document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id==="view-"+v));
+  document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x.dataset.view===v));
+  $("pageTitle").textContent={today:"今天",dashboard:"統計",courses:"課程進度",reviews:"複習",questions:"題目與錯題",english:"英文輸入",settings:"設定"}[v]||"Study OS";
+  localStorage.setItem("studyView",v);
+  restoreScroll(v)
 }
 document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
 setSidebarCollapsed(localStorage.getItem("studySidebarCollapsed")==="1",false);
@@ -1759,8 +2434,8 @@ $("focusDockPause").onclick=focusPause;
 $("focusDockExpand").onclick=()=>openFocusMode();
 $("focusDockComplete").onclick=focusComplete;
 
-$("courseAllBtn").onclick=()=>{courseAttentionOnly=false;localStorage.setItem("studyCourseAttention","0");renderCourses()};
-$("courseAttentionBtn").onclick=()=>{courseAttentionOnly=true;localStorage.setItem("studyCourseAttention","1");renderCourses()};
+$("courseAllBtn").onclick=()=>{courseAttentionOnly=false;localStorage.setItem("studyCourseAttention","0");saveCourseFilters();renderCourses()};
+$("courseAttentionBtn").onclick=()=>{courseAttentionOnly=true;localStorage.setItem("studyCourseAttention","1");saveCourseFilters();renderCourses()};
 $("quickFab").onclick=openActionSheet;
 $("focusModeBtn").onclick=openFocusMode;
 $("focusStart").onclick=focusStart;$("focusPause").onclick=focusPause;$("focusComplete").onclick=focusComplete;
@@ -1772,13 +2447,17 @@ document.querySelectorAll("[data-action-type]").forEach(b=>b.onclick=()=>{
   if(t==="question")openQuestion();
 });
 
-document.querySelectorAll("[data-course-subject]").forEach(b=>b.onclick=()=>{courseSubject=b.dataset.courseSubject;localStorage.setItem("studyCourseSubject",courseSubject);$("typeFilter").value="";renderCourses()});
+document.querySelectorAll("[data-course-subject]").forEach(b=>b.onclick=()=>{courseSubject=b.dataset.courseSubject;localStorage.setItem("studyCourseSubject",courseSubject);$("typeFilter").value="";saveCourseFilters();renderCourses()});
 document.querySelectorAll("[data-review-subject]").forEach(b=>b.onclick=()=>{reviewSubject=b.dataset.reviewSubject;localStorage.setItem("studyReviewSubject",reviewSubject);renderReviews()});
-["courseSearch","typeFilter","priorityFilter","statusFilter"].forEach(id=>$(id).addEventListener(id==="courseSearch"?"input":"change",renderCourses));
+["courseSearch","typeFilter","priorityFilter","statusFilter"].forEach(id=>$(id).addEventListener(id==="courseSearch"?"input":"change",()=>{saveCourseFilters();renderCourses()}));
+$("clearCourseFilters").onclick=clearCourseFilters;
 ["manualSearch","manualSubject","manualMode"].forEach(id=>$(id).addEventListener(id==="manualSearch"?"input":"change",renderManual));
 $("openManualBtn").onclick=openManual;$("selectVisible").onclick=()=>{manualFiltered().forEach(c=>manualSelected.add(courseKey(c)));renderManual()};$("clearSelected").onclick=()=>{manualSelected.clear();renderManual()};$("saveManual").onclick=saveManual;$("removeManual").onclick=removeManual;
 $("quickBtn").onclick=openActionSheet;$("englishQuickBtn").onclick=()=>openQuick({subject:"英文",activity:"文章",minutes:20});$("quickSubject").onchange=updateQuickFields;$("saveQuick").onclick=saveQuick;
 $("questionBtn").onclick=openQuestion;$("qSubject").onchange=updateQuestionCourse;$("saveQuestion").onclick=saveQuestion;$("questionSubjectFilter").onchange=renderQuestions;$("englishPeriod").onchange=renderEnglish;
+$("prevStudyDay").onclick=()=>{selectedStudyDate=addDaysISO(selectedStudyDate,-1);renderToday()};
+$("nextStudyDay").onclick=()=>{selectedStudyDate=addDaysISO(selectedStudyDate,1);renderToday()};
+$("returnToday").onclick=()=>{selectedStudyDate=iso();renderToday()};
 $("nextBtn").onclick=()=>{let t=iso(),p=allActivities().filter(a=>a.date===t&&a.type==="PLAN"&&!completionForPlan(a))[0];if(p)return openQuickFromPlan(p);let d=dueCourses()[0];if(d)return openQuickForCourse(d,"複習");setView("courses");toast("今天沒有未完成 PLAN / 到期複習，可以安排下一堂課")};
 $("syncBtn").onclick=()=>sync(true);$("settingsBtn").onclick=()=>setView("settings");
 $("saveSettings").onclick=()=>{settings={...settings,sheetId:$("sheetId").value.trim(),activitySheet:$("activitySheet").value.trim()||"ActivityLog",manualSheet:$("manualSheet").value.trim()||"ManualProgress",quickSheet:$("quickSheet").value.trim()||"QuickLog",questionSheet:$("questionSheet").value.trim()||"QuestionLog",webAppUrl:$("webAppUrl").value.trim(),writeToken:$("writeToken").value.trim(),refreshMin:Number($("refreshMin").value)||5,reviewIntervals:[$("r1"),$("r2"),$("r3"),$("r4")].map((x,i)=>Number(x.value)||[3,7,14,30][i])};localStorage.setItem("studySettings",JSON.stringify(settings));derive();render();sync(true)};
@@ -1787,8 +2466,14 @@ $("backupBtn").onclick=saveBackup;$("restoreBtn").onclick=()=>$("restoreInput").
 let dz=$("dropzone"),ci=$("csvInput");dz.onclick=()=>ci.click();ci.onchange=()=>{if(!ci.files[0])return;let r=new FileReader();r.onload=()=>{let a=csvParse(r.result);if(!a.length)return toast("CSV 沒有資料");activityLog=a;localStorage.setItem("studyActivities",JSON.stringify(a));render();toast(`已匯入 ActivityLog ${a.length} 筆`)};r.readAsText(ci.files[0])};["dragenter","dragover"].forEach(e=>dz.addEventListener(e,x=>{x.preventDefault();dz.classList.add("drag")}));["dragleave","drop"].forEach(e=>dz.addEventListener(e,x=>{x.preventDefault();dz.classList.remove("drag")}));dz.addEventListener("drop",e=>{ci.files=e.dataTransfer.files;ci.onchange()});
 let theme=localStorage.getItem("studyTheme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=theme;$("themeBtn").onclick=()=>{let t=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=t;localStorage.setItem("studyTheme",t)};
 
+if(courseFilterState.subject)courseSubject=courseFilterState.subject;
+if(typeof courseFilterState.attention==="boolean")courseAttentionOnly=courseFilterState.attention;
+if($("courseSearch"))$("courseSearch").value=courseFilterState.search||"";
+if($("priorityFilter"))$("priorityFilter").value=courseFilterState.priority||"";
+if($("statusFilter"))$("statusFilter").value=courseFilterState.status||"";
+
 $("todayLabel").textContent=new Date().toLocaleDateString("zh-TW",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
-let lv=localStorage.getItem("studyView");if(lv&&document.getElementById("view-"+lv))setView(lv);
+selectedStudyDate=iso();setView("today");
 lastSync=Number(localStorage.getItem("studyLastSync"))||null;derive();render();setSync(lastSync?4:0,4);if(settings.webAppUrl&&settings.writeToken)sync(false);
 
 if("serviceWorker" in navigator && location.protocol.startsWith("http")){
