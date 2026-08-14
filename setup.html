@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6d63f2">
+<title>Study OS 同步設定</title>
+<style>
+:root{--bg:#f4f6f9;--panel:#fff;--text:#101828;--muted:#667085;--line:#e6e9ef;--accent:#6d63f2;--green:#138a61;--greenBg:#e9f8f2;--red:#c83d3d;--redBg:#fff0f0;--amber:#a66a0a;--amberBg:#fff7e7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Segoe UI",sans-serif}
+main{width:min(720px,calc(100% - 28px));margin:34px auto 80px}.brand{display:flex;align-items:center;gap:12px;margin-bottom:20px}.logo{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:var(--accent);color:#fff;font-weight:900}.brand h1{font-size:20px;margin:0}.brand p{font-size:12px;color:var(--muted);margin:4px 0 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 18px 50px rgba(16,24,40,.07);margin-bottom:14px}.step{font-size:11px;color:var(--accent);font-weight:800;margin-bottom:7px}.card h2{font-size:16px;margin:0 0 8px}.note{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:15px}
+label{display:block;font-size:11px;color:var(--muted);font-weight:750;margin:12px 0 6px}input{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;font:inherit;font-size:13px;outline:none;background:#fff}.buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}button,a.btn{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;padding:11px 14px;font-weight:750;text-decoration:none;font-size:13px;cursor:pointer}.primary{background:var(--accent)!important;border-color:var(--accent)!important;color:white!important}button:disabled{opacity:.55;cursor:wait}
+.status{border-radius:14px;padding:13px 14px;font-size:12px;line-height:1.55;margin-top:14px;display:none}.status.show{display:block}.status.info{background:var(--amberBg);color:var(--amber)}.status.ok{background:var(--greenBg);color:var(--green)}.status.err{background:var(--redBg);color:var(--red)}.checks{display:grid;gap:8px;margin-top:12px}.check{display:flex;justify-content:space-between;gap:12px;padding:10px 11px;border:1px solid var(--line);border-radius:12px;font-size:12px}.check span:last-child{font-weight:800}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;word-break:break-all}.small{font-size:11px;color:var(--muted);line-height:1.55}.version{display:inline-block;padding:4px 7px;border-radius:999px;background:#eeecff;color:#6d63f2;font-size:10px;font-weight:800}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><div class="logo">S</div><div><h1>Study OS 同步設定</h1><p>獨立診斷頁 · 不依賴主頁 JavaScript　<span class="version">SETUP v1</span></p></div></div>
+
+  <div class="card">
+    <div class="step">STEP 1</div>
+    <h2>貼上 Apps Script 資料</h2>
+    <div class="note">這個頁面和你的 Study OS 是同一個 GitHub Pages 網域，所以測試成功後會直接把設定存給 Study OS 使用。</div>
+    <label>Apps Script Web App URL</label>
+    <input id="url" placeholder="https://script.google.com/macros/s/xxxxxxxx/exec" autocomplete="off">
+    <label>同步密鑰</label>
+    <input id="token" type="password" placeholder="貼上設定說明裡的同步密鑰" autocomplete="off">
+    <div class="buttons"><button class="primary" id="test">測試連線</button><button id="show">顯示／隱藏密鑰</button></div>
+    <div id="status" class="status"></div>
+  </div>
+
+  <div class="card">
+    <div class="step">STEP 2</div>
+    <h2>檢查結果</h2>
+    <div class="checks">
+      <div class="check"><span>按鈕 JavaScript</span><span id="cJs">等待測試</span></div>
+      <div class="check"><span>Web App URL</span><span id="cUrl">等待測試</span></div>
+      <div class="check"><span>同步密鑰</span><span id="cToken">等待測試</span></div>
+      <div class="check"><span>Apps Script 回應</span><span id="cApi">等待測試</span></div>
+      <div class="check"><span>ActivityLog</span><span id="cA">—</span></div>
+      <div class="check"><span>ManualProgress</span><span id="cM">—</span></div>
+      <div class="check"><span>QuickLog</span><span id="cQ">—</span></div>
+      <div class="check"><span>QuestionLog</span><span id="cQQ">—</span></div>
+    </div>
+    <div class="buttons"><a class="btn" href="./">回到 Study OS</a><button id="clear">清除目前設定</button></div>
+  </div>
+
+  <div class="card">
+    <div class="step">如果失敗</div>
+    <div class="small">
+      「unauthorized」＝同步密鑰不一致。<br>
+      「連線逾時」＝通常是 Apps Script 還是舊部署，或 /exec 網址貼錯。<br>
+      「無法載入 Apps Script」＝部署存取權限或網址有問題。<br>
+      成功後會顯示四個工作表各有幾筆，並自動儲存設定。
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const status=(msg,type)=>{
+    $("status").className="status show "+type;
+    $("status").textContent=msg;
+  };
+  const mark=(id,text,ok=null)=>{
+    $(id).textContent=text;
+    $(id).style.color=ok===true?"#138a61":ok===false?"#c83d3d":"";
+  };
+  mark("cJs","正常",true);
+
+  let settings={};
+  try{settings=JSON.parse(localStorage.getItem("studySettings")||"{}")||{}}catch{}
+  $("url").value=settings.webAppUrl||settings.manualWebAppUrl||"";
+  $("token").value=settings.writeToken||settings.manualToken||"";
+
+  $("show").addEventListener("click",()=>{
+    $("token").type=$("token").type==="password"?"text":"password";
+  });
+
+  $("clear").addEventListener("click",()=>{
+    let s={};
+    try{s=JSON.parse(localStorage.getItem("studySettings")||"{}")||{}}catch{}
+    delete s.webAppUrl;delete s.writeToken;delete s.manualWebAppUrl;delete s.manualToken;
+    localStorage.setItem("studySettings",JSON.stringify(s));
+    $("url").value="";$("token").value="";
+    status("已清除 Web App URL 與同步密鑰。","info");
+  });
+
+  $("test").addEventListener("click",async()=>{
+    const btn=$("test");
+    const url=$("url").value.trim();
+    const token=$("token").value.trim();
+
+    mark("cJs","正常",true);
+    mark("cUrl",url&&/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec(?:\?.*)?$/.test(url)?"格式正常":"請檢查",!!(url&&/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec(?:\?.*)?$/.test(url)));
+    mark("cToken",token?"已填":"未填",!!token);
+    mark("cApi","測試中…",null);
+    ["cA","cM","cQ","cQQ"].forEach(id=>mark(id,"—"));
+
+    if(!url){status("請先貼 Apps Script Web App URL。","err");return}
+    if(!token){status("請先貼同步密鑰。","err");return}
+
+    btn.disabled=true;btn.textContent="測試中…";
+    status("按鈕有正常收到點擊。現在正在連 Apps Script，最多等 12 秒。","info");
+
+    let settled=false;
+    const cb="__studySetup_"+Date.now()+"_"+Math.random().toString(36).slice(2);
+    const s=document.createElement("script");
+
+    const finish=()=>{
+      delete window[cb];
+      s.remove();
+      btn.disabled=false;
+      btn.textContent="測試連線";
+    };
+
+    const timer=setTimeout(()=>{
+      if(settled)return;
+      settled=true;finish();
+      mark("cApi","逾時",false);
+      status("連線逾時。請確認 Apps Script 已使用最新版程式碼重新「新增部署」，並貼的是新的 /exec 網址。","err");
+    },12000);
+
+    window[cb]=(data)=>{
+      if(settled)return;
+      settled=true;clearTimeout(timer);finish();
+
+      if(!data||data.ok!==true){
+        mark("cApi",data&&data.error?data.error:"失敗",false);
+        if(data&&data.error==="unauthorized"){
+          mark("cToken","不一致",false);
+          status("Apps Script 有收到請求，但同步密鑰不一致。請確認網站填的密鑰和 Apps Script 的 STUDY_OS_WRITE_SECRET 完全相同。","err");
+        }else{
+          status("Apps Script 有回應，但回傳失敗："+((data&&data.error)||"未知錯誤"),"err");
+        }
+        return;
+      }
+
+      const a=Array.isArray(data.activityLog)?data.activityLog:[];
+      const m=Array.isArray(data.manualProgress)?data.manualProgress:[];
+      const q=Array.isArray(data.quickLog)?data.quickLog:[];
+      const qq=Array.isArray(data.questionLog)?data.questionLog:[];
+
+      mark("cApi","成功",true);
+      mark("cA",a.length+" 筆",true);
+      mark("cM",m.length+" 筆",true);
+      mark("cQ",q.length+" 筆",true);
+      mark("cQQ",qq.length+" 筆",true);
+
+      let old={};
+      try{old=JSON.parse(localStorage.getItem("studySettings")||"{}")||{}}catch{}
+      const saved={
+        ...old,
+        webAppUrl:url,
+        writeToken:token,
+        activitySheet:old.activitySheet||"ActivityLog",
+        manualSheet:old.manualSheet||"ManualProgress",
+        quickSheet:old.quickSheet||"QuickLog",
+        questionSheet:old.questionSheet||"QuestionLog",
+        refreshMin:Number(old.refreshMin)||5,
+        reviewIntervals:Array.isArray(old.reviewIntervals)?old.reviewIntervals:[3,7,14,30]
+      };
+      localStorage.setItem("studySettings",JSON.stringify(saved));
+
+      localStorage.setItem("studyActivities",JSON.stringify(a));
+      const mm={};m.forEach(x=>{if(x.key)mm[x.key]=x});
+      localStorage.setItem("studyManualProgress",JSON.stringify(mm));
+      localStorage.setItem("studyQuickLog",JSON.stringify(q));
+      localStorage.setItem("studyQuestionLog",JSON.stringify(qq));
+      localStorage.setItem("studyLastSync",String(Date.now()));
+
+      status("同步成功，設定已儲存給 Study OS。現在可以按「回到 Study OS」。","ok");
+    };
+
+    s.onerror=()=>{
+      if(settled)return;
+      settled=true;clearTimeout(timer);finish();
+      mark("cApi","無法載入",false);
+      status("瀏覽器無法載入 Apps Script。請確認 Web App 的部署權限與 /exec 網址。","err");
+    };
+
+    try{
+      const u=new URL(url);
+      u.searchParams.set("action","sync");
+      u.searchParams.set("token",token);
+      u.searchParams.set("callback",cb);
+      u.searchParams.set("_",Date.now());
+      s.src=u.toString();
+      document.head.appendChild(s);
+    }catch(e){
+      settled=true;clearTimeout(timer);finish();
+      mark("cUrl","網址錯誤",false);
+      status("Web App URL 格式無法解析。","err");
+    }
+  });
+})();
+</script>
+</body>
+</html>
