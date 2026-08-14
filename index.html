@@ -62,7 +62,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
 <body>
 <div class="shell">
 <aside class="sidebar">
-  <div class="brand"><div class="logo">S</div><div><h1>後西醫 Study OS</h1><small>Final · Study command center</small></div></div>
+  <div class="brand"><div class="logo">S</div><div><h1>後西醫 Study OS</h1><small>Final · Private Sync</small></div></div>
   <div class="nav">
     <button data-view="today" class="active" data-icon="today">今天</button>
     <button data-view="dashboard" data-icon="dash">儀表板</button>
@@ -159,7 +159,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
     <div class="settings-grid">
       <div class="card setting-card">
         <div class="section-head"><h3>Google Sheet 讀取</h3><span>ActivityLog + 3</span></div>
-        <div class="note">網站會同步 ActivityLog、ManualProgress、QuickLog、QuestionLog。同步失敗時保留上次成功資料。</div>
+        <div class="note">四個工作表全部透過 Apps Script 私人同步；Google Sheet 不需要公開。同步失敗時保留上次成功資料。</div>
         <div class="field"><label>Google Sheet ID</label><input id="sheetId"></div>
         <div class="field-row"><div class="field"><label>ActivityLog</label><input id="activitySheet"></div><div class="field"><label>ManualProgress</label><input id="manualSheet"></div></div>
         <div class="field-row"><div class="field"><label>QuickLog</label><input id="quickSheet"></div><div class="field"><label>QuestionLog</label><input id="questionSheet"></div></div>
@@ -167,7 +167,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
       </div>
       <div class="card setting-card">
         <div class="section-head"><h3>跨裝置寫入</h3><span id="cloudState">尚未設定</span></div>
-        <div class="note">Web App URL + 同步密鑰只儲存在你的瀏覽器。公開 GitHub 原始碼不會包含密鑰。</div>
+        <div class="note">Web App URL + 同步密鑰只儲存在你的瀏覽器。Google Sheet 可保持私人，公開 GitHub 原始碼也不會包含密鑰。</div>
         <div class="field"><label>Apps Script Web App URL</label><input id="webAppUrl" placeholder="https://script.google.com/macros/s/.../exec"></div>
         <div class="field"><label>同步密鑰</label><input id="writeToken" type="password" autocomplete="off" placeholder="貼上設定檔中的密鑰"></div>
         <button class="btn primary" id="saveSettings">儲存並測試同步</button>
@@ -483,19 +483,86 @@ function csvParse(text){
   let rows=[],row=[],f="",q=false;for(let i=0;i<text.length;i++){let c=text[i];if(q){if(c=='"'&&text[i+1]=='"'){f+='"';i++}else if(c=='"')q=false;else f+=c}else if(c=='"')q=true;else if(c==","){row.push(f);f=""}else if(c=="\n"){row.push(f.replace(/\r$/,""));rows.push(row);row=[];f=""}else f+=c}if(f||row.length){row.push(f);rows.push(row)}
   if(!rows.length)return[];let h=rows.shift().map(x=>x.replace(/^\uFEFF/,"").trim());return rows.filter(r=>r.some(x=>String(x).trim())).map(r=>{let o={};h.forEach((k,i)=>o[k]=r[i]??"");["minutes","understanding","total_questions","correct","wrong","accuracy","progress"].forEach(k=>{if(o[k]!==""&&o[k]!=null)o[k]=Number(o[k])});return o})
 }
-async function fetchSheet(name){
-  let url=`https://docs.google.com/spreadsheets/d/${encodeURIComponent(settings.sheetId)}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}&_=${Date.now()}`;
-  let r=await fetch(url,{cache:"no-store"});if(!r.ok)throw new Error(`${name} ${r.status}`);return csvParse(await r.text())
+function privateSync(){
+  return new Promise((resolve,reject)=>{
+    if(!settings.webAppUrl)return reject(new Error("請先填 Apps Script Web App URL"));
+    if(!settings.writeToken)return reject(new Error("請先填同步密鑰"));
+
+    const cb="__studyOSSync_"+Date.now()+"_"+Math.random().toString(36).slice(2);
+    const script=document.createElement("script");
+    let settled=false;
+    const cleanup=()=>{delete window[cb];script.remove()};
+    const timer=setTimeout(()=>{
+      if(settled)return;settled=true;cleanup();
+      reject(new Error("連線逾時，請確認 Web App 已重新部署"));
+    },12000);
+
+    window[cb]=(data)=>{
+      if(settled)return;settled=true;clearTimeout(timer);cleanup();
+      if(!data||data.ok!==true)return reject(new Error(data?.error||"Apps Script 回傳失敗"));
+      resolve(data);
+    };
+
+    script.onerror=()=>{
+      if(settled)return;settled=true;clearTimeout(timer);cleanup();
+      reject(new Error("無法連到 Apps Script，請確認 /exec 網址"));
+    };
+
+    const u=new URL(settings.webAppUrl);
+    u.searchParams.set("action","sync");
+    u.searchParams.set("token",settings.writeToken);
+    u.searchParams.set("callback",cb);
+    u.searchParams.set("_",Date.now());
+    script.src=u.toString();
+    document.head.appendChild(script);
+  });
 }
+
 async function sync(show=true){
-  let ok=0;
-  try{let a=await fetchSheet(settings.activitySheet);if(a.length||true){activityLog=a;localStorage.setItem("studyActivities",JSON.stringify(a));ok++}}catch(e){console.warn(e)}
-  try{let a=await fetchSheet(settings.manualSheet),m={};a.forEach(x=>{if(x.key)m[x.key]=x});manualOverrides=m;localStorage.setItem("studyManualProgress",JSON.stringify(m));ok++}catch(e){console.warn(e)}
-  try{let a=await fetchSheet(settings.quickSheet);quickLog=a;localStorage.setItem("studyQuickLog",JSON.stringify(a));ok++}catch(e){console.warn(e)}
-  try{let a=await fetchSheet(settings.questionSheet);questionLog=a;localStorage.setItem("studyQuestionLog",JSON.stringify(a));ok++}catch(e){console.warn(e)}
-  lastSync=Date.now();localStorage.setItem("studyLastSync",String(lastSync));render();setSync(ok,4);if(show)toast(ok===4?"四個資料來源都已更新":`同步完成 ${ok}/4；其餘使用快取`);
-  clearInterval(timer);timer=setInterval(()=>sync(false),Math.max(1,Number(settings.refreshMin)||5)*60000)
+  const saveBtn=$("saveSettings");
+  const oldText=saveBtn?.textContent||"儲存並測試同步";
+  if(show&&saveBtn){
+    saveBtn.disabled=true;
+    saveBtn.textContent="測試中…";
+    toast("正在測試私人同步…");
+  }
+
+  try{
+    const data=await privateSync();
+
+    activityLog=Array.isArray(data.activityLog)?data.activityLog:[];
+    quickLog=Array.isArray(data.quickLog)?data.quickLog:[];
+    questionLog=Array.isArray(data.questionLog)?data.questionLog:[];
+
+    const m={};
+    (Array.isArray(data.manualProgress)?data.manualProgress:[]).forEach(x=>{if(x.key)m[x.key]=x});
+    manualOverrides=m;
+
+    localStorage.setItem("studyActivities",JSON.stringify(activityLog));
+    localStorage.setItem("studyQuickLog",JSON.stringify(quickLog));
+    localStorage.setItem("studyQuestionLog",JSON.stringify(questionLog));
+    localStorage.setItem("studyManualProgress",JSON.stringify(manualOverrides));
+
+    lastSync=Date.now();
+    localStorage.setItem("studyLastSync",String(lastSync));
+    render();
+    setSync(4,4);
+
+    if(show)toast(`同步成功 · Activity ${activityLog.length} · 補登 ${Object.keys(manualOverrides).length} · 快速 ${quickLog.length} · 題目 ${questionLog.length}`);
+  }catch(e){
+    console.warn(e);
+    setSync(0,4);
+    if(show)toast(`同步失敗：${e?.message||e}`);
+  }finally{
+    if(show&&saveBtn){
+      saveBtn.disabled=false;
+      saveBtn.textContent=oldText;
+    }
+    clearInterval(timer);
+    timer=setInterval(()=>sync(false),Math.max(1,Number(settings.refreshMin)||5)*60000);
+  }
 }
+
 async function postCloud(action,items){
   if(!settings.webAppUrl||!settings.writeToken||!items?.length)return false;
   try{let body=new URLSearchParams();body.set("payload",JSON.stringify({action,items,token:settings.writeToken}));await fetch(settings.webAppUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body});return true}catch(e){console.warn(e);return false}
@@ -620,7 +687,7 @@ let theme=localStorage.getItem("studyTheme")||(matchMedia("(prefers-color-scheme
 
 $("todayLabel").textContent=new Date().toLocaleDateString("zh-TW",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
 let lv=localStorage.getItem("studyView");if(lv&&document.getElementById("view-"+lv))setView(lv);
-lastSync=Number(localStorage.getItem("studyLastSync"))||null;derive();render();setSync(lastSync?1:0,4);sync(false);
+lastSync=Number(localStorage.getItem("studyLastSync"))||null;derive();render();setSync(lastSync?4:0,4);if(settings.webAppUrl&&settings.writeToken)sync(false);
 
 if("serviceWorker" in navigator && location.protocol.startsWith("http")){
   navigator.serviceWorker.register("./sw.js").then(reg=>{
