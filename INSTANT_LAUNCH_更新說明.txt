@@ -1,0 +1,24 @@
+Study OS｜Instant Launch Final
+
+目標：重新整理網站後，不需要等 Google Sheet 才能開始用。
+
+已完成：
+- 重新整理先讀上次 localStorage 資料。
+- 初始只 render「今天」，不再一次 render 全部頁面。
+- 統計 / 課程 / 複習 / 題目 / 英文 / 設定改為第一次進入才 render。
+- Google Sheet 改為第一幀畫面出來後才做背景同步。
+- 背景同步期間舊資料仍可操作。
+- 雲端資料沒有變化時，不重畫畫面。
+- 雲端真的有變化時，只更新目前頁面；其他頁標記為 dirty，進去時才更新。
+- derive 加上資料 revision，沒有資料變化不重算。
+- 同步狀態區分「顯示本機資料 / 雲端同步中 / 已同步 / 雲端同步失敗」。
+- 雲端失敗不會清空畫面，仍使用上次資料。
+- 專注模式 session 存入 localStorage。
+- 專注中重新整理後可恢復課程、時間、目標與執行/暫停狀態。
+- 專注計時中刷新，離開期間仍計入經過時間。
+- Website DONE → QuickLog + Google Calendar Mirror 完整保留。
+- web_event_id 去重邏輯完整保留。
+
+Apps Script：
+這一版沒有新增 Apps Script 要求。
+繼續使用上一版 Calendar Mirror Patch 即可。

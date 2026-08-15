@@ -1105,6 +1105,20 @@ body.initial-loading .view.active>.initial-skeleton{display:block}
   .context-menu{max-width:calc(100vw - 24px)}
 }
 
+
+/* ===== INSTANT LAUNCH / PERFORMANCE FINAL ===== */
+body.boot-ready .view.active{animation:none}
+body.background-syncing #syncDot{animation:syncPulse 1.15s ease-in-out infinite}
+@keyframes syncPulse{0%,100%{opacity:.45}50%{opacity:1}}
+.instant-badge{
+  display:none;align-items:center;gap:5px;padding:5px 8px;
+  border-radius:999px;border:1px solid var(--line);
+  background:color-mix(in srgb,var(--panel2) 84%,transparent);
+  color:var(--muted);font-size:9px;font-weight:650
+}
+body.background-syncing .instant-badge{display:inline-flex}
+@media(max-width:720px){.instant-badge{padding:4px 7px;font-size:8px}}
+
 </style>
 </head>
 <body>
@@ -1169,6 +1183,7 @@ body.initial-loading .view.active>.initial-skeleton{display:block}
     <div class="hello"><h2 id="pageTitle">今天</h2><p id="todayLabel"></p></div>
     <div class="top-actions">
       <button class="btn primary" id="quickBtn">＋ <span class="quick-label">快速紀錄</span></button>
+      <span class="instant-badge" id="instantBadge">● 雲端同步中</span>
       <button class="btn icon-btn" id="syncBtn" title="立即同步" data-icon="refresh"></button>
       <button class="btn icon-btn" id="themeBtn" title="切換深淺色" data-icon="moon"></button><button class="btn icon-btn" id="settingsBtn" title="設定" data-icon="settings"></button>
     </div>
@@ -2155,8 +2170,155 @@ function applyTodayAnimation(){
 }
 
 
+
+const VIEW_RENDERERS={
+  today:()=>renderToday(),
+  dashboard:()=>renderDashboard(),
+  courses:()=>renderCourses(),
+  reviews:()=>renderReviews(),
+  questions:()=>renderQuestions(),
+  english:()=>renderEnglish(),
+  settings:()=>renderSettings()
+};
+const renderedViews=new Set();
+const dirtyViews=new Set(Object.keys(VIEW_RENDERERS));
+let dataRevision=0,deriveRevision=-1;
+let lastRenderedRevision={};
+let appBooted=false;
+
+function markViewsDirty(...views){
+  (views.length?views:Object.keys(VIEW_RENDERERS)).forEach(v=>dirtyViews.add(v))
+}
+function ensureDerived(){
+  if(deriveRevision===dataRevision)return;
+  derive();
+  deriveRevision=dataRevision
+}
+function renderView(v,force=false){
+  const fn=VIEW_RENDERERS[v];if(!fn)return;
+  ensureDerived();
+  if(!force&&!dirtyViews.has(v)&&lastRenderedRevision[v]===dataRevision&&renderedViews.has(v))return;
+  fn();
+  renderedViews.add(v);
+  dirtyViews.delete(v);
+  lastRenderedRevision[v]=dataRevision
+}
+function renderGlobalMeta(){
+  ensureDerived();
+  renderNavMeta();
+  renderSyncHover();
+  paintFocusTimer()
+}
+function refreshCurrentView(force=false){
+  renderView(currentView||"today",force);
+  renderGlobalMeta()
+}
+function invalidateData(){
+  dataRevision++;
+  deriveRevision=-1;
+  markViewsDirty()
+}
+function lightweightHash(rows,fields){
+  let h=2166136261;
+  const arr=Array.isArray(rows)?rows:[];
+  for(let i=0;i<arr.length;i++){
+    const r=arr[i]||{};
+    for(const f of fields){
+      const s=String(r[f]??"");
+      for(let j=0;j<s.length;j++){h^=s.charCodeAt(j);h=Math.imul(h,16777619)}
+    }
+  }
+  return (h>>>0).toString(36)
+}
+function currentDataSignature(){
+  const manual=Object.values(manualOverrides||{});
+  return [
+    activityLog.length,lightweightHash(activityLog,["event_id","date","minutes","status","notes"]),
+    quickLog.length,lightweightHash(quickLog,["event_id","updated_at","minutes","calendar_event_id"]),
+    questionLog.length,lightweightHash(questionLog,["id","updated_at","reviewed","correct","wrong"]),
+    manual.length,lightweightHash(manual,["key","updated_at","status","progress"])
+  ].join("|")
+}
+function payloadSignature(data){
+  const manual=Array.isArray(data.manualProgress)?data.manualProgress:[];
+  const q=dedupeQuickDoubleClicks(Array.isArray(data.quickLog)?data.quickLog:[]);
+  return [
+    (data.activityLog||[]).length,lightweightHash(data.activityLog||[],["event_id","date","minutes","status","notes"]),
+    q.length,lightweightHash(q,["event_id","updated_at","minutes","calendar_event_id"]),
+    (data.questionLog||[]).length,lightweightHash(data.questionLog||[],["id","updated_at","reviewed","correct","wrong"]),
+    manual.length,lightweightHash(manual,["key","updated_at","status","progress"])
+  ].join("|")
+}
+function scheduleBackgroundSync(delay=120){
+  if(!settings.webAppUrl||!settings.writeToken)return;
+  const run=()=>sync(false);
+  if("requestIdleCallback" in window)requestIdleCallback(run,{timeout:1200});
+  else setTimeout(run,delay)
+}
+function setCachedReadyStatus(){
+  if(lastSync){
+    $("syncDot").className="dot warn";
+    $("syncText").textContent="顯示本機資料";
+    $("syncTime").textContent=`上次 ${new Date(lastSync).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})}`;
+  }else{
+    $("syncDot").className="dot warn";
+    $("syncText").textContent="本機資料已就緒";
+    $("syncTime").textContent="準備背景同步"
+  }
+  renderSyncHover()
+}
+function startBackgroundSyncUI(){
+  document.body.classList.add("background-syncing");
+  $("syncText").textContent="雲端同步中";
+}
+function stopBackgroundSyncUI(){
+  document.body.classList.remove("background-syncing")
+}
+
+/* Focus session survives refresh / temporary tab switches. */
+const FOCUS_STORAGE_KEY="studyFocusSessionV1";
+function persistFocusState(){
+  if(!focusState?.course||!focusState.started){
+    localStorage.removeItem(FOCUS_STORAGE_KEY);return
+  }
+  let elapsed=focusState.elapsed||0;
+  if(focusState.running&&focusState.last)elapsed+=(Date.now()-focusState.last)/1000;
+  localStorage.setItem(FOCUS_STORAGE_KEY,JSON.stringify({
+    courseKey:courseKey(focusState.course),
+    activity:focusState.activity,
+    target:focusState.target,
+    elapsed,
+    running:!!focusState.running,
+    started:true,
+    savedAt:Date.now()
+  }))
+}
+function restoreFocusSession(){
+  let saved=null;
+  try{saved=JSON.parse(localStorage.getItem(FOCUS_STORAGE_KEY)||"null")}catch{}
+  if(!saved?.started||!saved.courseKey)return false;
+  ensureDerived();
+  const c=derived.find(x=>courseKey(x)===saved.courseKey);
+  if(!c){localStorage.removeItem(FOCUS_STORAGE_KEY);return false}
+  let elapsed=Number(saved.elapsed)||0;
+  if(saved.running&&saved.savedAt)elapsed+=Math.max(0,(Date.now()-Number(saved.savedAt))/1000);
+  focusState={
+    course:c,activity:saved.activity||"看課",target:Number(saved.target)||0,
+    elapsed,running:!!saved.running,last:Date.now(),started:true
+  };
+  if(focusState.running){
+    clearInterval(focusTicker);
+    focusTicker=setInterval(()=>{tickFocus();persistFocusState()},1000)
+  }
+  paintFocusTimer();
+  return true
+}
+window.addEventListener("pagehide",()=>{rememberScroll();persistFocusState()});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")persistFocusState()});
+
 function render(){
-  derive();renderToday();renderDashboard();renderCourses();renderReviews();renderQuestions();renderEnglish();renderSettings();renderNavMeta();renderSyncHover();
+  invalidateData();
+  refreshCurrentView(true)
 }
 
 function toast(msg,action=null,label="復原"){
@@ -2211,46 +2373,51 @@ function privateSync(){
 
 async function sync(show=true){
   document.body.classList.add("sync-loading");
-  const firstLoad=!allActivities().length;if(firstLoad)setInitialLoading(true);
-  const saveBtn=$("saveSettings");
-  const oldText=saveBtn?.textContent||"儲存並測試同步";
-  if(show&&saveBtn){
-    saveBtn.disabled=true;
-    saveBtn.textContent="測試中…";
-    toast("正在測試私人同步…");
-  }
+  startBackgroundSyncUI();
+  const saveBtn=$("saveSettings"),oldText=saveBtn?.textContent||"儲存並測試同步";
+  if(show&&saveBtn){saveBtn.disabled=true;saveBtn.textContent="測試中…";toast("正在測試私人同步…")}
 
   try{
+    const before=currentDataSignature();
     const data=await privateSync();
+    const incoming=payloadSignature(data);
 
-    activityLog=Array.isArray(data.activityLog)?data.activityLog:[];
-    quickLog=dedupeQuickDoubleClicks(Array.isArray(data.quickLog)?data.quickLog:[]);
-    questionLog=Array.isArray(data.questionLog)?data.questionLog:[];
+    if(incoming!==before){
+      activityLog=Array.isArray(data.activityLog)?data.activityLog:[];
+      quickLog=dedupeQuickDoubleClicks(Array.isArray(data.quickLog)?data.quickLog:[]);
+      questionLog=Array.isArray(data.questionLog)?data.questionLog:[];
+      const mm={};
+      (Array.isArray(data.manualProgress)?data.manualProgress:[]).forEach(x=>{if(x.key)mm[x.key]=x});
+      manualOverrides=mm;
 
-    const m={};
-    (Array.isArray(data.manualProgress)?data.manualProgress:[]).forEach(x=>{if(x.key)m[x.key]=x});
-    manualOverrides=m;
+      localStorage.setItem("studyActivities",JSON.stringify(activityLog));
+      localStorage.setItem("studyQuickLog",JSON.stringify(quickLog));
+      localStorage.setItem("studyQuestionLog",JSON.stringify(questionLog));
+      localStorage.setItem("studyManualProgress",JSON.stringify(manualOverrides));
 
-    localStorage.setItem("studyActivities",JSON.stringify(activityLog));
-    localStorage.setItem("studyQuickLog",JSON.stringify(quickLog));
-    localStorage.setItem("studyQuestionLog",JSON.stringify(questionLog));
-    localStorage.setItem("studyManualProgress",JSON.stringify(manualOverrides));
+      invalidateData();
+      refreshCurrentView(true);
+    }else{
+      renderGlobalMeta()
+    }
 
     lastSync=Date.now();
     localStorage.setItem("studyLastSync",String(lastSync));
-    render();
     setSync(4,4);
-
-    if(show)toast(`同步成功 · Activity ${activityLog.length} · 補登 ${Object.keys(manualOverrides).length} · 快速 ${quickLog.length} · 題目 ${questionLog.length}`);
+    if(show)toast(incoming!==before?"同步成功 · 已更新最新資料":"同步成功 · 已是最新資料");
   }catch(e){
     console.warn(e);
-    setSync(0,4);
+    $("syncDot").className="dot bad";
+    $("syncText").textContent="雲端同步失敗";
+    $("syncTime").textContent=lastSync?`仍顯示 ${new Date(lastSync).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})} 本機資料`:"使用本機資料";
+    renderSyncHover();
     if(show)toast(`同步失敗：${e?.message||e}`);
   }finally{
-    if(show&&saveBtn){saveBtn.disabled=false;saveBtn.textContent=oldText;}
-    document.body.classList.remove("sync-loading");setInitialLoading(false);
+    if(show&&saveBtn){saveBtn.disabled=false;saveBtn.textContent=oldText}
+    document.body.classList.remove("sync-loading");
+    stopBackgroundSyncUI();
     clearInterval(timer);
-    timer=setInterval(()=>sync(false),Math.max(1,Number(settings.refreshMin)||5)*60000);
+    timer=setInterval(()=>sync(false),Math.max(1,Number(settings.refreshMin)||5)*60000)
   }
 }
 
@@ -2509,13 +2676,13 @@ function focusStart(){
   if(focusState.running||!focusState.course)return;
   focusState.started=true;focusState.running=true;focusState.last=Date.now();
   clearInterval(focusTicker);focusTicker=setInterval(tickFocus,500);
-  $("focusStart").textContent="進行中";paintFocusTimer()
+  $("focusStart").textContent="進行中";paintFocusTimer();persistFocusState()
 }
 
 function focusPause(){
   if(focusState.running){tickFocus();focusState.running=false;clearInterval(focusTicker)}
   else if(focusState.started&&focusState.course){focusState.running=true;focusState.last=Date.now();clearInterval(focusTicker);focusTicker=setInterval(tickFocus,500)}
-  $("focusStart").textContent=focusState.running?"進行中":"繼續";paintFocusTimer()
+  $("focusStart").textContent=focusState.running?"進行中":"繼續";paintFocusTimer();persistFocusState()
 }
 
 function focusComplete(){
@@ -2528,7 +2695,7 @@ function focusComplete(){
     $("quickMinutes").value=Math.max(1,Math.round(elapsed/60)||Math.round(target/60)||30)
   }else setView("courses");
   focusState={course:null,activity:"看課",target:0,elapsed:0,running:false,last:0,started:false};
-  paintFocusTimer();
+  localStorage.removeItem(FOCUS_STORAGE_KEY);paintFocusTimer();
 }
 
 function setView(v){
@@ -2538,6 +2705,8 @@ function setView(v){
   document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x.dataset.view===v));
   $("pageTitle").textContent={today:"今天",dashboard:"統計",courses:"課程進度",reviews:"複習",questions:"題目與錯題",english:"英文輸入",settings:"設定"}[v]||"Study OS";
   localStorage.setItem("studyView",v);
+  renderView(v);
+  renderGlobalMeta();
   restoreScroll(v)
 }
 document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
@@ -2573,10 +2742,10 @@ $("nextStudyDay").onclick=()=>{selectedStudyDate=addDaysISO(selectedStudyDate,1)
 $("returnToday").onclick=()=>{selectedStudyDate=iso();renderToday()};
 $("nextBtn").onclick=()=>{let t=iso(),p=allActivities().filter(a=>a.date===t&&a.type==="PLAN"&&!completionForPlan(a))[0];if(p)return openQuickFromPlan(p);let d=dueCourses()[0];if(d)return openQuickForCourse(d,"複習");setView("courses");toast("今天沒有未完成 PLAN / 到期複習，可以安排下一堂課")};
 $("syncBtn").onclick=()=>sync(true);$("settingsBtn").onclick=()=>setView("settings");
-$("saveSettings").onclick=()=>{settings={...settings,sheetId:$("sheetId").value.trim(),activitySheet:$("activitySheet").value.trim()||"ActivityLog",manualSheet:$("manualSheet").value.trim()||"ManualProgress",quickSheet:$("quickSheet").value.trim()||"QuickLog",questionSheet:$("questionSheet").value.trim()||"QuestionLog",webAppUrl:$("webAppUrl").value.trim(),writeToken:$("writeToken").value.trim(),refreshMin:Number($("refreshMin").value)||5,reviewIntervals:[$("r1"),$("r2"),$("r3"),$("r4")].map((x,i)=>Number(x.value)||[3,7,14,30][i])};localStorage.setItem("studySettings",JSON.stringify(settings));derive();render();sync(true)};
+$("saveSettings").onclick=()=>{settings={...settings,sheetId:$("sheetId").value.trim(),activitySheet:$("activitySheet").value.trim()||"ActivityLog",manualSheet:$("manualSheet").value.trim()||"ManualProgress",quickSheet:$("quickSheet").value.trim()||"QuickLog",questionSheet:$("questionSheet").value.trim()||"QuestionLog",webAppUrl:$("webAppUrl").value.trim(),writeToken:$("writeToken").value.trim(),refreshMin:Number($("refreshMin").value)||5,reviewIntervals:[$("r1"),$("r2"),$("r3"),$("r4")].map((x,i)=>Number(x.value)||[3,7,14,30][i])};localStorage.setItem("studySettings",JSON.stringify(settings));invalidateData();refreshCurrentView(true);sync(true)};
 document.querySelectorAll("[data-export]").forEach(b=>b.onclick=()=>{let k=b.dataset.export;if(k==="activity")csvDownload(activityLog,"ActivityLog_export.csv",["event_id","date","type","subject","activity","topic","start_time","end_time","minutes","status","plan_title","calendar","format","source","platform","domain","understanding","url","notes"]);if(k==="manual")csvDownload(manualRows(),"ManualProgress_export.csv",["key","subject","course_type","code","status","progress","recent","updated_at"]);if(k==="quick")csvDownload(quickLog,"QuickLog_export.csv",["event_id","date","type","subject","activity","topic","minutes","status","format","source","platform","domain","understanding","url","notes","updated_at"]);if(k==="questions")csvDownload(questionLog,"QuestionLog_export.csv",["id","date","subject","source","topic","total_questions","correct","wrong","accuracy","error_type","note","reviewed","reviewed_at","updated_at"])});
 $("backupBtn").onclick=saveBackup;$("restoreBtn").onclick=()=>$("restoreInput").click();$("restoreInput").onchange=()=>{if($("restoreInput").files[0])restoreBackupFile($("restoreInput").files[0])};
-let dz=$("dropzone"),ci=$("csvInput");dz.onclick=()=>ci.click();ci.onchange=()=>{if(!ci.files[0])return;let r=new FileReader();r.onload=()=>{let a=csvParse(r.result);if(!a.length)return toast("CSV 沒有資料");activityLog=a;localStorage.setItem("studyActivities",JSON.stringify(a));render();toast(`已匯入 ActivityLog ${a.length} 筆`)};r.readAsText(ci.files[0])};["dragenter","dragover"].forEach(e=>dz.addEventListener(e,x=>{x.preventDefault();dz.classList.add("drag")}));["dragleave","drop"].forEach(e=>dz.addEventListener(e,x=>{x.preventDefault();dz.classList.remove("drag")}));dz.addEventListener("drop",e=>{ci.files=e.dataTransfer.files;ci.onchange()});
+let dz=$("dropzone"),ci=$("csvInput");dz.onclick=()=>ci.click();ci.onchange=()=>{if(!ci.files[0])return;let r=new FileReader();r.onload=()=>{let a=csvParse(r.result);if(!a.length)return toast("CSV 沒有資料");activityLog=a;localStorage.setItem("studyActivities",JSON.stringify(a));invalidateData();refreshCurrentView(true);toast(`已匯入 ActivityLog ${a.length} 筆`)};r.readAsText(ci.files[0])};["dragenter","dragover"].forEach(e=>dz.addEventListener(e,x=>{x.preventDefault();dz.classList.add("drag")}));["dragleave","drop"].forEach(e=>dz.addEventListener(e,x=>{x.preventDefault();dz.classList.remove("drag")}));dz.addEventListener("drop",e=>{ci.files=e.dataTransfer.files;ci.onchange()});
 let theme=localStorage.getItem("studyTheme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=theme;$("themeBtn").onclick=()=>{let t=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=t;localStorage.setItem("studyTheme",t)};
 
 if(courseFilterState.subject)courseSubject=courseFilterState.subject;
@@ -2586,12 +2755,29 @@ if($("priorityFilter"))$("priorityFilter").value=courseFilterState.priority||"";
 if($("statusFilter"))$("statusFilter").value=courseFilterState.status||"";
 
 $("todayLabel").textContent=new Date().toLocaleDateString("zh-TW",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
-selectedStudyDate=iso();setView("today");
-lastSync=Number(localStorage.getItem("studyLastSync"))||null;derive();render();setSync(lastSync?4:0,4);if(settings.webAppUrl&&settings.writeToken)sync(false);
+selectedStudyDate=iso();
+lastSync=Number(localStorage.getItem("studyLastSync"))||null;
+
+/* Instant Launch: cached data first, TODAY only. */
+currentView="today";
+document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id==="view-today"));
+document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x.dataset.view==="today"));
+$("pageTitle").textContent="今天";
+
+ensureDerived();
+restoreFocusSession();
+renderView("today",true);
+renderGlobalMeta();
+setCachedReadyStatus();
+document.body.classList.add("boot-ready");
+appBooted=true;
+
+/* Browser gets a paint before cloud work starts. */
+requestAnimationFrame(()=>scheduleBackgroundSync(160));
 
 if("serviceWorker" in navigator && location.protocol.startsWith("http")){
   navigator.serviceWorker.register("./sw.js").then(reg=>{
-    $("pwaStatus").textContent="PWA 已啟用；離線可讀最後快取。";
+    $("pwaStatus").textContent="PWA 已啟用；Instant Launch 可先讀本機資料，離線可讀最後快取。";
     reg.addEventListener("updatefound",()=>{let nw=reg.installing;if(nw)nw.addEventListener("statechange",()=>{if(nw.state==="installed"&&navigator.serviceWorker.controller)$("updateBanner").classList.remove("hidden")})})
   }).catch(()=>{$("pwaStatus").textContent="Service Worker 未啟用；網站本身仍可正常使用。"})
 }else $("pwaStatus").textContent="本機檔案模式不啟用 PWA；部署到 GitHub Pages 後會啟用。";
