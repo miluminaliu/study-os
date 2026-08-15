@@ -193,7 +193,7 @@ label{display:block;font-size:11px;color:var(--muted);font-weight:750;margin:12p
 
     try{
       const u=new URL(url);
-      u.searchParams.set("action","sync");
+      u.searchParams.set("action","sync");u.searchParams.set("refresh_calendar","1");
       u.searchParams.set("token",token);
       u.searchParams.set("callback",cb);
       u.searchParams.set("_",Date.now());
