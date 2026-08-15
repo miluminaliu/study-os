@@ -1297,7 +1297,7 @@ body.background-syncing .instant-badge{display:inline-flex}
       </div>
       <div class="card setting-card">
         <div class="section-head"><h3>跨裝置寫入</h3><span id="cloudState">尚未設定</span></div>
-        <div class="note">Web App URL + 同步密鑰只儲存在你的瀏覽器。Google Sheet 可保持私人，公開 GitHub 原始碼也不會包含密鑰。</div>
+        <div class="note">Web App URL + 同步密鑰會獨立儲存在這個瀏覽器，重新整理與網站更新後都會自動恢復。Google Sheet 可保持私人，公開 GitHub 原始碼不包含密鑰。</div>
         <div class="field"><label>Apps Script Web App URL</label><input id="webAppUrl" placeholder="https://script.google.com/macros/s/.../exec"></div>
         <div class="field"><label>同步密鑰</label><input id="writeToken" type="password" autocomplete="off" placeholder="貼上設定檔中的密鑰"></div>
         <button class="btn primary" id="saveSettings">儲存並測試同步</button><div style="margin-top:10px"><a href="./setup.html" style="font-size:12px;color:var(--accent);font-weight:750">如果按鈕沒反應 → 開啟獨立同步診斷</a></div>
@@ -1479,8 +1479,50 @@ const monday=()=>{let d=new Date(),day=(d.getDay()+6)%7;d.setDate(d.getDate()-da
 const courseKey=c=>`${c.subject}|${c.type}|${c.code}`;
 const uid=prefix=>`${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
 
-let settings={...DEFAULTS,...js(localStorage.getItem("studySettings"),{})};
+function storageGet(key,fallback=""){
+  try{
+    const v=localStorage.getItem(key);
+    if(v!==null&&v!=="")return v;
+  }catch(e){}
+  try{
+    const v=sessionStorage.getItem(key);
+    if(v!==null&&v!=="")return v;
+  }catch(e){}
+  return fallback
+}
+function storageSet(key,value){
+  let localOK=false,sessionOK=false;
+  try{localStorage.setItem(key,String(value??""));localOK=localStorage.getItem(key)===String(value??"")}catch(e){}
+  try{sessionStorage.setItem(key,String(value??""));sessionOK=sessionStorage.getItem(key)===String(value??"")}catch(e){}
+  return localOK||sessionOK
+}
+function loadStudySettings(){
+  let saved={};
+  try{saved=JSON.parse(localStorage.getItem("studySettings")||sessionStorage.getItem("studySettings")||"{}")||{}}catch(e){}
+  const dedicatedUrl=storageGet("studyWebAppUrl","");
+  const dedicatedToken=storageGet("studyWriteToken","");
+  return {
+    ...DEFAULTS,
+    ...saved,
+    webAppUrl:dedicatedUrl||saved.webAppUrl||saved.manualWebAppUrl||DEFAULTS.webAppUrl||"",
+    writeToken:dedicatedToken||saved.writeToken||saved.manualToken||DEFAULTS.writeToken||""
+  }
+}
+function persistStudyConnection(){
+  const url=String(settings.webAppUrl||"").trim();
+  const token=String(settings.writeToken||"").trim();
+  const urlOK=storageSet("studyWebAppUrl",url);
+  const tokenOK=storageSet("studyWriteToken",token);
+  try{
+    localStorage.setItem("studySettings",JSON.stringify(settings));
+    sessionStorage.setItem("studySettings",JSON.stringify(settings));
+  }catch(e){}
+  return urlOK&&tokenOK
+}
+let settings=loadStudySettings();
 if(!Array.isArray(settings.reviewIntervals)||settings.reviewIntervals.length<4)settings.reviewIntervals=[3,7,14,30];
+// Migrate older saved connection fields into dedicated persistent keys.
+if(settings.webAppUrl||settings.writeToken)persistStudyConnection();
 let activityLog=js(localStorage.getItem("studyActivities"),null)||SEED;
 let quickLog=js(localStorage.getItem("studyQuickLog"),[])||[];
 let questionLog=js(localStorage.getItem("studyQuestionLog"),[])||[];
@@ -1803,8 +1845,13 @@ function renderEnglish(){
   $("englishBreakdown").innerHTML=entries.length?entries.map(([k,v])=>`<div class="source-row"><span>${esc(k)}</span><div class="progress"><i style="width:${v/max*100}%"></i></div><b>${v}m</b></div>`).join(""):'<div class="empty">沒有資料</div>';
 }
 function renderSettings(){
+  const savedUrl=storageGet("studyWebAppUrl",settings.webAppUrl||"");
+  const savedToken=storageGet("studyWriteToken",settings.writeToken||"");
+  if(savedUrl)settings.webAppUrl=savedUrl;
+  if(savedToken)settings.writeToken=savedToken;
   $("sheetId").value=settings.sheetId;$("activitySheet").value=settings.activitySheet;$("manualSheet").value=settings.manualSheet;$("quickSheet").value=settings.quickSheet;$("questionSheet").value=settings.questionSheet;$("refreshMin").value=settings.refreshMin;
-  $("webAppUrl").value=settings.webAppUrl||"";$("writeToken").value=settings.writeToken||"";$("cloudState").textContent=settings.webAppUrl&&settings.writeToken?"已設定":"尚未設定";
+  $("webAppUrl").value=settings.webAppUrl||"";$("writeToken").value=settings.writeToken||"";
+  $("cloudState").textContent=settings.webAppUrl&&settings.writeToken?"已儲存於此瀏覽器":"尚未設定";
   [$("r1"),$("r2"),$("r3"),$("r4")].forEach((x,i)=>x.value=settings.reviewIntervals[i]||[3,7,14,30][i]);
 }
 
@@ -2616,7 +2663,7 @@ function saveBackup(){
 function restoreBackupFile(file){
   let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(d.activityLog)activityLog=d.activityLog;if(d.quickLog)quickLog=d.quickLog;if(d.questionLog)questionLog=d.questionLog;if(d.manualProgress)manualOverrides=d.manualProgress;if(d.settings)settings={...settings,...d.settings,writeToken:settings.writeToken};persistAll();render();toast("備份已還原到本機；同步密鑰保留原值")}catch(e){toast("備份檔格式不正確")}};r.readAsText(file)
 }
-function persistAll(){localStorage.setItem("studyActivities",JSON.stringify(activityLog));localStorage.setItem("studyQuickLog",JSON.stringify(quickLog));localStorage.setItem("studyQuestionLog",JSON.stringify(questionLog));localStorage.setItem("studyManualProgress",JSON.stringify(manualOverrides));localStorage.setItem("studySettings",JSON.stringify(settings))}
+function persistAll(){localStorage.setItem("studyActivities",JSON.stringify(activityLog));localStorage.setItem("studyQuickLog",JSON.stringify(quickLog));localStorage.setItem("studyQuestionLog",JSON.stringify(questionLog));localStorage.setItem("studyManualProgress",JSON.stringify(manualOverrides));persistStudyConnection()}
 
 
 function openActionSheet(){openModal("actionSheet")}
@@ -2742,7 +2789,33 @@ $("nextStudyDay").onclick=()=>{selectedStudyDate=addDaysISO(selectedStudyDate,1)
 $("returnToday").onclick=()=>{selectedStudyDate=iso();renderToday()};
 $("nextBtn").onclick=()=>{let t=iso(),p=allActivities().filter(a=>a.date===t&&a.type==="PLAN"&&!completionForPlan(a))[0];if(p)return openQuickFromPlan(p);let d=dueCourses()[0];if(d)return openQuickForCourse(d,"複習");setView("courses");toast("今天沒有未完成 PLAN / 到期複習，可以安排下一堂課")};
 $("syncBtn").onclick=()=>sync(true);$("settingsBtn").onclick=()=>setView("settings");
-$("saveSettings").onclick=()=>{settings={...settings,sheetId:$("sheetId").value.trim(),activitySheet:$("activitySheet").value.trim()||"ActivityLog",manualSheet:$("manualSheet").value.trim()||"ManualProgress",quickSheet:$("quickSheet").value.trim()||"QuickLog",questionSheet:$("questionSheet").value.trim()||"QuestionLog",webAppUrl:$("webAppUrl").value.trim(),writeToken:$("writeToken").value.trim(),refreshMin:Number($("refreshMin").value)||5,reviewIntervals:[$("r1"),$("r2"),$("r3"),$("r4")].map((x,i)=>Number(x.value)||[3,7,14,30][i])};localStorage.setItem("studySettings",JSON.stringify(settings));invalidateData();refreshCurrentView(true);sync(true)};
+["webAppUrl","writeToken"].forEach(id=>{
+  const el=$(id);
+  if(!el)return;
+  el.addEventListener("change",()=>{
+    settings.webAppUrl=$("webAppUrl").value.trim();
+    settings.writeToken=$("writeToken").value.trim();
+    persistStudyConnection();
+    $("cloudState").textContent=settings.webAppUrl&&settings.writeToken?"已儲存於此瀏覽器":"尚未設定";
+  });
+});
+$("saveSettings").onclick=()=>{
+  settings={...settings,
+    sheetId:$("sheetId").value.trim(),
+    activitySheet:$("activitySheet").value.trim()||"ActivityLog",
+    manualSheet:$("manualSheet").value.trim()||"ManualProgress",
+    quickSheet:$("quickSheet").value.trim()||"QuickLog",
+    questionSheet:$("questionSheet").value.trim()||"QuestionLog",
+    webAppUrl:$("webAppUrl").value.trim(),
+    writeToken:$("writeToken").value.trim(),
+    refreshMin:Number($("refreshMin").value)||5,
+    reviewIntervals:[$("r1"),$("r2"),$("r3"),$("r4")].map((x,i)=>Number(x.value)||[3,7,14,30][i])
+  };
+  const persisted=persistStudyConnection();
+  $("cloudState").textContent=persisted?"已儲存於此瀏覽器":"瀏覽器儲存失敗";
+  if(!persisted)return toast("瀏覽器無法保存同步設定。請確認不是私密瀏覽或封鎖網站儲存。");
+  invalidateData();refreshCurrentView(true);sync(true)
+};
 document.querySelectorAll("[data-export]").forEach(b=>b.onclick=()=>{let k=b.dataset.export;if(k==="activity")csvDownload(activityLog,"ActivityLog_export.csv",["event_id","date","type","subject","activity","topic","start_time","end_time","minutes","status","plan_title","calendar","format","source","platform","domain","understanding","url","notes"]);if(k==="manual")csvDownload(manualRows(),"ManualProgress_export.csv",["key","subject","course_type","code","status","progress","recent","updated_at"]);if(k==="quick")csvDownload(quickLog,"QuickLog_export.csv",["event_id","date","type","subject","activity","topic","minutes","status","format","source","platform","domain","understanding","url","notes","updated_at"]);if(k==="questions")csvDownload(questionLog,"QuestionLog_export.csv",["id","date","subject","source","topic","total_questions","correct","wrong","accuracy","error_type","note","reviewed","reviewed_at","updated_at"])});
 $("backupBtn").onclick=saveBackup;$("restoreBtn").onclick=()=>$("restoreInput").click();$("restoreInput").onchange=()=>{if($("restoreInput").files[0])restoreBackupFile($("restoreInput").files[0])};
 let dz=$("dropzone"),ci=$("csvInput");dz.onclick=()=>ci.click();ci.onchange=()=>{if(!ci.files[0])return;let r=new FileReader();r.onload=()=>{let a=csvParse(r.result);if(!a.length)return toast("CSV 沒有資料");activityLog=a;localStorage.setItem("studyActivities",JSON.stringify(a));invalidateData();refreshCurrentView(true);toast(`已匯入 ActivityLog ${a.length} 筆`)};r.readAsText(ci.files[0])};["dragenter","dragover"].forEach(e=>dz.addEventListener(e,x=>{x.preventDefault();dz.classList.add("drag")}));["dragleave","drop"].forEach(e=>dz.addEventListener(e,x=>{x.preventDefault();dz.classList.remove("drag")}));dz.addEventListener("drop",e=>{ci.files=e.dataTransfer.files;ci.onchange()});

@@ -1,0 +1,27 @@
+Study OS｜同步設定持久化修正版
+
+修正問題：
+重新整理後 Apps Script Web App URL / 同步密鑰變空白。
+
+修正方式：
+- studySettings 繼續保留。
+- Web App URL 額外獨立保存於 studyWebAppUrl。
+- 同步密鑰額外獨立保存於 studyWriteToken。
+- localStorage + sessionStorage 雙重保存。
+- 啟動時優先讀專用欄位，不再只依賴 studySettings。
+- 舊版已儲存的 webAppUrl/writeToken 會自動遷移到專用欄位。
+- 設定欄位離開焦點(change)時也會先保存，避免尚未按測試就刷新而遺失。
+- 按「儲存並測試同步」後會做瀏覽器儲存讀回確認。
+- 如果瀏覽器真的禁止儲存，會明確顯示錯誤，而不是靜默變空白。
+- setup.html 同步採用相同的專用儲存方式。
+
+其他功能完整保留：
+- Instant Launch
+- Lazy Render
+- 專注模式刷新恢復
+- QuickLog + Google Calendar DONE Mirror
+- ActivityLog / QuickLog web_event_id 去重
+- Sidebar / Companion Mode / Hover / Drill-down 等 UX
+
+Apps Script：
+不需要修改。
