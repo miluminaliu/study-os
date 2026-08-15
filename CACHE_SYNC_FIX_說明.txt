@@ -1,0 +1,18 @@
+Study OS｜Cache + Sync Fix Final
+Build: 2026.08.15-cache-sync-fix-1
+
+修正重點：
+- 補回 manifest.webmanifest 與 sw.js。
+- Service Worker 改成 network-first。
+- 每次新版本啟用會刪除所有舊 study-os cache。
+- register 使用 updateViaCache='none'。
+- 舊 Service Worker 換成新版後自動 reload 一次。
+- 「更新並重新載入」會清除 study-os cache 後重載。
+- 同步狀態 Hover 現在會顯示版本號與最新 ActivityLog。
+
+已確認後端目前有：
+2026-08-15 | PLAN | 生物 | 看課 |
+生物_054-1_第十六回__第27-61頁植物構造_20260516 |
+13:45-14:45 | 60 分鐘
+
+因此只要瀏覽器收到最新 ActivityLog，首頁必須能顯示此 PLAN。
