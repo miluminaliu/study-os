@@ -1,0 +1,37 @@
+Study OS｜Stability Repair Final
+Build: 2026.08.17-stability-repair-1
+
+這版不是新增功能，專門修穩定性。
+
+已定位的實際 Runtime Bug：
+- JavaScript 會執行 $("clearCourseFilters").onclick
+- 但舊版 HTML 沒有 clearCourseFilters 元素
+- 瀏覽器因此在啟動過程丟出 TypeError
+- 該行之後的按鈕事件綁定全部中斷
+- 這就是部分按鈕按了完全沒反應的重要原因之一
+
+本版修正：
+- 補回 clearCourseFilters 按鈕
+- 綁定改成 defensive addEventListener
+- 靜態檢查所有 $("id")，目前沒有缺少的 HTML ID
+- 停用 Service Worker / PWA 快取
+- 自動解除舊 Service Worker 並清理 study-os cache
+- 開站背景同步改成輕量 Sheet 讀取，不再每次強制重建 Calendar
+- 手動按同步仍會強制 Calendar → ActivityLog
+- Apps Script 讀取失敗自動重試一次
+- 同步加 Lock，不允許多個同步請求互相重疊
+- Runtime error / Promise error 會顯示提示，不再靜默失效
+
+保留：
+- Instant Launch / localStorage
+- Apps Script URL 與密鑰持久化
+- PLAN / DONE
+- QuickLog + Google Calendar DONE Mirror
+- web_event_id 去重
+- Focus 計時與刷新恢復
+- 複習提醒預設關閉
+
+部署：
+請完整覆蓋 GitHub repo。
+若 GitHub Desktop 顯示 sw.js 與 manifest.webmanifest 被刪除，請一併 Commit 這兩個刪除。
+Apps Script 不需要因為這一版 Stability Repair 再修改。
