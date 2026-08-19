@@ -1,0 +1,734 @@
+[
+  {
+    "id": "V01D01",
+    "volume": "Vol.01",
+    "day": 1,
+    "title": "Selective Sound",
+    "domain": "Neuroscience / Psychiatry",
+    "words": 706,
+    "questions": 6,
+    "recommended": "18 min",
+    "difficulty": 3,
+    "answers": [
+      "B",
+      "C",
+      "D",
+      "B",
+      "C",
+      "C"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "EXPERIMENT",
+      "DETAIL",
+      "VOCAB",
+      "INFERENCE",
+      "DETAIL/INFERENCE"
+    ]
+  },
+  {
+    "id": "V01D02",
+    "volume": "Vol.01",
+    "day": 2,
+    "title": "Fiery Amoeba",
+    "domain": "Microbiology / Cell Biology",
+    "words": 582,
+    "questions": 6,
+    "recommended": "17 min",
+    "difficulty": 3,
+    "answers": [
+      "C",
+      "B",
+      "E",
+      "D",
+      "A",
+      "B"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "RHETORICAL PURPOSE",
+      "DETAIL",
+      "VOCAB",
+      "INFERENCE",
+      "SCIENTIFIC LITERACY"
+    ]
+  },
+  {
+    "id": "V01D03",
+    "volume": "Vol.01",
+    "day": 3,
+    "title": "Pressing Paws",
+    "domain": "Evolution / Genetics",
+    "words": 799,
+    "questions": 7,
+    "recommended": "20 min",
+    "difficulty": 3,
+    "answers": [
+      "B",
+      "D",
+      "C",
+      "A",
+      "E",
+      "E",
+      "B"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "DETAIL",
+      "METHOD",
+      "INFERENCE",
+      "VOCAB",
+      "DETAIL",
+      "DETAIL"
+    ]
+  },
+  {
+    "id": "V01D04",
+    "volume": "Vol.01",
+    "day": 4,
+    "title": "Growing Story",
+    "domain": "Evolution / Ecology / Mycology",
+    "words": 561,
+    "questions": 6,
+    "recommended": "17 min",
+    "difficulty": 3,
+    "answers": [
+      "C",
+      "E",
+      "B",
+      "D",
+      "A",
+      "B"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "EVIDENCE",
+      "DETAIL",
+      "VOCAB",
+      "INFERENCE",
+      "EVIDENCE"
+    ]
+  },
+  {
+    "id": "V01D05",
+    "volume": "Vol.01",
+    "day": 5,
+    "title": "Athletic Drill",
+    "domain": "Biomechanics / Physiology",
+    "words": 391,
+    "questions": 6,
+    "recommended": "15 min",
+    "difficulty": 2,
+    "answers": [
+      "B",
+      "C",
+      "D",
+      "A",
+      "E",
+      "D"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "METHOD",
+      "DETAIL",
+      "VOCAB/PHRASE",
+      "INFERENCE",
+      "METHOD"
+    ]
+  },
+  {
+    "id": "V01D06",
+    "volume": "Vol.01",
+    "day": 6,
+    "title": "Smoke Detector",
+    "domain": "Sensory Biology / Animal Behavior",
+    "words": 416,
+    "questions": 6,
+    "recommended": "16 min",
+    "difficulty": 3,
+    "answers": [
+      "C",
+      "D",
+      "B",
+      "E",
+      "A",
+      "A"
+    ],
+    "types": [
+      "HYPOTHESIS",
+      "EXPERIMENT",
+      "DETAIL",
+      "INFERENCE",
+      "LIMITATION",
+      "INFERENCE"
+    ]
+  },
+  {
+    "id": "V01D07",
+    "volume": "Vol.01",
+    "day": 7,
+    "title": "Parenting Paradox",
+    "domain": "Neuroscience / Psychology",
+    "words": 1239,
+    "questions": 7,
+    "recommended": "25 min",
+    "difficulty": 4,
+    "answers": [
+      "B",
+      "C",
+      "D",
+      "E",
+      "A",
+      "C",
+      "B"
+    ],
+    "types": [
+      "MAIN CONCEPT",
+      "METHOD",
+      "DETAIL",
+      "INFERENCE",
+      "DETAIL/INFERENCE",
+      "MECHANISM",
+      "DETAIL"
+    ]
+  },
+  {
+    "id": "V01D08",
+    "volume": "Vol.01",
+    "day": 8,
+    "title": "Heal Injuries Faster",
+    "domain": "Rehabilitation / Pain Physiology",
+    "words": 891,
+    "questions": 7,
+    "recommended": "22 min",
+    "difficulty": 3,
+    "answers": [
+      "C",
+      "B",
+      "D",
+      "A",
+      "E",
+      "D",
+      "C"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "CAUSE-EFFECT",
+      "DATA",
+      "PARAPHRASE",
+      "DETAIL",
+      "VOCAB/CONCEPT",
+      "DETAIL"
+    ]
+  },
+  {
+    "id": "V01D09",
+    "volume": "Vol.01",
+    "day": 9,
+    "title": "The Hardest Problem",
+    "domain": "Neuroscience / Consciousness",
+    "words": 4520,
+    "questions": 7,
+    "recommended": "38 min",
+    "difficulty": 5,
+    "answers": [
+      "B",
+      "D",
+      "C",
+      "A",
+      "E",
+      "B",
+      "D"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "DETAIL",
+      "EXPERIMENTAL LOGIC",
+      "VOCAB/CONCEPT",
+      "INFERENCE/DETAIL",
+      "COMPARE/RESULT",
+      "MAIN CONCEPT"
+    ]
+  },
+  {
+    "id": "V01D10",
+    "volume": "Vol.01",
+    "day": 10,
+    "title": "Deadly Mirror",
+    "domain": "Synthetic Biology / Immunology",
+    "words": 3084,
+    "questions": 7,
+    "recommended": "34 min",
+    "difficulty": 5,
+    "answers": [
+      "C",
+      "B",
+      "C",
+      "A",
+      "B",
+      "B",
+      "C"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "CONCEPT",
+      "MECHANISM",
+      "RHETORICAL PURPOSE",
+      "INFERENCE",
+      "ANALOGY/MECHANISM",
+      "AUTHOR POSITION"
+    ]
+  },
+  {
+    "id": "V02D01",
+    "volume": "Vol.02",
+    "day": 1,
+    "title": "Regrowth Record",
+    "domain": "Biology / Immunology",
+    "words": 450,
+    "questions": 6,
+    "recommended": "10-12 min",
+    "difficulty": 1,
+    "answers": [
+      "D",
+      "A",
+      "E",
+      "C",
+      "A",
+      "D"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "METHOD",
+      "DETAIL",
+      "SCIENTIFIC REASONING",
+      "INFERENCE",
+      "VOCAB"
+    ]
+  },
+  {
+    "id": "V02D02",
+    "volume": "Vol.02",
+    "day": 2,
+    "title": "Earthquake Life",
+    "domain": "Microbiology / Astrobiology",
+    "words": 422,
+    "questions": 6,
+    "recommended": "10-12 min",
+    "difficulty": 1,
+    "answers": [
+      "B",
+      "D",
+      "A",
+      "E",
+      "C",
+      "B"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "CAUSE-EFFECT",
+      "METHOD",
+      "DETAIL",
+      "INFERENCE",
+      "VOCAB"
+    ]
+  },
+  {
+    "id": "V02D03",
+    "volume": "Vol.02",
+    "day": 3,
+    "title": "Language Gaps",
+    "domain": "Neuroscience / Language",
+    "words": 490,
+    "questions": 6,
+    "recommended": "11-13 min",
+    "difficulty": 2,
+    "answers": [
+      "A",
+      "D",
+      "B",
+      "E",
+      "C",
+      "A"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "DETAIL",
+      "SCIENTIFIC UNCERTAINTY",
+      "METHOD",
+      "INFERENCE",
+      "VOCAB"
+    ]
+  },
+  {
+    "id": "V02D04",
+    "volume": "Vol.02",
+    "day": 4,
+    "title": "Path to Excellence",
+    "domain": "Human Behavior / Performance Psychology",
+    "words": 618,
+    "questions": 6,
+    "recommended": "12-14 min",
+    "difficulty": 2,
+    "answers": [
+      "C",
+      "E",
+      "A",
+      "D",
+      "B",
+      "C"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "VOCAB",
+      "EVIDENCE",
+      "NOT SUPPORTED",
+      "LIMITATION",
+      "APPLICATION"
+    ]
+  },
+  {
+    "id": "V02D05",
+    "volume": "Vol.02",
+    "day": 5,
+    "title": "Fire Starters",
+    "domain": "Evolutionary Biology / Archaeology",
+    "words": 766,
+    "questions": 6,
+    "recommended": "15-17 min",
+    "difficulty": 2,
+    "answers": [
+      "E",
+      "B",
+      "C",
+      "A",
+      "D",
+      "B"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "EVIDENCE",
+      "DETAIL",
+      "RHETORICAL PURPOSE",
+      "INFERENCE",
+      "VOCAB"
+    ]
+  },
+  {
+    "id": "V02D06",
+    "volume": "Vol.02",
+    "day": 6,
+    "title": "Care for Family Caregivers",
+    "domain": "Health / Psychoneuroimmunology",
+    "words": 908,
+    "questions": 7,
+    "recommended": "17-20 min",
+    "difficulty": 2,
+    "answers": [
+      "A",
+      "C",
+      "E",
+      "B",
+      "D",
+      "A",
+      "C"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "EVIDENCE",
+      "CONCEPT",
+      "DETAIL",
+      "METHOD",
+      "INFERENCE",
+      "VOCAB"
+    ]
+  },
+  {
+    "id": "V02D07",
+    "volume": "Vol.02",
+    "day": 7,
+    "title": "Navigating Our Social Worlds",
+    "domain": "Social Neuroscience",
+    "words": 1226,
+    "questions": 7,
+    "recommended": "20-23 min",
+    "difficulty": 3,
+    "answers": [
+      "B",
+      "D",
+      "A",
+      "E",
+      "C",
+      "B",
+      "D"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "METHOD",
+      "DETAIL",
+      "INFERENCE",
+      "NEUROSCIENCE",
+      "INFERENCE",
+      "RHETORICAL PURPOSE"
+    ]
+  },
+  {
+    "id": "V02D08",
+    "volume": "Vol.02",
+    "day": 8,
+    "title": "When Care Becomes Code",
+    "domain": "Clinical Medicine / Health AI",
+    "words": 2822,
+    "questions": 8,
+    "recommended": "35-40 min",
+    "difficulty": 3,
+    "answers": [
+      "C",
+      "A",
+      "E",
+      "B",
+      "D",
+      "A",
+      "C",
+      "E"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "RHETORICAL PURPOSE",
+      "VOCAB / FIGURATIVE LANGUAGE",
+      "CASE ANALYSIS",
+      "COMPARISON",
+      "APPLICATION",
+      "INFERENCE",
+      "CONCLUSION"
+    ]
+  },
+  {
+    "id": "V03D01",
+    "volume": "Vol.03",
+    "day": 1,
+    "title": "Trunk Sense",
+    "domain": "Biomechanics / Sensory Biology",
+    "words": 570,
+    "questions": 6,
+    "recommended": "16-20 min",
+    "difficulty": 2,
+    "answers": [
+      "B",
+      "B",
+      "B",
+      "C",
+      "A",
+      "B"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "DETAIL",
+      "METHOD",
+      "VOCAB",
+      "INFERENCE",
+      "APPLICATION"
+    ]
+  },
+  {
+    "id": "V03D02",
+    "volume": "Vol.03",
+    "day": 2,
+    "title": "Love Island",
+    "domain": "Ecology / Conservation Biology",
+    "words": 664,
+    "questions": 6,
+    "recommended": "17-21 min",
+    "difficulty": 2,
+    "answers": [
+      "B",
+      "C",
+      "C",
+      "B",
+      "C",
+      "B"
+    ],
+    "types": [
+      "DETAIL",
+      "INFERENCE",
+      "DETAIL",
+      "VOCAB",
+      "MAIN IDEA / DETAIL",
+      "RHETORICAL PURPOSE"
+    ]
+  },
+  {
+    "id": "V03D03",
+    "volume": "Vol.03",
+    "day": 3,
+    "title": "Upright Heart",
+    "domain": "Cardiovascular Neuroscience",
+    "words": 443,
+    "questions": 6,
+    "recommended": "16-20 min",
+    "difficulty": 3,
+    "answers": [
+      "B",
+      "C",
+      "B",
+      "C",
+      "A",
+      "D"
+    ],
+    "types": [
+      "DETAIL",
+      "METHOD / CAUSAL EVIDENCE",
+      "INFERENCE",
+      "VOCAB",
+      "PARAPHRASE",
+      "SCIENTIFIC LITERACY"
+    ]
+  },
+  {
+    "id": "V03D04",
+    "volume": "Vol.03",
+    "day": 4,
+    "title": "Discerning Chicks",
+    "domain": "Cognition / Evolution",
+    "words": 722,
+    "questions": 7,
+    "recommended": "18-22 min",
+    "difficulty": 3,
+    "answers": [
+      "B",
+      "B",
+      "B",
+      "C",
+      "B",
+      "A",
+      "B"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "METHOD",
+      "DETAIL",
+      "INFERENCE / METHOD",
+      "VOCAB",
+      "EVIDENCE",
+      "INFERENCE"
+    ]
+  },
+  {
+    "id": "V03D05",
+    "volume": "Vol.03",
+    "day": 5,
+    "title": "Flower Forger",
+    "domain": "Animal Behavior / Chemical Ecology",
+    "words": 317,
+    "questions": 6,
+    "recommended": "14-18 min",
+    "difficulty": 2,
+    "answers": [
+      "B",
+      "B",
+      "A",
+      "B",
+      "A",
+      "B"
+    ],
+    "types": [
+      "DETAIL",
+      "DETAIL",
+      "INFERENCE",
+      "SCIENTIFIC LITERACY",
+      "MAIN IDEA / COMPARISON",
+      "VOCAB"
+    ]
+  },
+  {
+    "id": "V03D06",
+    "volume": "Vol.03",
+    "day": 6,
+    "title": "A Tale of Two Supplements",
+    "domain": "Physiology / Evidence-Based Health",
+    "words": 960,
+    "questions": 7,
+    "recommended": "20-25 min",
+    "difficulty": 3,
+    "answers": [
+      "B",
+      "B",
+      "B",
+      "B",
+      "C",
+      "B",
+      "A"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "PHYSIOLOGY",
+      "SCIENTIFIC LITERACY",
+      "NUANCE / INFERENCE",
+      "DETAIL",
+      "EVIDENCE / SAFETY",
+      "VOCAB"
+    ]
+  },
+  {
+    "id": "V03D07",
+    "volume": "Vol.03",
+    "day": 7,
+    "title": "How Birds Survived the Dinosaurs' Doomsday",
+    "domain": "Evolution / Paleobiology",
+    "words": 3407,
+    "questions": 8,
+    "recommended": "38-45 min",
+    "difficulty": 4,
+    "answers": [
+      "C",
+      "B",
+      "B",
+      "A",
+      "B",
+      "B",
+      "B",
+      "B"
+    ],
+    "types": [
+      "MAIN IDEA",
+      "CONCEPT",
+      "DETAIL",
+      "RHETORICAL PURPOSE",
+      "EVIDENCE",
+      "CAUSE / EFFECT",
+      "RHETORICAL PURPOSE",
+      "INFERENCE"
+    ]
+  },
+  {
+    "id": "V03D08",
+    "volume": "Vol.03",
+    "day": 8,
+    "title": "Your Heart in Flames",
+    "domain": "Cardiovascular Medicine / Immunology",
+    "words": 3316,
+    "questions": 8,
+    "recommended": "42-50 min",
+    "difficulty": 4,
+    "answers": [
+      "B",
+      "A",
+      "B",
+      "B",
+      "A",
+      "B",
+      "B",
+      "B"
+    ],
+    "types": [
+      "MAIN IDEA / PROBLEM",
+      "EVIDENCE",
+      "METHOD / RESULT",
+      "MECHANISM",
+      "CLINICAL TRIAL",
+      "SCIENTIFIC LITERACY",
+      "PARAPHRASE",
+      "MAIN IDEA / NUANCE"
+    ]
+  }
+]

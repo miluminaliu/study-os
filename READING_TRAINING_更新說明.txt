@@ -1,0 +1,49 @@
+Study OS｜English Reading Training Final
+Build: 2026.08.19-reading-training-v1
+
+資料來源：
+- 後西醫_生物醫學閱讀題本_Vol01_題目本_V2 + 詳解本
+- 後西醫_生物醫學閱讀題本_Vol02_題目本_Standard + 詳解本
+- 後西醫_生物醫學閱讀題本_Vol03_題目本_Standard + 詳解本
+
+內建資料：
+- Vol.01：10 回
+- Vol.02：8 回
+- Vol.03：8 回
+- 合計 26 回
+- 每回內建：標題、領域、字數、題數、建議時間、難度、正確答案、逐題題型
+
+日常輸入：
+必填只有兩個：
+1. 答對幾題
+2. 實際分鐘
+
+選填：
+- 點選錯題題號
+- 主要錯因
+
+自動功能：
+- 自動找下一篇未完成文章
+- 題本進度 Vol.01 / Vol.02 / Vol.03
+- 總正確率
+- 總閱讀訓練時間
+- 粗略 words/min（包含作答時間，因此只看趨勢）
+- 每篇與建議時間中值比較
+- 自動依錯題題號帶出正確答案與原始題型
+- 弱題型統計
+- 短 / 中 / 長篇 metadata 已內建，可供後續擴充
+
+同步：
+- 閱讀結果寫入既有 QuestionLog，不新增 Sheet
+- 同一次練習也建立 QuickLog DONE
+- QuickLog 會沿用既有 Calendar Mirror → Google Calendar「後西醫｜DONE」
+- QuestionLog 的閱讀紀錄標記 reviewed=true，不會污染一般「待回看錯題」Badge
+- 一般刷題頁會排除閱讀題本 aggregate record
+- Apps Script 不需要修改
+
+穩定性：
+- 以 Stability Repair Final 為基底
+- Service Worker 仍停用
+- 同步 retry / lock 保留
+- 所有 HTML id 引用已靜態檢查：0 missing
+- JavaScript node --check：OK
