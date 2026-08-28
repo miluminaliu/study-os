@@ -1,0 +1,53 @@
+Study OS｜Daily Flow Final
+Build: 2026.08.28-daily-flow-v1
+
+這版專門處理日常操作的卡點，不新增新的資料表。
+
+1. 專注模式可選今天的預定事項
+- 專注視窗新增「現在要執行」下拉選單
+- 只列出今天尚未完成的 PLAN
+- 計時開始前可自由切換
+- 計時開始後鎖定，避免誤切造成時間遺失
+- Today 每一筆 PLAN 也直接多一個「專注」按鈕
+
+2. 完成 PLAN 後會從「今天預計」消失
+- Today 的 PLAN 清單現在只顯示「未完成」
+- 已完成內容只留在 DONE
+- 完成比對改為一對一，不會因同一天排兩次同一堂而一次全部消失
+- 從 PLAN 完成時，QuickLog 會額外記錄 plan_event_id / plan_title，讓本機立刻精準對應
+- 舊資料仍有 course code / topic fallback
+
+3. 推薦待辦
+- 首先依今天尚未完成 PLAN 排序
+- 若有空位，再推薦目前「進行中」課程
+- 再補最近科目的 A高未看課程
+- 最後用英文閱讀題本下一篇作低負擔候選
+- 每個推薦可直接「開始專注」或前往閱讀
+
+4. 「開始下一項」行為修正
+- 舊版會直接打開 DONE 表單
+- 現在會真正進入專注模式
+
+5. DONE 改成 local-first
+- 按儲存後，本機立即出現 DONE、PLAN 立即消失
+- Sheets / Calendar 改在背景確認，不阻塞下一個操作
+- 雲端尚未完成的 QuickLog 會標記 pending
+- 同步時會保留本機 pending，不會被雲端舊資料覆蓋
+- 後續自動重試 pending
+
+6. 捷徑 PLAN 更快出現
+- 開站先讀本機資料
+- 背景先做輕量同步
+- Calendar -> ActivityLog 強制刷新最多每 3 分鐘一次
+- 避免每次重新整理都重跑 Calendar，又能讓新捷徑 PLAN 自動進站
+
+7. 保留
+- Reading Training Vol.01-03 / 26篇
+- Apps Script URL / token 持久化
+- Calendar Mirror
+- Focus refresh restore
+- Stability mode（Service Worker 關閉）
+- Review reminders 預設關閉
+
+Apps Script：
+這版不需要修改。
