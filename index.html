@@ -1,203 +1,91 @@
 <!doctype html>
-<html lang="zh-Hant" data-theme="light">
+<html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#455A84" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <title>Page &amp; Pace · study journal</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" href="icon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="icon-180.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f5f2ed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Study OS v7｜後西醫備考</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="paper-noise" aria-hidden="true"></div>
-  <div class="app-shell">
-    <aside class="spine" aria-label="主選單">
-      <a class="brand" href="#today" data-nav="today" aria-label="Page & Pace 首頁">
-        <span class="brand-mark">P<span>&amp;</span>P</span>
-        <span class="brand-copy"><strong>Page &amp; Pace</strong><small>study journal · 2026</small></span>
-      </a>
-      <nav class="binder-tabs">
-        <button class="tab active" data-nav="today"><b>01</b><span>today</span></button>
-        <button class="tab" data-nav="week"><b>02</b><span>week</span></button>
-        <button class="tab" data-nav="study"><b>03</b><span>study</span></button>
-        <button class="tab" data-nav="review"><b>04</b><span>review</span></button>
-        <button class="tab" data-nav="archive"><b>05</b><span>archive</span></button>
-      </nav>
-      <div class="spine-foot">
-        <button class="ghost-icon" id="syncBtn" title="同步">↻</button>
-        <button class="ghost-icon" id="themeBtn" title="切換明暗模式">◐</button>
-        <div class="sync-state"><i></i><span id="syncLabel">local</span></div>
+<div id="appShell" class="app-shell">
+  <aside class="sidebar">
+    <button class="brand" data-nav="today" aria-label="回到 Today">
+      <span class="brand-mark">S</span>
+      <span><b class="display-font">Study OS</b><small>後西醫備考 · v7</small></span>
+    </button>
+    <nav class="side-nav" id="sideNav">
+      <button class="nav-item active" data-nav="today" data-icon="home"><span class="nav-ico">⌂</span><span>Today</span></button>
+      <button class="nav-item" data-nav="plan" data-icon="plan"><span class="nav-ico">◫</span><span>Plan</span></button>
+      <button class="nav-item" data-nav="study" data-icon="study"><span class="nav-ico">▤</span><span>Study</span></button>
+      <button class="nav-item" data-nav="insights" data-icon="insights"><span class="nav-ico">⌁</span><span>Insights</span></button>
+      <button class="nav-item" data-nav="more" data-icon="more"><span class="nav-ico">•••</span><span>More</span></button>
+    </nav>
+    <div class="sidebar-foot">
+      <button class="sync-card" id="syncBtnSide">
+        <span class="sync-dot" id="syncDot"></span>
+        <span><b id="syncStatus">Local ready</b><small id="lastSync">尚未雲端同步</small></span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="top-title">
+        <p id="eyebrow">STUDY OS · TODAY</p>
+        <h1 class="display-font" id="pageTitle">今天，只看下一步。</h1>
       </div>
-    </aside>
+      <div class="top-actions">
+        <button class="icon-btn" id="themeBtn" title="切換深色模式">◐</button>
+        <button class="soft-btn desktop-only" id="syncBtn">同步</button>
+        <button class="primary-btn" id="quickAddBtn">＋ 新增</button>
+      </div>
+    </header>
 
-    <main class="journal">
-      <header class="journal-head">
-        <div>
-          <p class="eyebrow">PAGE &amp; PACE / STUDY JOURNAL</p>
-          <h1 id="pageTitle">today</h1>
-          <p class="hand date-script" id="todayDate"></p>
-        </div>
-        <div class="head-actions">
-          <button class="paper-button" id="quickFocusBtn">＋ focus</button>
-          <button class="paper-button secondary" id="quickLogBtn">＋ log</button>
-        </div>
-      </header>
+    <section class="view active" id="view-today"></section>
+    <section class="view" id="view-plan"></section>
+    <section class="view" id="view-study"></section>
+    <section class="view" id="view-insights"></section>
+    <section class="view" id="view-more"></section>
+  </main>
 
-      <section class="view active" id="view-today">
-        <div class="today-layout">
-          <section class="paper-card next-card rotate-left">
-            <span class="tape tape-blue"></span>
-            <div class="card-kicker">NOW / UP NEXT</div>
-            <div id="nextAction"></div>
-          </section>
-
-          <section class="paper-card focus-card rotate-right" id="focusCard">
-            <span class="pin">●</span>
-            <div class="card-kicker">FOCUS SESSION</div>
-            <div class="timer-mode-row" id="timerModes">
-              <button data-mode="focus" class="active">50 / 10</button>
-              <button data-mode="quick">25 / 5</button>
-              <button data-mode="deep">75 / 15</button>
-              <button data-mode="lecture">stopwatch</button>
-            </div>
-            <div class="timer-display" id="timerDisplay">50:00</div>
-            <div class="timer-context" id="timerContext">choose a task, then start.</div>
-            <div class="timer-actions">
-              <button class="ink-button" id="timerStart">start</button>
-              <button class="line-button" id="timerPause" disabled>pause</button>
-              <button class="line-button" id="timerFinish" disabled>finish &amp; log</button>
-            </div>
-          </section>
-
-          <section class="paper-card plan-card">
-            <div class="section-title-row"><div><span class="card-kicker">TODAY'S PAGE</span><h2>計畫 × 實際</h2></div><div class="plan-summary" id="planSummary"></div></div>
-            <div class="timeline" id="todayTimeline"></div>
-          </section>
-
-          <section class="paper-card words-card rotate-soft">
-            <span class="tape tape-violet"></span>
-            <div class="card-kicker">WORDS FOR TODAY</div>
-            <div id="todayWords"></div>
-          </section>
-
-          <section class="paper-card stats-strip">
-            <div><small>planned</small><strong id="todayPlanMin">0m</strong></div>
-            <div><small>done</small><strong id="todayDoneMin">0m</strong></div>
-            <div><small>focus</small><strong id="todayFocusMin">0m</strong></div>
-            <div><small>logged</small><strong id="todayLogCount">0</strong></div>
-          </section>
-
-          <section class="paper-card close-card" id="dayCloseCard">
-            <div class="section-title-row"><div><span class="card-kicker">DAY CLOSE</span><h2>漏記檢查</h2></div><span class="stamp">30 sec</span></div>
-            <div id="unloggedList"></div>
-          </section>
-        </div>
-      </section>
-
-      <section class="view" id="view-week">
-        <div class="spread-title"><div><span class="card-kicker">WEEKLY SPREAD</span><h2 id="weekRange">this week</h2></div><p class="hand">plan softly. show up steadily.</p></div>
-        <div class="week-grid" id="weekGrid"></div>
-        <div class="week-lower">
-          <section class="paper-card"><div class="section-title-row"><div><span class="card-kicker">PLAN VS REALITY</span><h2>本週投入</h2></div></div><div id="weekSubjectBars" class="subject-bars"></div></section>
-          <section class="paper-card note-paper"><span class="tape tape-brown"></span><div class="card-kicker">WEEK NOTE</div><textarea id="weekNote" placeholder="這週想記住什麼？（只存本機）"></textarea></section>
-        </div>
-      </section>
-
-      <section class="view" id="view-study">
-        <div class="spread-title"><div><span class="card-kicker">STUDY INDEX</span><h2>subjects &amp; English</h2></div><p class="hand">one tab at a time.</p></div>
-        <div class="subject-tabs" id="subjectTabs"></div>
-        <section class="paper-card study-sheet" id="studySheet"></section>
-      </section>
-
-      <section class="view" id="view-review">
-        <div class="spread-title"><div><span class="card-kicker">REVIEW DESK</span><h2>該回頭看的東西</h2></div><p class="hand">not everything needs attention today.</p></div>
-        <div class="review-columns">
-          <section class="paper-card"><div class="section-title-row"><div><span class="card-kicker">DUE</span><h2>單字複習</h2></div><span class="count-badge" id="reviewVocabCount">0</span></div><div id="reviewVocabPreview"></div></section>
-          <section class="paper-card"><div class="section-title-row"><div><span class="card-kicker">UNLOGGED</span><h2>可能漏記</h2></div><span class="count-badge" id="reviewUnloggedCount">0</span></div><div id="reviewUnlogged"></div></section>
-          <section class="paper-card"><div class="section-title-row"><div><span class="card-kicker">WRONG ANSWERS</span><h2>刷題回看</h2></div><span class="count-badge" id="reviewQuestionCount">0</span></div><div id="reviewQuestions"></div></section>
-        </div>
-      </section>
-
-      <section class="view" id="view-archive">
-        <div class="spread-title"><div><span class="card-kicker">ARCHIVE</span><h2>history / settings</h2></div><p class="hand">keep the trail, not the clutter.</p></div>
-        <div class="archive-grid">
-          <section class="paper-card"><div class="section-title-row"><div><span class="card-kicker">THIS MONTH</span><h2>study snapshot</h2></div></div><div class="month-stats" id="monthStats"></div></section>
-          <section class="paper-card settings-card">
-            <div class="section-title-row"><div><span class="card-kicker">SYNC</span><h2>Page &amp; Pace 設定</h2></div></div>
-            <label>Apps Script Web App URL<input id="webAppUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" /></label>
-            <label>同步密鑰<input id="syncToken" type="password" autocomplete="off" placeholder="沿用你原本的同步密鑰" /></label>
-            <div class="settings-row"><label>每日新單字<input id="newWordCount" type="number" min="0" max="100" /></label><label>週起始<select id="weekStart"><option value="1">週一</option><option value="0">週日</option></select></label></div>
-            <div class="setting-actions"><button class="ink-button" id="saveSettings">save &amp; test</button><button class="line-button" id="exportBackup">export backup</button><label class="line-button file-label">import backup<input id="importBackup" type="file" accept="application/json" hidden /></label></div>
-            <p class="microcopy">網址與密鑰只存在這台裝置的瀏覽器，不寫進網站程式碼。</p>
-          </section>
-          <section class="paper-card"><div class="section-title-row"><div><span class="card-kicker">RECENT TRAIL</span><h2>最近紀錄</h2></div></div><div id="recentTrail" class="trail"></div></section>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <nav class="mobile-tabs" aria-label="手機主選單">
-    <button class="active" data-nav="today"><span>◌</span><small>today</small></button>
-    <button data-nav="week"><span>▦</span><small>week</small></button>
-    <button data-nav="study"><span>▱</span><small>study</small></button>
-    <button data-nav="review"><span>↺</span><small>review</small></button>
-    <button data-nav="archive"><span>⌂</span><small>archive</small></button>
+  <nav class="mobile-nav" id="mobileNav">
+    <button class="active" data-nav="today"><span>⌂</span><small>Today</small></button>
+    <button data-nav="plan"><span>◫</span><small>Plan</small></button>
+    <button data-nav="study"><span>▤</span><small>Study</small></button>
+    <button data-nav="insights"><span>⌁</span><small>Insights</small></button>
+    <button data-nav="more"><span>•••</span><small>More</small></button>
   </nav>
 
-  <div class="mini-timer" id="miniTimer" hidden>
-    <button id="miniTimerOpen"><span class="mini-dot"></span><strong id="miniTimerLabel">FOCUS</strong><b id="miniTimerClock">00:00</b></button>
+  <button class="fab" id="fabBtn" aria-label="快速新增">＋</button>
+
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <section class="bottom-sheet" id="bottomSheet" aria-modal="true" role="dialog">
+    <div class="sheet-grabber"></div>
+    <div id="sheetContent"></div>
+  </section>
+
+  <div class="focus-layer" id="focusLayer" aria-hidden="true">
+    <div class="focus-shell">
+      <button class="focus-close" id="focusClose">×</button>
+      <div class="focus-meta"><span id="focusSubject">Quick Focus</span><small id="focusTopic">結束後再紀錄內容</small></div>
+      <div class="focus-clock display-font" id="focusClock">50:00</div>
+      <div class="focus-progress"><i id="focusProgress"></i></div>
+      <div class="focus-controls">
+        <button class="focus-btn ghost" id="focusMinus">−5</button>
+        <button class="focus-btn primary" id="focusPause">Pause</button>
+        <button class="focus-btn ghost" id="focusPlus">+10</button>
+      </div>
+      <button class="text-btn danger" id="focusFinish">提前完成並記錄</button>
+    </div>
   </div>
 
-  <dialog id="focusDialog" class="modal-paper">
-    <form method="dialog" class="modal-head"><div><span class="card-kicker">START FOCUS</span><h3>這段時間要做什麼？</h3></div><button value="cancel" class="ghost-icon">×</button></form>
-    <div class="modal-body">
-      <label>科目<select id="focusSubject"><option>物理</option><option>生化</option><option>生物</option><option>化學</option><option>英文</option><option>其他</option></select></label>
-      <label>活動<select id="focusActivity"><option>看課</option><option>複習</option><option>刷題</option><option>閱讀</option><option>單字</option><option>整理筆記</option></select></label>
-      <label>主題<input id="focusTopic" placeholder="例如：正課 14 / Vol.06 Day 01" /></label>
-      <label>模式<select id="focusMode"><option value="focus">50 / 10 Focus</option><option value="quick">25 / 5 Quick</option><option value="deep">75 / 15 Deep</option><option value="lecture">Lecture stopwatch</option></select></label>
-      <button class="ink-button wide" id="confirmFocus" type="button">start session</button>
-    </div>
-  </dialog>
-
-  <dialog id="logDialog" class="modal-paper">
-    <form method="dialog" class="modal-head"><div><span class="card-kicker">QUICK LOG</span><h3>補一筆完成紀錄</h3></div><button value="cancel" class="ghost-icon">×</button></form>
-    <div class="modal-body">
-      <label>科目<select id="logSubject"><option>物理</option><option>生化</option><option>生物</option><option>化學</option><option>英文</option><option>其他</option></select></label>
-      <label>活動<select id="logActivity"><option>看課</option><option>複習</option><option>刷題</option><option>閱讀</option><option>單字</option><option>整理筆記</option></select></label>
-      <label>主題<input id="logTopic" placeholder="今天做了什麼" /></label>
-      <label>分鐘<input id="logMinutes" type="number" min="1" max="720" value="30" /></label>
-      <button class="ink-button wide" id="saveQuickLog" type="button">save log</button>
-    </div>
-  </dialog>
-
-  <dialog id="vocabDialog" class="modal-paper vocab-modal">
-    <form method="dialog" class="modal-head"><div><span class="card-kicker">VOCABULARY</span><h3 id="vocabSessionTitle">today's words</h3></div><button value="cancel" class="ghost-icon">×</button></form>
-    <div class="vocab-progress"><i id="vocabProgressBar"></i></div>
-    <div class="flashcard" id="flashcard"></div>
-    <div class="flash-actions" id="flashActions" hidden>
-      <button data-grade="again">忘記<small>again</small></button>
-      <button data-grade="hard">模糊<small>hard</small></button>
-      <button data-grade="good">熟悉<small>good</small></button>
-      <button data-grade="easy">已會<small>easy</small></button>
-    </div>
-  </dialog>
-
-  <dialog id="readingDialog" class="modal-paper reading-modal">
-    <form method="dialog" class="modal-head"><div><span class="card-kicker">READING LOG</span><h3 id="readingDialogTitle">reading</h3></div><button value="cancel" class="ghost-icon">×</button></form>
-    <div class="modal-body">
-      <input id="readingId" type="hidden" />
-      <div class="score-row"><label>答對<input id="readingCorrect" type="number" min="0" max="7" value="0" /></label><span id="readingTotalLabel">/ 7</span><label>分鐘<input id="readingMinutes" type="number" min="0" max="180" value="0" /></label></div>
-      <fieldset><legend>這篇主要錯在哪？</legend><div class="skill-chips" id="skillChips"></div></fieldset>
-      <label>備註<textarea id="readingNote" rows="3" placeholder="可留空"></textarea></label>
-      <button class="ink-button wide" id="saveReading" type="button">save reading</button>
-    </div>
-  </dialog>
-
-  <div class="toast" id="toast" role="status"></div>
-  <script src="app.js" defer></script>
+  <div class="toast" id="toast"><span id="toastText"></span><button id="toastUndo" hidden>UNDO</button></div>
+</div>
+<script src="app.js"></script>
 </body>
 </html>

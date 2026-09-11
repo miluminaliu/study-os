@@ -1,21 +1,12 @@
 {
-  "name": "Page & Pace · Study Journal",
-  "short_name": "Page & Pace",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#f0eee7",
-  "theme_color": "#455a84",
-  "icons": [
-    {
-      "src": "icon-180.png",
-      "sizes": "180x180",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+  "name":"Study OS v7｜後西醫備考",
+  "short_name":"Study OS",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#f4f1ec",
+  "theme_color":"#f4f1ec",
+  "icons":[
+    {"src":"icon-180.png","sizes":"180x180","type":"image/png"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
   ]
 }

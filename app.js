@@ -1,304 +1,253 @@
-(()=>{
 'use strict';
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const STORE='pagePace.v7.';
+
+const VERSION='7.0.1';
 const SUBJECTS=['物理','生化','生物','化學','英文'];
-const SKILLS=['Vocabulary','Detail','Paraphrase','Mechanism','Method','Inference','Purpose','Organization','Evidence boundary','Main idea'];
-const TIMER_MODES={focus:{label:'FOCUS',work:50,break:10},quick:{label:'QUICK',work:25,break:5},deep:{label:'DEEP',work:75,break:15},lecture:{label:'LECTURE',work:null,break:null}};
-const readJSON=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??f}catch{return f}};
-const saveJSON=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-const legacySettings=readJSON('studySettings',{});
-const settings={
-  webAppUrl:readJSON(STORE+'settings',{}).webAppUrl||legacySettings.webAppUrl||legacySettings.webAppURL||localStorage.getItem('studyWebAppUrl')||'',
-  token:readJSON(STORE+'settings',{}).token||legacySettings.token||localStorage.getItem('studySyncToken')||'',
-  newWordCount:+(readJSON(STORE+'settings',{}).newWordCount??15),
-  weekStart:+(readJSON(STORE+'settings',{}).weekStart??1)
-};
-let state={
-  activities:readJSON(STORE+'activities',readJSON('studyActivities',[])),
-  quickLog:readJSON(STORE+'quickLog',[]),
-  manualProgress:readJSON(STORE+'manualProgress',[]),
-  questionLog:readJSON(STORE+'questionLog',[]),
-  readingProgress:readJSON(STORE+'readingProgress',{}),
-  vocabProgress:readJSON(STORE+'vocabProgress',{}),
-  skippedPlans:readJSON(STORE+'skippedPlans',{}),
-  readingLibrary:[],vocab:[],readingVocab:[],activeSubject:'物理',englishPanel:'reading'
-};
-let timerState=readJSON(STORE+'timer',null),tickHandle=null,vocabSession=null;
+const SUBJECT_TOTALS={物理:105,生物:177,生化:129,化學:104,英文:0};
+const LS={settings:'studyos_v7_settings',cache:'studyos_v7_cache',local:'studyos_v7_local',focus:'studyos_v7_focus',theme:'studyos_theme'};
+const $=s=>document.querySelector(s); const $$=s=>[...document.querySelectorAll(s)];
 const pad=n=>String(n).padStart(2,'0');
-const localISO=(d=new Date())=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-const parseLocal=v=>{if(!v)return null;if(v instanceof Date)return v;const s=String(v).trim();const m=s.match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?/);if(m)return new Date(+m[1],+m[2]-1,+m[3],+(m[4]||0),+(m[5]||0),+(m[6]||0));const d=new Date(s);return isNaN(d)?null:d};
-const fmtMin=n=>{n=Math.round(+n||0);if(n<60)return `${n}m`;const h=Math.floor(n/60),m=n%60;return m?`${h}h ${m}m`:`${h}h`};
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const norm=s=>String(s??'').toLowerCase().replace(/[\s_｜|：:【】\-–—]+/g,'');
-const uniqBy=(arr,key)=>{const m=new Map;arr.forEach(x=>m.set(key(x),x));return [...m.values()]};
-const toast=(msg)=>{const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),2600)};
-const uid=(p='pp')=>`${p}_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
-function persist(){saveJSON(STORE+'activities',state.activities);saveJSON(STORE+'quickLog',state.quickLog);saveJSON(STORE+'manualProgress',state.manualProgress);saveJSON(STORE+'questionLog',state.questionLog);saveJSON(STORE+'readingProgress',state.readingProgress);saveJSON(STORE+'vocabProgress',state.vocabProgress);saveJSON(STORE+'skippedPlans',state.skippedPlans)}
-function saveSettingsLocal(){saveJSON(STORE+'settings',settings)}
+const now=()=>new Date();
+const isoDate=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseDate=v=>{if(!v)return null; if(v instanceof Date)return v; const s=String(v).trim(); let d=new Date(s); if(!isNaN(d))return d; const m=s.match(/(\d{4})[-\/]?(\d{1,2})[-\/]?(\d{1,2})/); return m?new Date(+m[1],+m[2]-1,+m[3]):null};
+const startOfDay=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const startOfWeek=d=>{const x=startOfDay(d);const day=(x.getDay()+6)%7;return addDays(x,-day)};
+const minFmt=m=>{m=Math.max(0,Math.round(Number(m)||0));const h=Math.floor(m/60),r=m%60;return h?`${h}h ${r?`${r}m`:''}`:`${r}m`};
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const uid=p=>`${p}_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const get=(o,keys,def='')=>{for(const k of keys){if(o&&o[k]!==undefined&&o[k]!==null&&String(o[k])!=='')return o[k]}return def};
+const nget=(o,keys)=>Number(get(o,keys,0))||0;
 
-async function loadStatic(){
-  const [r,v]=await Promise.all([fetch('./data/reading-library.json').then(x=>x.json()),fetch('./data/vocab-core.json').then(x=>x.json())]);
-  state.readingLibrary=r;state.vocab=v;buildReadingVocabPool();renderAll();
+let cloud={activityLog:[],manualProgress:[],quickLog:[],questionLog:[],vocabulary:[],weeklyPlan:[],decisionLog:[]};
+let local=loadJSON(LS.local,{vocabulary:[],weeklyPlan:[],decisionLog:[],pendingActions:[],ui:{studyTab:'courses',insightRange:'week',vocabTab:'words'}});
+local.pendingActions=local.pendingActions||[];local.ui=local.ui||{studyTab:'courses',insightRange:'week',vocabTab:'words'};
+let settings=loadJSON(LS.settings,{apiUrl:'',token:'',examDate:'',reviewReminders:true,reviewIntervals:[1,3,7,14,30],weekTarget:25});
+let currentView='today',undoAction=null,toastTimer=null;
+let focus={running:false,paused:false,startedAt:null,durationMin:50,remainingSec:3000,subject:'',topic:'',activity:'專注',mode:'quick',tick:null};
+let wakeLock=null;
+
+function loadJSON(k,d){try{return JSON.parse(localStorage.getItem(k)||'null')||d}catch{return d}}
+function saveLocal(){localStorage.setItem(LS.local,JSON.stringify(local))}
+function saveSettings(){localStorage.setItem(LS.settings,JSON.stringify(settings));try{sessionStorage.setItem(LS.settings,JSON.stringify(settings))}catch{}}
+function cacheCloud(){localStorage.setItem(LS.cache,JSON.stringify({time:new Date().toISOString(),...cloud}))}
+function loadCache(){const c=loadJSON(LS.cache,null);if(c){Object.assign(cloud,c)}}
+
+function setTheme(theme){document.documentElement.dataset.theme=theme;localStorage.setItem(LS.theme,theme);document.querySelector('meta[name="theme-color"]').content=theme==='dark'?'#111512':'#f4f1ec'}
+function initTheme(){setTheme(localStorage.getItem(LS.theme)||((matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'))}
+
+function normalizedQuick(r){
+  const date=isoDate(parseDate(get(r,['date','日期','start_time','updated_at']))||now());
+  return {id:String(get(r,['event_id','id'],uid('q'))),kind:'DONE',date,subject:String(get(r,['subject','科目'],'其他')),activity:String(get(r,['activity','活動','type'],'學習')),topic:String(get(r,['topic','主題','title'],'')).trim(),minutes:nget(r,['minutes','actual_minutes','實際分鐘','分鐘']),status:String(get(r,['status','完成狀態'],'完成')),start:get(r,['start_time','開始時間'],''),end:get(r,['end_time','結束時間'],''),understanding:get(r,['understanding','理解度'],''),notes:get(r,['notes','note','備註'],''),source:'quick'};
+}
+function normalizedActivity(r){
+  const rawTitle=String(get(r,['title','event_title','標題','summary'],'')).trim();
+  const parts=rawTitle.split('｜');
+  const marker=String(get(r,['kind','type','calendar_type','event_type','分類'],'')).toUpperCase() || (rawTitle.includes('｜PLAN｜')?'PLAN':rawTitle.includes('｜DONE｜')?'DONE':'');
+  const kind=marker.includes('PLAN')?'PLAN':marker.includes('DONE')?'DONE':String(get(r,['status'],'')).includes('預定')?'PLAN':'DONE';
+  const subject=String(get(r,['subject','科目'],parts.length>2?parts[2]:'其他'));
+  const activity=String(get(r,['activity','活動'],parts.length>3?parts[3]:(kind==='PLAN'?'計畫':'學習')));
+  const topic=String(get(r,['topic','主題'],parts.length>4?parts.slice(4).join('｜'):''));
+  const date=isoDate(parseDate(get(r,['date','日期','start','start_time','開始時間','updated_at']))||now());
+  const mins=kind==='PLAN'?nget(r,['minutes','planned_minutes','預計分鐘','plan_minutes']):nget(r,['actual_minutes','minutes','實際分鐘']);
+  return {id:String(get(r,['web_event_id','event_id','id'],uid('a'))),kind,date,subject,activity,topic,minutes:mins,status:String(get(r,['status','完成狀態'],kind==='PLAN'?'預定':'完成')),start:get(r,['start_time','start','開始時間'],''),end:get(r,['end_time','end','結束時間'],''),understanding:get(r,['understanding','理解度'],''),notes:get(r,['notes','note','備註'],''),source:'activity'};
+}
+function allRecords(){
+  const arr=[...cloud.activityLog.map(normalizedActivity),...cloud.quickLog.map(normalizedQuick)];
+  const seen=new Set(),out=[];
+  for(const r of arr){const sig=r.id&& !r.id.startsWith('a_')&&!r.id.startsWith('q_')?r.id:[r.kind,r.date,r.subject,r.activity,r.topic,r.minutes].join('|'); if(seen.has(sig))continue;seen.add(sig);out.push(r)}
+  return out.sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+}
+function doneRecords(){return allRecords().filter(x=>x.kind==='DONE')}
+function planRecords(){return allRecords().filter(x=>x.kind==='PLAN')}
+function dateRangeRecords(from,to,kind='DONE'){return allRecords().filter(r=>r.kind===kind&&r.date>=isoDate(from)&&r.date<=isoDate(to))}
+function sumMin(rows){return rows.reduce((s,r)=>s+(Number(r.minutes)||0),0)}
+function subjectMinutes(rows){const m={};SUBJECTS.forEach(s=>m[s]=0);rows.forEach(r=>m[r.subject]=(m[r.subject]||0)+(Number(r.minutes)||0));return m}
+function activityMinutes(rows){const m={};rows.forEach(r=>{const k=r.activity||'其他';m[k]=(m[k]||0)+(Number(r.minutes)||0)});return m}
+
+function mergedVocabulary(){const map=new Map();[...(local.vocabulary||[]),...(cloud.vocabulary||[])].forEach(x=>{if(x&&x.id)map.set(String(x.id),x)});return [...map.values()]}
+function mergedWeeklyPlan(){const map=new Map();[...(local.weeklyPlan||[]),...(cloud.weeklyPlan||[])].forEach(x=>{if(x&&x.id)map.set(String(x.id),x)});return [...map.values()]}
+function mergedDecisions(){const map=new Map();[...(local.decisionLog||[]),...(cloud.decisionLog||[])].forEach(x=>{if(x&&x.id)map.set(String(x.id),x)});return [...map.values()].sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')))}
+
+function courseStatusMap(){const map=new Map();cloud.manualProgress.forEach(r=>{const subject=String(get(r,['subject','科目'],''));const code=String(get(r,['code','課程代碼'],''));if(subject&&code)map.set(`${subject}|${code}`,r)});return map}
+function trackedCourses(){
+  const map=new Map();cloud.manualProgress.forEach(r=>{const subject=String(get(r,['subject'],'')),code=String(get(r,['code'],''));if(!subject||!code)return;map.set(`${subject}|${code}`,{subject,code,type:String(get(r,['course_type'],'正課')),topic:String(get(r,['topic','description'],'課程')),status:String(get(r,['status'],'已看課')),progress:nget(r,['progress'])||45,recent:String(get(r,['recent'],''))})});
+  allRecords().forEach(r=>{if(!SUBJECTS.includes(r.subject)||!r.topic)return;const m=r.topic.match(/(?:正課|先修|補充)?\s*([0-9]{1,3}(?:-[0-9])?)/);if(!m)return;const code=m[1];const k=`${r.subject}|${code}`;if(!map.has(k))map.set(k,{subject:r.subject,code,type:r.activity||'正課',topic:r.topic,status:r.kind==='DONE'?'已看課':'未開始',progress:r.kind==='DONE'?45:0,recent:r.date})});
+  return [...map.values()].sort((a,b)=>a.subject.localeCompare(b.subject,'zh-Hant')||a.code.localeCompare(b.code,undefined,{numeric:true}));
+}
+function subjectProgress(subject){const items=trackedCourses().filter(x=>x.subject===subject);if(!items.length)return 0;const done=items.reduce((s,x)=>s+(Number(x.progress)||0),0);const denom=SUBJECT_TOTALS[subject]||items.length;return Math.min(100,Math.round(done/(denom*100)*100))}
+
+function reviewQueue(){
+  if(!settings.reviewReminders)return[];
+  const intervals=settings.reviewIntervals||[1,3,7,14,30],today=startOfDay(now()),out=[];
+  const firstDone=new Map();doneRecords().filter(r=>SUBJECTS.includes(r.subject)&&r.topic).forEach(r=>{const key=`${r.subject}|${r.topic}`;if(!firstDone.has(key)||r.date<firstDone.get(key).date)firstDone.set(key,r)});
+  firstDone.forEach(r=>intervals.forEach((days,idx)=>{const due=addDays(parseDate(r.date),days);const title=`${r.subject} · ${r.topic}`;const reviewDone=doneRecords().some(x=>x.subject===r.subject&&String(x.activity).includes('複習')&&x.topic===r.topic&&parseDate(x.date)>=due);if(!reviewDone&&due<=addDays(today,3))out.push({id:`${r.id}_${days}`,subject:r.subject,topic:r.topic,stage:idx+1,days,due:isoDate(due),overdue:due<today})}));
+  return out.sort((a,b)=>a.due.localeCompare(b.due)).slice(0,80);
 }
 
+function todayStats(){const d=isoDate(now()),done=doneRecords().filter(r=>r.date===d),plan=planRecords().filter(r=>r.date===d);return{done,plan,doneMin:sumMin(done),planMin:sumMin(plan),subj:subjectMinutes(done)}}
+function weekStats(base=now()){
+  const s=startOfWeek(base),e=addDays(s,6),done=dateRangeRecords(s,e,'DONE'),plan=dateRangeRecords(s,e,'PLAN'),q=cloud.questionLog.filter(r=>{const d=isoDate(parseDate(get(r,['date'],''))||new Date(0));return d>=isoDate(s)&&d<=isoDate(e)}); const total=q.reduce((a,r)=>a+nget(r,['total_questions']),0),correct=q.reduce((a,r)=>a+nget(r,['correct']),0);
+  return{s,e,done,plan,doneMin:sumMin(done),planMin:sumMin(plan),subj:subjectMinutes(done),planSubj:subjectMinutes(plan),questions:total,accuracy:total?Math.round(correct/total*100):0};
+}
+function nextAction(){
+  const t=todayStats();const undone=t.plan.filter(p=>!t.done.some(d=>d.subject===p.subject&&d.topic&&p.topic&&d.topic.includes(p.topic))).sort((a,b)=>b.minutes-a.minutes);
+  if(undone.length)return{label:`${undone[0].subject} · ${undone[0].topic||undone[0].activity}`,sub:`今日 PLAN · ${minFmt(undone[0].minutes)}`,subject:undone[0].subject,topic:undone[0].topic,activity:undone[0].activity};
+  const rq=reviewQueue().filter(x=>x.overdue);if(rq.length)return{label:`${rq[0].subject} · ${rq[0].topic}`,sub:`逾期複習 ${Math.abs(Math.floor((startOfDay(now())-parseDate(rq[0].due))/86400000))} 天`,subject:rq[0].subject,topic:rq[0].topic,activity:'複習'};
+  return{label:'Quick Focus',sub:'沒有排定項目，直接開始一段專注',subject:'',topic:'',activity:'專注'};
+}
+function studyBrief(){const w=weekStats(),p=w.planMin,d=w.doneMin; if(!p&&!d)return'本週還沒有足夠的學習資料。先完成第一段 Focus，Study OS 會開始累積你的節奏。'; const gaps=SUBJECTS.map(s=>({s,g:(w.planSubj[s]||0)-(w.subj[s]||0),actual:w.subj[s]||0})).sort((a,b)=>b.g-a.g); let txt=`本週已完成 ${minFmt(d)}${p?`，相當於目前 PLAN 的 ${pct(d,p)}%`:''}。`; if(p&&gaps[0].g>30)txt+=`${gaps[0].s}目前比計畫少 ${minFmt(gaps[0].g)}；`; const over=gaps.slice().sort((a,b)=>a.g-b.g)[0]; if(over&&over.g<-30)txt+=`${over.s}投入比計畫多 ${minFmt(Math.abs(over.g))}。`; const rq=reviewQueue().filter(x=>x.overdue).length;if(rq)txt+=`另有 ${rq} 項複習逾期。`; return txt}
 
-function buildReadingVocabPool(){
-  const m=new Map();
-  state.readingLibrary.forEach(r=>(r.highYieldVocab||[]).forEach(x=>{
-    const k=norm(x.word);if(!k)return;
-    const id='read:'+k,src=`Vol.${pad(r.volume)} Day ${pad(r.day)}`;
-    if(!m.has(k))m.set(k,{id,word:x.word,ipa:'',definition:x.gloss||'',source:src,readingSources:[src]});
-    else {const q=m.get(k);if(!q.readingSources.includes(src))q.readingSources.push(src);q.source=q.readingSources.join(' · ')}
-  }));
-  state.readingVocab=[...m.values()];
-}
-function vocabPool(){return [...state.vocab,...state.readingVocab]}
-function addReadingWords(id){
-  const r=state.readingLibrary.find(x=>x.id===id);if(!r)return;
-  let added=0;
-  (r.highYieldVocab||[]).forEach(x=>{
-    const core=state.vocab.find(v=>norm(v.word)===norm(x.word));
-    const v=core||state.readingVocab.find(v=>norm(v.word)===norm(x.word));if(!v)return;
-    const old=state.vocabProgress[v.id];
-    if(!old){state.vocabProgress[v.id]={word_id:String(v.id),word:v.word,state:'new',stage:0,due:localISO(),last_reviewed:'',correct:0,reviews:0,source:`Vol.${pad(r.volume)} Day ${pad(r.day)}`,mastered:false,updated_at:new Date().toISOString()};added++}
-  });
-  persist();renderAll();toast(`${added||0} 個新字已加入 Today’s Words`);
-  const items=(r.highYieldVocab||[]).map(x=>{const core=state.vocab.find(v=>norm(v.word)===norm(x.word)),v=core||state.readingVocab.find(v=>norm(v.word)===norm(x.word));return v&&state.vocabProgress[v.id]}).filter(Boolean);
-  if(items.length)postCloud('vocab_upsert',items);
-}
+function render(){renderNav();if(currentView==='today')renderToday();if(currentView==='plan')renderPlan();if(currentView==='study')renderStudy();if(currentView==='insights')renderInsights();if(currentView==='more')renderMore()}
+function renderNav(){$$('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===currentView));$$('.view').forEach(v=>v.classList.remove('active'));$(`#view-${currentView}`).classList.add('active');const meta={today:['STUDY OS · TODAY','今天，只看下一步。'],plan:['PLAN · REALITY','把一週排得剛剛好。'],study:['STUDY WORKSPACE','學習、複習、刷題與單字。'],insights:['INSIGHTS','看懂時間花去哪裡。'],more:['MORE','設定與備考決策。']}[currentView];$('#eyebrow').textContent=meta[0];$('#pageTitle').textContent=meta[1]}
 
-function allLogs(){
-  const activityDone=(state.activities||[]).filter(a=>String(a.type).toUpperCase()==='DONE');
-  const mirrored=new Set(activityDone.map(a=>String(a.notes||'').match(/web_event_id=([^\n]+)/)?.[1]).filter(Boolean));
-  const quick=(state.quickLog||[]).filter(q=>!mirrored.has(String(q.event_id||''))).map(q=>({...q,type:'DONE'}));
-  return uniqBy([...activityDone,...quick],x=>String(x.event_id||x.id||[x.date,x.subject,x.activity,x.topic,x.minutes,x.start_time].join('|')));
-}
-function plans(){return (state.activities||[]).filter(a=>String(a.type).toUpperCase()==='PLAN')}
-function logMinutes(x){return +x.minutes||+x.actual_minutes||0}
-function isPlanDone(p){
-  const ds=allLogs().filter(d=>d.date===p.date);
-  const planTitle=String(p.plan_title||'');
-  return ds.some(d=>{
-    if(planTitle&&String(d.plan_title||'')===planTitle)return true;
-    if(String(d.notes||'').includes(`plan_event_id=${p.event_id}`))return true;
-    return norm(d.subject)===norm(p.subject)&&norm(d.activity)===norm(p.activity)&&norm(d.topic)===norm(p.topic);
-  });
-}
-function planIsPast(p){const end=parseLocal(p.end_time)||parseLocal(`${p.date} 23:59`);return end&&end<new Date()}
-function unloggedPlans(days=7){
-  const cutoff=new Date();cutoff.setHours(0,0,0,0);cutoff.setDate(cutoff.getDate()-days+1);
-  return plans().filter(p=>{const d=parseLocal(p.date);return d&&d>=cutoff&&planIsPast(p)&&!isPlanDone(p)&&!state.skippedPlans[p.event_id]});
-}
-function todaysPlans(){return plans().filter(a=>a.date===localISO())}
-function todaysLogs(){return allLogs().filter(a=>a.date===localISO())}
-function weekAnchor(d=new Date()){
-  const x=new Date(d);x.setHours(0,0,0,0);const wd=x.getDay(),delta=settings.weekStart===1?((wd+6)%7):wd;x.setDate(x.getDate()-delta);return x;
-}
-function dateAdd(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
-function inRange(date,start,end){const d=parseLocal(date);return d&&d>=start&&d<end}
-
-function setNav(v){
-  $$('.view').forEach(x=>x.classList.toggle('active',x.id===`view-${v}`));$$('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===v));
-  $('#pageTitle').textContent=v;location.hash=v==='today'?'':v;window.scrollTo({top:0,behavior:'smooth'});
-  if(v==='week')renderWeek(); if(v==='study')renderStudy(); if(v==='review')renderReview(); if(v==='archive')renderArchive();
-}
-
-function renderAll(){renderDate();renderToday();renderWeek();renderStudy();renderReview();renderArchive();renderTimer();}
-function renderDate(){
-  const d=new Date();$('#todayDate').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})+' · '+d.toLocaleDateString('zh-TW',{year:'numeric'});
-}
 function renderToday(){
-  const ps=todaysPlans(),ds=todaysLogs(),doneP=ps.filter(isPlanDone),pending=ps.filter(p=>!isPlanDone(p));
-  const next=pending.filter(p=>!state.skippedPlans[p.event_id]).sort((a,b)=>String(a.start_time||'').localeCompare(String(b.start_time||'')))[0];
-  const nextBox=$('#nextAction');
-  if(next){nextBox.innerHTML=`<h2>${esc(next.topic||next.activity||'下一項')}</h2><div class="next-meta"><span>${esc(next.subject||'')}</span><span>· ${esc(next.activity||'')}</span><span>· ${fmtMin(next.minutes)}</span>${next.start_time?`<span>· ${esc(timeOnly(next.start_time))}</span>`:''}</div><div class="next-actions"><button class="ink-button" data-start-plan="${esc(next.event_id)}">start focus</button><button class="line-button" data-skip-plan="${esc(next.event_id)}">not today</button></div>`}
-  else nextBox.innerHTML=`<h2>${ds.length?'今日主要紀錄完成':'今天還沒有安排'}</h2><div class="next-meta"><span>${ds.length?'nice pace — keep it light.':'可以從一個 25 分鐘 quick focus 開始。'}</span></div><div class="next-actions"><button class="ink-button" data-free-focus>start quick focus</button></div>`;
-  const tline=$('#todayTimeline');
-  if(!ps.length&&!ds.length)tline.innerHTML='<div class="empty-note">blank page — 今天的第一筆紀錄會出現在這裡。</div>';
-  else {
-    const rows=[...ps.map(x=>({...x,_kind:'plan'})),...ds.filter(d=>!ps.some(p=>isPlanDone(p)&&norm(p.topic)===norm(d.topic))).map(x=>({...x,_kind:'done'}))].sort((a,b)=>String(a.start_time||'').localeCompare(String(b.start_time||'')));
-    tline.innerHTML=rows.map(x=>{const done=x._kind==='done'||isPlanDone(x);return `<div class="timeline-item ${done?'done':''}"><div class="timeline-time">${esc(timeOnly(x.start_time)||'—')}</div><i class="timeline-dot"></i><div class="timeline-main"><strong>${esc(x.topic||x.activity||'study')}</strong><small>${esc(x.subject||'')} · ${esc(x.activity||'')} · ${fmtMin(x.minutes)}</small></div>${x._kind==='plan'&&!done?`<button class="tiny-action" data-start-plan="${esc(x.event_id)}">focus</button>`:''}</div>`}).join('');
-  }
-  const pmin=ps.reduce((s,x)=>s+logMinutes(x),0),dmin=ds.reduce((s,x)=>s+logMinutes(x),0),focus=ds.filter(x=>String(x.source||'').includes('Page & Pace')).reduce((s,x)=>s+logMinutes(x),0);
-  $('#todayPlanMin').textContent=fmtMin(pmin);$('#todayDoneMin').textContent=fmtMin(dmin);$('#todayFocusMin').textContent=fmtMin(focus);$('#todayLogCount').textContent=ds.length;
-  $('#planSummary').innerHTML=`PLAN ${fmtMin(pmin)}<br>DONE ${fmtMin(dmin)} · ${doneP.length}/${ps.length||0}`;
-  renderTodayWords();renderUnlogged();
-  $$('[data-start-plan]').forEach(b=>b.onclick=()=>startPlanFocus(b.dataset.startPlan));$$('[data-skip-plan]').forEach(b=>b.onclick=()=>skipPlan(b.dataset.skipPlan));
-  $$('[data-free-focus]').forEach(b=>b.onclick=()=>openFocus('quick'));
-}
-function timeOnly(v){const d=parseLocal(v);return d?`${pad(d.getHours())}:${pad(d.getMinutes())}`:''}
-
-function renderTodayWords(){
-  const due=getDueVocab(), unseen=getUnseenVocab(settings.newWordCount), box=$('#todayWords');
-  const peek=(due[0]||unseen[0]);
-  box.innerHTML=`<div class="words-overview"><div><small>new</small><strong>${unseen.length}</strong></div><div><small>review</small><strong>${due.length}</strong></div></div>${peek?`<div class="word-peek">${esc(peek.word)}<span>${esc(shortDef(peek.definition))}</span></div>`:''}<button class="ink-button" id="startVocabToday">start ${due.length+unseen.length?Math.min(due.length+unseen.length,99):0} cards</button>`;
-  $('#startVocabToday').onclick=()=>startVocabSession();
-}
-function renderUnlogged(){
-  const list=unloggedPlans(1),box=$('#unloggedList');
-  if(!list.length){box.innerHTML='<div class="empty-note">今天沒有待確認的漏記。</div>';return}
-  box.innerHTML=list.map(p=>`<div class="unlogged-row"><div><strong>${esc(p.topic||p.activity)}</strong><small>${esc(p.subject)} · ${fmtMin(p.minutes)} · ${esc(timeOnly(p.start_time))}</small></div><div class="unlogged-actions"><button data-log-plan="${esc(p.event_id)}">有讀 → 補登</button><button data-skip-plan="${esc(p.event_id)}">沒讀</button></div></div>`).join('');
-  $$('[data-log-plan]').forEach(b=>b.onclick=()=>quickLogFromPlan(b.dataset.logPlan));$$('[data-skip-plan]').forEach(b=>b.onclick=()=>skipPlan(b.dataset.skipPlan));
-}
-function skipPlan(id){state.skippedPlans[id]={date:localISO(),at:new Date().toISOString()};persist();renderToday();renderReview();toast('已標記為今天未完成')}
-function quickLogFromPlan(id){const p=plans().find(x=>String(x.event_id)===String(id));if(!p)return;$('#logSubject').value=p.subject||'其他';$('#logActivity').value=p.activity||'複習';$('#logTopic').value=p.topic||'';$('#logMinutes').value=p.minutes||30;$('#logDialog').dataset.planId=id;$('#logDialog').showModal()}
-
-function renderWeek(){
-  const start=weekAnchor(),end=dateAdd(start,7);$('#weekRange').textContent=`${start.getMonth()+1}.${start.getDate()} — ${dateAdd(end,-1).getMonth()+1}.${dateAdd(end,-1).getDate()}`;
-  const daynames=settings.weekStart===1?['Mon','Tue','Wed','Thu','Fri','Sat','Sun']:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const wg=$('#weekGrid');wg.innerHTML='';
-  for(let i=0;i<7;i++){
-    const d=dateAdd(start,i),iso=localISO(d),ps=plans().filter(x=>x.date===iso),ds=allLogs().filter(x=>x.date===iso),dm=ds.reduce((s,x)=>s+logMinutes(x),0),pm=ps.reduce((s,x)=>s+logMinutes(x),0);
-    const el=document.createElement('div');el.className='day-page'+(iso===localISO()?' today':'');el.innerHTML=`<div class="dayname">${daynames[i]}</div><h3>${d.getDate()}</h3><div class="dayhours">${fmtMin(dm)} <small>/ ${fmtMin(pm)}</small></div>${[...ps.slice(0,3),...ds.filter(x=>!ps.some(p=>norm(p.topic)===norm(x.topic))).slice(0,2)].slice(0,4).map(x=>`<div class="day-mini"><b>${esc(x.subject||'')}</b>${esc((x.topic||x.activity||'').slice(0,34))}</div>`).join('')}`;wg.appendChild(el)
-  }
-  const wb=$('#weekSubjectBars');const weekPlans=plans().filter(x=>inRange(x.date,start,end)),weekDone=allLogs().filter(x=>inRange(x.date,start,end));
-  wb.innerHTML=SUBJECTS.map(s=>{const pm=weekPlans.filter(x=>x.subject===s).reduce((a,x)=>a+logMinutes(x),0),dm=weekDone.filter(x=>x.subject===s).reduce((a,x)=>a+logMinutes(x),0),max=Math.max(pm,dm,1),pct=Math.min(100,dm/max*100);return `<div class="subject-bar-row"><b>${s}</b><div class="subject-bar-track"><i style="width:${pct}%"></i></div><small>${fmtMin(dm)} / ${fmtMin(pm)}</small></div>`}).join('');
-  const wk=localISO(start);$('#weekNote').value=localStorage.getItem(STORE+'weeknote.'+wk)||'';$('#weekNote').oninput=e=>localStorage.setItem(STORE+'weeknote.'+wk,e.target.value)
+  const t=todayStats(),w=weekStats(),na=nextAction(),max=Math.max(...Object.values(t.subj),1),rq=reviewQueue().filter(x=>x.overdue).length,phase=examPhase();
+  const subjectRows=SUBJECTS.filter(s=>(t.subj[s]||0)>0).map(s=>`<div class="mini-row"><span>${s}</span><div class="mini-track"><i style="width:${Math.round((t.subj[s]||0)/max*100)}%"></i></div><b>${minFmt(t.subj[s])}</b></div>`).join('')||`<div class="muted" style="font-size:12px">今天還沒有 DONE 紀錄</div>`;
+  const tasks=t.plan.length?t.plan.map((p,i)=>{const isDone=t.done.some(d=>d.subject===p.subject&&d.topic&&p.topic&&d.topic.includes(p.topic));return`<div class="task ${isDone?'done':''}"><button class="task-check" data-action="complete-plan" data-index="${i}">✓</button><div class="task-main"><b>${esc(p.subject)} · ${esc(p.topic||p.activity)}</b><small>${esc(p.activity)} · ${minFmt(p.minutes)}</small></div><div class="task-actions"><button class="tiny-btn go" data-action="task-focus" data-index="${i}">Focus</button><button class="tiny-btn" data-action="move-tomorrow" data-index="${i}">明天</button></div></div>`}).join(''):`<div class="empty-state"><b>今天還沒有 PLAN</b>可以直接開 Focus，或新增一個今日計畫。</div>`;
+  $('#view-today').innerHTML=`
+  <div class="card hero-card">
+    <div class="hero-time"><div class="section-label">TODAY FOCUS</div><div class="big display-font">${minFmt(t.doneMin)}</div><div class="sub">PLAN ${minFmt(t.planMin)} · Execution ${t.planMin?pct(t.doneMin,t.planMin):0}%</div><div class="hero-actions"><button class="pill-btn primary" data-action="focus-preset" data-min="50">▶ 50 min Focus</button><button class="pill-btn" data-action="focus-picker">其他時間</button><button class="pill-btn" data-action="historical">＋ 補記</button></div></div>
+    <div class="subject-mini">${settings.examDate?`<div class="exam-chip"><b>${esc(phase.sub.split(' · ')[0])}</b><span>${esc(phase.label)}</span></div>`:''}${subjectRows}</div>
+  </div>
+  <div class="spacer"></div>
+  <div class="grid grid-4">
+    <div class="card metric-card emphasis"><span>本週 DONE</span><b>${minFmt(w.doneMin)}</b><small>${w.planMin?`PLAN ${minFmt(w.planMin)} · ${pct(w.doneMin,w.planMin)}%`:'尚未設定週計畫'}</small></div>
+    <div class="card metric-card"><span>待複習</span><b>${rq}</b><small>${rq?'需要處理的 overdue':'目前沒有逾期'}</small></div>
+    <div class="card metric-card"><span>本週刷題</span><b>${w.questions}</b><small>${w.questions?`正確率 ${w.accuracy}%`:'尚無刷題紀錄'}</small></div>
+    <div class="card metric-card"><span>單字 Due</span><b>${vocabDue().length}</b><small>${mergedVocabulary().length} words collected</small></div>
+  </div>
+  <div class="spacer"></div>
+  <div class="grid grid-2">
+    <div class="card pad"><div class="section-head"><h2 class="display-font">Today Plan</h2><button class="text-btn" data-action="add-plan">＋ 安排今天</button></div><div class="task-list">${tasks}</div></div>
+    <div class="grid"><div class="card pad"><div class="section-label">STUDY BRIEF</div><div class="brief"><strong>目前節奏</strong><p>${esc(studyBrief())}</p></div></div><div class="card pad"><div class="section-head"><h3>Next Best Action</h3></div><div class="next-action"><div><b>${esc(na.label)}</b><small>${esc(na.sub)}</small></div><button class="tiny-btn go" data-action="next-focus">開始</button></div></div></div>
+  </div>
+  <div class="spacer"></div>
+  <div class="card pad"><div class="section-head"><h2 class="display-font">Today Timeline</h2><button class="text-btn" data-action="historical">＋ 補記</button></div>${renderTimeline(t.done)}</div>`;
 }
 
-function renderStudy(){
-  const tabs=$('#subjectTabs');tabs.innerHTML=SUBJECTS.map(s=>`<button class="${state.activeSubject===s?'active':''}" data-subject="${s}">${s}</button>`).join('');
-  $$('[data-subject]').forEach(b=>b.onclick=()=>{state.activeSubject=b.dataset.subject;renderStudy()});
-  const sheet=$('#studySheet'); if(state.activeSubject==='英文'){renderEnglish(sheet);return}
-  const s=state.activeSubject, logs=allLogs().filter(x=>x.subject===s).sort((a,b)=>String(b.date).localeCompare(String(a.date))), mp=state.manualProgress.filter(x=>x.subject===s);
-  const totalMin=logs.reduce((a,x)=>a+logMinutes(x),0),monthStart=new Date(new Date().getFullYear(),new Date().getMonth(),1),monthMin=logs.filter(x=>parseLocal(x.date)>=monthStart).reduce((a,x)=>a+logMinutes(x),0);
-  const topics=uniqBy(logs,x=>norm(x.topic||x.activity)).slice(0,10);
-  sheet.innerHTML=`<div class="study-hero"><div><span class="card-kicker">SUBJECT FILE</span><h2>${s}</h2><p class="microcopy">最近的學習紀錄與補登狀態會自動從同步資料整理。</p></div><div><small>this month</small><strong>${fmtMin(monthMin)}</strong></div></div><div class="analytics-grid" style="margin-top:16px"><div class="metric-paper"><strong>${fmtMin(totalMin)}</strong><small>累積記錄時間</small></div><div class="metric-paper"><strong>${mp.length}</strong><small>ManualProgress 條目</small></div><div class="metric-paper"><strong>${topics.length}</strong><small>近期不同主題</small></div></div><div class="recent-topics">${topics.length?topics.map(x=>`<div class="topic-slip"><small>${esc(x.date)} · ${esc(x.activity||'study')}</small><strong>${esc(x.topic||x.activity||'')}</strong></div>`).join(''):'<div class="empty-note">同步後，最近主題會出現在這裡。</div>'}</div>`;
-}
-function renderEnglish(sheet){
-  sheet.innerHTML=`<div class="study-hero"><div><span class="card-kicker">ENGLISH HUB</span><h2>Reading × Vocabulary</h2><p class="microcopy">題本追蹤、3331 單字庫、錯題技能分析都放在同一頁。</p></div><div><small>reading bank</small><strong>${state.readingLibrary.length}</strong></div></div><div class="english-nav"><button data-eng="reading" class="${state.englishPanel==='reading'?'active':''}">Reading</button><button data-eng="vocab" class="${state.englishPanel==='vocab'?'active':''}">Vocabulary</button><button data-eng="progress" class="${state.englishPanel==='progress'?'active':''}">Progress</button></div><div id="englishPanel"></div>`;
-  $$('[data-eng]').forEach(b=>b.onclick=()=>{state.englishPanel=b.dataset.eng;renderStudy()});
-  const panel=$('#englishPanel');if(state.englishPanel==='reading')renderReadingLibrary(panel);else if(state.englishPanel==='vocab')renderVocabBank(panel);else renderEnglishProgress(panel);
-}
-function renderReadingLibrary(panel){
-  let html='';const volumes=[...new Set(state.readingLibrary.map(r=>r.volume))].sort((a,b)=>a-b);
-  volumes.forEach(vol=>{
-    const volumeRows=state.readingLibrary.filter(r=>r.volume===vol).sort((a,b)=>a.day-b.day);
-    html+=`<div class="volume-label"><span>Volume ${pad(vol)}</span><small>${volumeRows.length} readings · ${volumeRows.reduce((s,r)=>s+(+r.questions||0),0)} questions</small></div><div class="reading-library">`;
-    volumeRows.forEach(r=>{
-      const p=state.readingProgress[r.id]||{},done=p.status==='done'||(+p.correct>=0&&p.updated_at),q=+r.questions||7,vocabN=(r.highYieldVocab||[]).length;
-      const meta=[r.category,r.wordCount?`${r.wordCount} words`:'',`${q}Q`,r.suggestedTime||'',r.source].filter(Boolean).map(esc).join(' · ');
-      const vocabAction=vocabN?`<small><button class="tiny-action" data-add-reading-vocab="${r.id}">+ ${vocabN} high-yield words</button></small>`:'';
-      html+=`<div class="reading-row"><div class="number">${pad(r.day)}</div><div><strong>${esc(r.title)}</strong><small>${meta}</small>${vocabAction}</div><div class="reading-status">${done?`<button class="reading-result" data-reading="${r.id}"><b>${p.correct ?? '—'}/${q}</b><span>${p.minutes?fmtMin(p.minutes):'done'} · edit</span></button>`:`<button class="tiny-action" data-reading="${r.id}">log result</button>`}</div></div>`
-    });
-    html+='</div>'
-  });
-  panel.innerHTML=html;$$('[data-reading]').forEach(b=>b.onclick=()=>openReading(b.dataset.reading));$$('[data-add-reading-vocab]').forEach(b=>b.onclick=()=>addReadingWords(b.dataset.addReadingVocab));
-}
-function renderVocabBank(panel){
-  const due=getDueVocab().length,learned=Object.values(state.vocabProgress).filter(x=>x.reviews>0).length,pool=vocabPool();
-  panel.innerHTML=`<div class="vocab-toolbar"><input id="vocabSearch" placeholder="search 3331 words…"><button class="ink-button" id="vocabStudyDue">review ${due}</button><button class="line-button" id="vocabStudyToday">today's set</button></div><div class="analytics-grid" style="margin-bottom:14px"><div class="metric-paper"><strong>${state.vocab.length||3331}</strong><small>Core Bank · + Reading Bank</small></div><div class="metric-paper"><strong>${learned}</strong><small>started</small></div><div class="metric-paper"><strong>${due}</strong><small>due today</small></div></div><div class="vocab-list" id="vocabList"></div>`;
-  const draw=()=>{const q=norm($('#vocabSearch').value),arr=(q?pool.filter(x=>norm(x.word).includes(q)):pool).slice(0,80);$('#vocabList').innerHTML=arr.map(v=>{const p=state.vocabProgress[v.id]||{};return `<div class="vocab-item"><strong>${esc(v.word)}</strong><small>${esc(v.ipa||'')}</small><small>${esc(shortDef(v.definition))}</small><small>${p.reviews?`stage ${p.stage||0} · next ${p.due||'—'}`:'new'}</small></div>`}).join('')};draw();$('#vocabSearch').oninput=draw;$('#vocabStudyDue').onclick=()=>startVocabSession('due');$('#vocabStudyToday').onclick=()=>startVocabSession();
-}
-function renderEnglishProgress(panel){
-  const rp=Object.values(state.readingProgress),done=rp.filter(x=>x.updated_at),answered=done.reduce((a,x)=>a+(+x.total||7),0),correct=done.reduce((a,x)=>a+(+x.correct||0),0),acc=answered?Math.round(correct/answered*100):0;
-  const skills={};done.forEach(x=>(x.error_types||[]).forEach(s=>skills[s]=(skills[s]||0)+1));const top=Object.entries(skills).sort((a,b)=>b[1]-a[1]);
-  panel.innerHTML=`<div class="analytics-grid"><div class="metric-paper"><strong>${done.length}</strong><small>readings logged / ${state.readingLibrary.length}</small></div><div class="metric-paper"><strong>${acc}%</strong><small>question accuracy</small></div><div class="metric-paper"><strong>${Object.values(state.vocabProgress).filter(x=>x.reviews>0).length}</strong><small>vocab started</small></div></div><div class="paper-card" style="box-shadow:none;margin-top:14px"><span class="card-kicker">SKILL ERRORS</span><div class="subject-bars">${top.length?top.map(([s,n])=>`<div class="subject-bar-row"><b>${esc(s)}</b><div class="subject-bar-track"><i style="width:${Math.min(100,n/(top[0][1]||1)*100)}%"></i></div><small>${n}</small></div>`).join(''):'<div class="empty-note">開始記錄閱讀成績後，錯題類型會累積在這裡。</div>'}</div></div>`;
-}
+function renderTimeline(rows){if(!rows.length)return`<div class="empty-state"><b>今天還沒有時間軸</b>Focus 完成或補記後，會自動出現在這裡。</div>`;return`<div class="timeline-list">${rows.slice().sort((a,b)=>String(a.start).localeCompare(String(b.start))).map(r=>`<div class="timeline-item"><div class="timeline-time">${timeLabel(r.start,r.end,r.minutes)}</div><div class="timeline-line"></div><div class="timeline-body"><b>${esc(r.subject)} · ${esc(r.topic||r.activity)}</b><small>${esc(r.activity)} · ${minFmt(r.minutes)}${r.understanding?` · 理解 ${esc(r.understanding)}/5`:''}</small></div></div>`).join('')}</div>`}
+function timeLabel(start,end,mins){const f=v=>{const d=parseDate(v);return d?`${pad(d.getHours())}:${pad(d.getMinutes())}`:''};const a=f(start),b=f(end);return a?(b?`${a}–${b}`:a):minFmt(mins)}
 
-function renderReview(){
-  const due=getDueVocab(),un=unloggedPlans(7),qs=state.questionLog.filter(q=>(+q.wrong||0)>0&&!truthy(q.reviewed));
-  $('#reviewVocabCount').textContent=due.length;$('#reviewUnloggedCount').textContent=un.length;$('#reviewQuestionCount').textContent=qs.length;
-  $('#reviewVocabPreview').innerHTML=due.length?due.slice(0,10).map(v=>`<div class="review-item"><strong>${esc(v.word)}</strong><small>${esc(shortDef(v.definition))}</small></div>`).join('')+`<button class="ink-button" id="reviewStartVocab" style="margin-top:14px">review due</button>`:'<div class="empty-note">單字目前沒有到期。</div>';
-  if($('#reviewStartVocab'))$('#reviewStartVocab').onclick=()=>startVocabSession('due');
-  $('#reviewUnlogged').innerHTML=un.length?un.slice(0,10).map(p=>`<div class="review-item"><strong>${esc(p.topic||p.activity)}</strong><small>${esc(p.date)} · ${esc(p.subject)} · ${fmtMin(p.minutes)}</small></div>`).join(''):'<div class="empty-note">近期沒有漏記。</div>';
-  $('#reviewQuestions').innerHTML=qs.length?qs.slice(0,10).map(q=>`<div class="review-item"><strong>${esc(q.topic||q.source||'題目紀錄')}</strong><small>${esc(q.date||'')} · 錯 ${+q.wrong||0} 題 · ${esc(q.error_type||'')}</small></div>`).join(''):'<div class="empty-note">目前沒有待回看的錯題紀錄。</div>';
+function renderPlan(){
+  const w=weekStats(),days=[0,1,2,3,4,5,6].map(i=>addDays(w.s,i)),today=isoDate(now()),plans=planRecords().filter(r=>r.date>=isoDate(w.s)&&r.date<=isoDate(w.e));
+  const wp=currentWeekPlan(),target=wp.reduce((s,x)=>s+(Number(x.planned_minutes)||0),0)||Number(settings.weekTarget||0)*60;
+  const dayCols=days.map(d=>{const ds=isoDate(d),ps=plans.filter(x=>x.date===ds),dn=['一','二','三','四','五','六','日'][(d.getDay()+6)%7];return`<div class="day-column ${ds===today?'today':''}"><div class="dayname">週${dn}</div><div class="date">${d.getMonth()+1}/${d.getDate()}</div>${ps.length?ps.map(p=>`<div class="plan-chip">${esc(p.subject)} · ${esc(p.topic||p.activity)}<br><span class="muted">${minFmt(p.minutes)}</span></div>`).join(''):`<button class="tiny-btn" data-action="plan-day" data-date="${ds}">＋ Plan</button>`}</div>`}).join('');
+  const targetRows=SUBJECTS.map(s=>{const plan=wp.find(x=>x.subject===s);const planned=Number(plan?.planned_minutes)||0,actual=w.subj[s]||0;const max=Math.max(planned,actual,60);return`<div class="target-row"><b>${s}</b><div class="target-track"><i style="width:${Math.min(100,actual/max*100)}%"></i><em style="left:${Math.min(99,planned/max*100)}%"></em></div><span>${minFmt(actual)} / ${minFmt(planned)}</span></div>`}).join('');
+  const phase=examPhase();
+  $('#view-plan').innerHTML=`
+  <div class="grid grid-3">
+    <div class="card metric-card emphasis"><span>THIS WEEK</span><b>${minFmt(w.doneMin)}</b><small>Target ${minFmt(target)} · ${target?pct(w.doneMin,target):0}%</small></div>
+    <div class="card metric-card"><span>PLAN × DONE</span><b>${w.planMin?pct(w.doneMin,w.planMin):0}%</b><small>${minFmt(w.planMin)} planned → ${minFmt(w.doneMin)} actual</small></div>
+    <div class="card metric-card"><span>EXAM ROADMAP</span><b>${esc(phase.label)}</b><small>${esc(phase.sub)}</small></div>
+  </div><div class="spacer"></div>
+  <div class="card pad"><div class="section-head"><h2 class="display-font">This Week</h2><button class="text-btn" data-action="weekly-target">設定科目時數</button></div><div class="plan-week">${dayCols}</div></div>
+  <div class="spacer"></div><div class="grid grid-2">
+    <div class="card pad"><div class="section-head"><h3>Plan vs Reality</h3><small>細線＝目標 · 色塊＝實際</small></div><div class="subject-targets">${targetRows}</div></div>
+    <div class="card pad"><div class="section-head"><h3>Weekly Review</h3></div>${weeklyReviewHTML(w,wp)}</div>
+  </div>`;
 }
-function truthy(v){return v===true||['true','1','yes','是','已訂正','完成'].includes(String(v).toLowerCase())}
+function currentWeekPlan(){const ws=isoDate(startOfWeek(now()));return mergedWeeklyPlan().filter(x=>x.week_start===ws)}
+function weeklyReviewHTML(w,wp){const targetBy=Object.fromEntries(SUBJECTS.map(s=>[s,Number(wp.find(x=>x.subject===s)?.planned_minutes)||0]));const diffs=SUBJECTS.map(s=>({s,d:(w.subj[s]||0)-targetBy[s]})).sort((a,b)=>a.d-b.d);const low=diffs[0],high=diffs[diffs.length-1];return`<div class="brief"><strong>本週目前</strong><p>${w.planMin?`PLAN 執行率 ${pct(w.doneMin,w.planMin)}%。`:'尚未用 Calendar 建立足夠 PLAN。'}${low&&low.d<-30?`${low.s}比科目目標少 ${minFmt(Math.abs(low.d))}。`:''}${high&&high.d>30?`${high.s}比科目目標多 ${minFmt(high.d)}。`:''}${reviewQueue().filter(x=>x.overdue).length?` 有 ${reviewQueue().filter(x=>x.overdue).length} 項複習逾期。`:''}</p></div><div class="divider"></div><button class="soft-btn" data-nav="insights">看完整 Insights</button>`}
+function examPhase(){if(!settings.examDate)return{label:'尚未設定',sub:'在 More → Settings 設定考試日'};const ex=parseDate(settings.examDate),days=Math.ceil((startOfDay(ex)-startOfDay(now()))/86400000);if(days<0)return{label:'已到考試日',sub:`${Math.abs(days)} days ago`};let label=days>180?'正課建立期':days>90?'整合複習期':days>30?'考古題強化期':'考前衝刺期';return{label,sub:`D−${days} · ${settings.examDate}`}}
 
-function renderArchive(){
-  const now=new Date(),ms=new Date(now.getFullYear(),now.getMonth(),1),me=new Date(now.getFullYear(),now.getMonth()+1,1),logs=allLogs().filter(x=>inRange(x.date,ms,me)),min=logs.reduce((a,x)=>a+logMinutes(x),0),days=new Set(logs.map(x=>x.date)).size,eng=logs.filter(x=>x.subject==='英文').reduce((a,x)=>a+logMinutes(x),0),focus=logs.filter(x=>String(x.source||'').includes('Page & Pace')).reduce((a,x)=>a+logMinutes(x),0);
-  $('#monthStats').innerHTML=`<div><small>study time</small><strong>${fmtMin(min)}</strong></div><div><small>active days</small><strong>${days}</strong></div><div><small>English</small><strong>${fmtMin(eng)}</strong></div><div><small>Page & Pace focus</small><strong>${fmtMin(focus)}</strong></div>`;
-  $('#webAppUrl').value=settings.webAppUrl||'';$('#syncToken').value=settings.token||'';$('#newWordCount').value=settings.newWordCount;$('#weekStart').value=String(settings.weekStart);
-  const recent=allLogs().sort((a,b)=>String(b.date+b.start_time).localeCompare(String(a.date+a.start_time))).slice(0,16);$('#recentTrail').innerHTML=recent.length?recent.map(x=>`<div class="trail-item"><small>${esc(x.date)} · ${esc(x.subject||'')}</small><strong>${esc(x.topic||x.activity||'study')}</strong><small>${fmtMin(x.minutes)} · ${esc(x.activity||'')}</small></div>`).join(''):'<div class="empty-note">同步後會顯示最近紀錄。</div>';
-}
+function renderStudy(){const tab=local.ui.studyTab||'courses';$('#view-study').innerHTML=`<div class="tabs" id="studyTabs"><button data-study-tab="courses" class="${tab==='courses'?'active':''}">Courses</button><button data-study-tab="reviews" class="${tab==='reviews'?'active':''}">Review</button><button data-study-tab="questions" class="${tab==='questions'?'active':''}">Questions</button><button data-study-tab="vocab" class="${tab==='vocab'?'active':''}">Vocabulary</button></div><div class="spacer"></div><div id="studyBody"></div>`;renderStudyBody(tab)}
+function renderStudyBody(tab){const el=$('#studyBody');if(!el)return;if(tab==='courses')el.innerHTML=renderCourses();if(tab==='reviews')el.innerHTML=renderReviews();if(tab==='questions')el.innerHTML=renderQuestions();if(tab==='vocab')el.innerHTML=renderVocab()}
+function renderCourses(){const items=trackedCourses();const subj=local.ui.courseSubject||'物理',list=items.filter(x=>x.subject===subj);const summaries=SUBJECTS.slice(0,4).map(s=>`<div class="card metric-card"><span>${s}</span><b>${subjectProgress(s)}%</b><small>${items.filter(x=>x.subject===s).length} tracked / ${SUBJECT_TOTALS[s]||'—'} total</small></div>`).join('');return`<div class="grid grid-4">${summaries}</div><div class="spacer"></div><div class="card pad"><div class="section-head"><h2 class="display-font">Courses</h2><button class="text-btn" data-action="manual-progress">＋ 補課程進度</button></div><div class="toolbar"><select class="field-control" id="courseSubject">${SUBJECTS.slice(0,4).map(s=>`<option ${s===subj?'selected':''}>${s}</option>`).join('')}</select><input class="field-control search-control" id="courseSearch" placeholder="搜尋課號或主題"></div><div class="course-grid" id="courseGrid">${courseCards(list)}</div></div>`}
+function courseCards(list){if(!list.length)return`<div class="empty-state"><b>目前還沒有 ${esc(local.ui.courseSubject||'物理')} 的雲端課程紀錄</b>同步後，已補登或已有學習紀錄的課程會出現在這裡；v7 不會自行捏造舊課程內容。</div>`;return list.map((c,i)=>`<div class="course-card"><div class="course-top"><span class="code">${esc(c.code)}</span><span class="status">${esc(c.status)}</span></div><h4>${esc(c.type)} · ${esc(c.topic||'課程')}</h4><p>${c.recent?`最近：${esc(c.recent)}`:'尚無最近紀錄'}</p><div class="course-actions"><button class="tiny-btn go" data-action="course-focus" data-course-index="${i}" data-subject="${esc(c.subject)}" data-code="${esc(c.code)}">Focus</button><button class="tiny-btn" data-action="course-review" data-subject="${esc(c.subject)}" data-code="${esc(c.code)}" data-topic="${esc(c.topic)}">複習完成</button></div></div>`).join('')}
+function renderReviews(){const q=reviewQueue();return`<div class="grid grid-3"><div class="card metric-card emphasis"><span>OVERDUE</span><b>${q.filter(x=>x.overdue).length}</b><small>逾期複習</small></div><div class="card metric-card"><span>NEXT 3 DAYS</span><b>${q.filter(x=>!x.overdue).length}</b><small>即將到期</small></div><div class="card metric-card"><span>INTERVALS</span><b>${(settings.reviewIntervals||[]).join('·')}</b><small>days</small></div></div><div class="spacer"></div><div class="card pad"><div class="section-head"><h2 class="display-font">Review Queue</h2><button class="text-btn" data-action="toggle-review">${settings.reviewReminders?'暫停首頁提醒':'啟用首頁提醒'}</button></div><div class="review-stack">${q.length?q.map(x=>`<div class="review-row ${x.overdue?'overdue':''}"><div><b>${esc(x.subject)} · ${esc(x.topic)}</b><small>第 ${x.stage} 次複習 · ${x.due}${x.overdue?' · overdue':''}</small></div><button class="tiny-btn go" data-action="finish-review" data-subject="${esc(x.subject)}" data-topic="${esc(x.topic)}">完成</button></div>`).join(''):`<div class="empty-state"><b>目前沒有到期複習</b>完成新課後，系統會按照間隔建立複習節奏。</div>`}</div></div>`}
+function renderQuestions(){const rows=cloud.questionLog.slice().sort((a,b)=>String(get(b,['date'],'')).localeCompare(String(get(a,['date'],'')))),total=rows.reduce((s,r)=>s+nget(r,['total_questions']),0),correct=rows.reduce((s,r)=>s+nget(r,['correct']),0),unreviewed=rows.filter(r=>nget(r,['wrong'])>0&&!String(get(r,['reviewed'],'')).match(/true|是|1/i)).length;return`<div class="grid grid-3"><div class="card metric-card emphasis"><span>TOTAL QUESTIONS</span><b>${total}</b><small>累積題數</small></div><div class="card metric-card"><span>ACCURACY</span><b>${total?Math.round(correct/total*100):0}%</b><small>整體正確率</small></div><div class="card metric-card"><span>TO REVIEW</span><b>${unreviewed}</b><small>待回看錯題紀錄</small></div></div><div class="spacer"></div><div class="card pad"><div class="section-head"><h2 class="display-font">Questions</h2><button class="text-btn" data-action="add-question">＋ 記錄刷題</button></div>${rows.length?`<div class="review-stack">${rows.slice(0,40).map(r=>`<div class="review-row"><div><b>${esc(get(r,['subject'],'其他'))} · ${esc(get(r,['source'],'刷題'))}</b><small>${esc(get(r,['date'],''))} · ${nget(r,['correct'])}/${nget(r,['total_questions'])} · ${esc(get(r,['error_type'],'無錯因標記'))}</small></div><span>${Math.round(nget(r,['accuracy'])||pct(nget(r,['correct']),nget(r,['total_questions'])))}%</span></div>`).join('')}</div>`:`<div class="empty-state"><b>還沒有刷題紀錄</b>只填總題數與答對數就能快速儲存。</div>`}</div>`}
+function vocabDue(){const today=isoDate(now());return mergedVocabulary().filter(v=>!v.mastered&&(!v.due||v.due<=today)).sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')))}
+function renderVocab(){const words=mergedVocabulary(),due=vocabDue(),weak=words.filter(v=>Number(v.level||0)<=1&&!v.mastered),mastered=words.filter(v=>v.mastered);return`<div class="vocab-hero"><div class="card vocab-stat"><div class="section-label">VOCABULARY</div><div class="big">${words.length}</div><div class="muted">words collected</div><div class="hero-actions"><button class="pill-btn primary" data-action="vocab-add">＋ Quick Capture</button><button class="pill-btn" data-action="vocab-review">Review ${due.length}</button></div></div><div class="grid grid-3"><div class="card metric-card"><span>DUE</span><b>${due.length}</b><small>今天待複習</small></div><div class="card metric-card"><span>WEAK</span><b>${weak.length}</b><small>不會 / 模糊</small></div><div class="card metric-card"><span>MASTERED</span><b>${mastered.length}</b><small>已熟悉</small></div></div></div><div class="spacer"></div><div class="card pad"><div class="section-head"><h2 class="display-font">Word Library</h2><button class="text-btn" data-action="vocab-add">＋ 單字</button></div>${words.length?`<div class="vocab-list">${words.slice().sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||''))).slice(0,80).map(v=>`<div class="vocab-row"><div><div class="vocab-word">${esc(v.word)}</div><div class="vocab-meaning">${esc(v.meaning||'尚未補意思')}</div><div class="vocab-meta">${esc(v.source||'未標來源')} · ${v.mastered?'Mastered':`Due ${esc(v.due||'today')}`}</div></div><button class="tiny-btn" data-action="vocab-edit" data-id="${esc(v.id)}">編輯</button></div>`).join('')}</div>`:`<div class="empty-state"><b>單字庫還是空的</b>閱讀時只要先輸入單字就能快速收下，意思與例句可以之後再補。</div>`}</div>`}
 
-function startPlanFocus(id){const p=plans().find(x=>String(x.event_id)===String(id));if(!p)return;startTimer({mode:'focus',subject:p.subject||'其他',activity:p.activity||'看課',topic:p.topic||'',planId:p.event_id})}
-function openFocus(mode='focus'){const d=$('#focusDialog');$('#focusMode').value=mode;d.showModal()}
-function startTimer(ctx){
-  const mode=TIMER_MODES[ctx.mode]?ctx.mode:'focus';timerState={...ctx,mode,running:true,startedAt:Date.now(),elapsedBefore:0,durationSec:TIMER_MODES[mode].work?TIMER_MODES[mode].work*60:null};saveJSON(STORE+'timer',timerState);renderTimer();renderToday();toast(`${TIMER_MODES[mode].label.toLowerCase()} started`)
-}
-function timerElapsed(){if(!timerState)return 0;return Math.max(0,+timerState.elapsedBefore||0)+(timerState.running?Math.max(0,(Date.now()-(+timerState.startedAt||Date.now()))/1000):0)}
-function pauseTimer(){if(!timerState||!timerState.running)return;timerState.elapsedBefore=timerElapsed();timerState.running=false;timerState.startedAt=null;saveJSON(STORE+'timer',timerState);renderTimer()}
-function resumeTimer(){if(!timerState||timerState.running)return;timerState.running=true;timerState.startedAt=Date.now();saveJSON(STORE+'timer',timerState);renderTimer()}
-function renderTimer(){
-  clearInterval(tickHandle);const mode=timerState?TIMER_MODES[timerState.mode]:TIMER_MODES.focus;
-  $$('#timerModes button').forEach(b=>b.classList.toggle('active',(timerState?.mode||'focus')===b.dataset.mode));
-  const paint=()=>{
-    let sec;if(!timerState){sec=mode.work*60}else{const elapsed=timerElapsed();sec=timerState.durationSec==null?elapsed:Math.max(0,timerState.durationSec-elapsed);if(timerState.durationSec!=null&&sec<=0&&timerState.running){pauseTimer();try{navigator.vibrate?.([120,60,120])}catch{}toast('focus complete — finish & log');return}}
-    const label=formatClock(sec);$('#timerDisplay').textContent=label;$('#miniTimerClock').textContent=label;$('#timerContext').textContent=timerState?`${timerState.subject} · ${timerState.activity} · ${timerState.topic||'untitled'}`:'choose a task, then start.';
-    $('#timerStart').textContent=timerState?(timerState.running?'running':'resume'):'start';$('#timerStart').disabled=!!timerState?.running;$('#timerPause').disabled=!timerState?.running;$('#timerFinish').disabled=!timerState;$('#miniTimer').hidden=!timerState;$('#miniTimerLabel').textContent=mode.label;
-  };paint();if(timerState?.running)tickHandle=setInterval(paint,500)
-}
-function formatClock(sec){sec=Math.max(0,Math.floor(sec));const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return h?`${pad(h)}:${pad(m)}:${pad(s)}`:`${pad(m)}:${pad(s)}`}
-async function finishTimer(){
-  if(!timerState)return;const ctx={...timerState},elapsed=Math.max(60,timerElapsed()),minutes=Math.max(1,Math.round(elapsed/60));timerState=null;localStorage.removeItem(STORE+'timer');clearInterval(tickHandle);renderTimer();
-  await addQuickLog({subject:ctx.subject,activity:ctx.activity,topic:ctx.topic,minutes,notes:ctx.planId?`plan_event_id=${ctx.planId}`:'',format:'Focus'});toast(`✓ ${fmtMin(minutes)} 已記錄`);renderAll()
-}
+function renderInsights(){const range=local.ui.insightRange||'week';let start,end=now();if(range==='day')start=startOfDay(now());else if(range==='week')start=startOfWeek(now());else if(range==='month')start=new Date(now().getFullYear(),now().getMonth(),1);else start=addDays(now(),-89);const rows=dateRangeRecords(start,end,'DONE'),mins=sumMin(rows),subj=subjectMinutes(rows),activities=activityMinutes(rows);const days=[];for(let d=startOfDay(start);d<=startOfDay(end);d=addDays(d,1)){const ds=isoDate(d);days.push({d:new Date(d),m:sumMin(rows.filter(r=>r.date===ds))})}const max=Math.max(...days.map(x=>x.m),1);const bars=days.slice(-31).map(x=>`<div class="chart-col"><div class="chart-bar-wrap"><div class="chart-bar" style="height:${Math.max(2,x.m/max*100)}%" title="${isoDate(x.d)} ${minFmt(x.m)}"></div></div><small>${x.d.getDate()}</small></div>`).join('');const maxS=Math.max(...Object.values(subj),1);const srows=SUBJECTS.map(s=>`<div class="break-row"><span>${s}</span><div class="break-track"><i style="width:${subj[s]/maxS*100}%"></i></div><b>${minFmt(subj[s])}</b></div>`).join('');const acts=Object.entries(activities).sort((a,b)=>b[1]-a[1]).slice(0,8),maxA=Math.max(...acts.map(x=>x[1]),1);const arows=acts.map(([a,m])=>`<div class="break-row"><span>${esc(a)}</span><div class="break-track"><i style="width:${m/maxA*100}%"></i></div><b>${minFmt(m)}</b></div>`).join('')||'<div class="muted">尚無活動分類</div>';const streak=calcStreak();const focusSessions=rows.filter(r=>r.source==='quick'&&String(r.notes||'').includes('[focus]'));
+  $('#view-insights').innerHTML=`<div class="tabs" id="insightTabs"><button data-range="day" class="${range==='day'?'active':''}">DAY</button><button data-range="week" class="${range==='week'?'active':''}">WEEK</button><button data-range="month" class="${range==='month'?'active':''}">MONTH</button><button data-range="90" class="${range==='90'?'active':''}">90 DAYS</button></div><div class="spacer"></div><div class="grid grid-4"><div class="card metric-card emphasis"><span>STUDY TIME</span><b>${minFmt(mins)}</b><small>${rows.length} records</small></div><div class="card metric-card"><span>STREAK</span><b>${streak} days</b><small>連續有 DONE 的天數</small></div><div class="card metric-card"><span>FOCUS</span><b>${focusSessions.length}</b><small>${minFmt(sumMin(focusSessions))}</small></div><div class="card metric-card"><span>QUESTIONS</span><b>${weekStats().questions}</b><small>本週 ${weekStats().accuracy}% correct</small></div></div><div class="spacer"></div><div class="grid grid-2"><div class="card pad"><div class="section-head"><h2 class="display-font">Study Rhythm</h2><small>${isoDate(start)} → ${isoDate(end)}</small></div><div class="chart">${bars}</div></div><div class="card pad"><div class="section-head"><h3>Subject Breakdown</h3></div><div class="breakdown">${srows}</div><div class="divider"></div><div class="section-head"><h3>Activity Breakdown</h3></div><div class="breakdown">${arows}</div></div></div><div class="spacer"></div><div class="grid grid-2"><div class="card pad"><div class="section-head"><h3>Study Heatmap</h3><small>最近 14 週</small></div>${heatmapHTML()}</div><div class="card pad"><div class="section-head"><h3>Progress Insight</h3></div><div class="brief"><strong>從數據看下一步</strong><p>${esc(studyBrief())}</p></div></div></div>`}
+function calcStreak(){const set=new Set(doneRecords().filter(r=>r.minutes>0).map(r=>r.date));let c=0,d=startOfDay(now());if(!set.has(isoDate(d)))d=addDays(d,-1);while(set.has(isoDate(d))){c++;d=addDays(d,-1)}return c}
+function heatmapHTML(){const end=startOfDay(now()),start=addDays(end,-97),records=doneRecords(),mins={};records.forEach(r=>mins[r.date]=(mins[r.date]||0)+r.minutes);const cells=[];for(let d=start;d<=end;d=addDays(d,1)){const m=mins[isoDate(d)]||0,l=m===0?0:m<60?1:m<180?2:m<300?3:4;cells.push(`<span class="heat l${l}" title="${isoDate(d)} · ${minFmt(m)}"></span>`)}return`<div class="heatmap">${cells.join('')}</div><div class="muted" style="font-size:10px;margin-top:10px">顏色越深代表當日累積學習時間越長。</div>`}
 
-async function addQuickLog({subject,activity,topic,minutes,notes='',format=''}){
-  const end=new Date(),start=new Date(end.getTime()-(+minutes||1)*60000),item={event_id:uid('pp'),date:localISO(end),type:'DONE',subject:subject||'其他',activity:activity||'學習',topic:topic||'',minutes:+minutes||1,status:'完成',format:format||'',source:'Page & Pace',platform:'Web',domain:'',understanding:'',url:'',notes,updated_at:new Date().toISOString(),start_time:dateTimeLocal(start),end_time:dateTimeLocal(end),calendar_event_id:''};
-  state.quickLog.unshift(item);persist();renderAll();await postCloud('quick_add',[item]);return item
-}
-function dateTimeLocal(d){return `${localISO(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`}
+function renderMore(){const phase=examPhase();$('#view-more').innerHTML=`<div class="grid grid-2"><div class="card pad"><div class="section-head"><h2 class="display-font">Settings</h2></div><div class="form"><div class="field"><label>Apps Script Web App URL</label><input id="settingUrl" value="${esc(settings.apiUrl)}" placeholder="https://script.google.com/.../exec"></div><div class="field"><label>同步密鑰（只存在你的瀏覽器，不寫入 GitHub）</label><input id="settingToken" type="password" value="${esc(settings.token)}" placeholder="你的現有同步密鑰"></div><div class="form-row"><div class="field"><label>考試日期</label><input id="settingExam" type="date" value="${esc(settings.examDate)}"></div><div class="field"><label>每週目標時數</label><input id="settingWeekTarget" type="number" min="1" max="100" value="${esc(settings.weekTarget)}"></div></div><div class="form-actions"><button data-action="test-sync">測試同步</button><button class="save" data-action="save-settings">儲存設定</button></div></div></div><div class="card pad"><div class="section-head"><h2 class="display-font">Roadmap</h2></div><div class="brief"><strong>${esc(phase.label)}</strong><p>${esc(phase.sub)}</p></div><div class="divider"></div><label style="display:flex;align-items:center;gap:8px;font-size:12px"><input type="checkbox" id="reviewToggle" ${settings.reviewReminders?'checked':''}> 首頁顯示到期複習提醒</label><div class="divider"></div><button class="soft-btn" data-action="export-backup">下載 v7 Backup JSON</button></div></div><div class="spacer"></div><div class="grid grid-2"><div class="card pad"><div class="section-head"><h2 class="display-font">Decision Log</h2><button class="text-btn" data-action="add-decision">＋ 決策</button></div>${mergedDecisions().length?`<div class="grid">${mergedDecisions().slice(0,10).map(d=>`<div class="decision"><b>${esc(d.title)}</b><p>${esc(d.reason||'')}</p><small class="muted">${esc(d.created_at?.slice(0,10)||'')} ${d.review_date?`· Review ${esc(d.review_date)}`:''}</small></div>`).join('')}</div>`:`<div class="empty-state"><b>還沒有備考決策紀錄</b>只記真正會影響策略的大決定。</div>`}</div><div class="card pad"><div class="section-head"><h2 class="display-font">About v7</h2></div><p class="muted" style="font-size:12px;line-height:1.7">Focus、Weekly Plan、Plan vs Reality、歷史補記、Vocabulary、Insights、Heatmap、Dark Mode 與 Study Decision Log 已整合。生成式 AI、聊天機器人與自然語言操作刻意不加入，因此不需要 AI token。</p><p class="muted" style="font-size:11px">Version ${VERSION} · 待同步 ${local.pendingActions?.length||0} 筆</p></div></div>`}
 
-function getDueVocab(){const today=localISO();return vocabPool().filter(v=>{const p=state.vocabProgress[v.id];return p&&p.reviews>0&&p.due&&p.due<=today&&!p.mastered})}
-function getUnseenVocab(n=settings.newWordCount){const limit=Math.max(0,+n||0),selected=vocabPool().filter(v=>{const p=state.vocabProgress[v.id];return p&&(+p.reviews||0)===0}),ordinary=state.vocab.filter(v=>!state.vocabProgress[v.id]);return uniqBy([...selected,...ordinary],x=>String(x.id)).slice(0,limit)}
-function shortDef(s){return String(s||'').replace(/\s+/g,' ').replace(/,{2,}/g,',').slice(0,110)}
-function startVocabSession(kind='today'){
-  const q=kind==='due'?getDueVocab():[...getDueVocab(),...getUnseenVocab()];if(!q.length){toast('目前沒有待背單字');return}
-  vocabSession={queue:uniqBy(q,x=>x.id),index:0,revealed:false,startedAt:Date.now(),reviewed:0};$('#vocabSessionTitle').textContent=kind==='due'?'due review':"today's words";$('#vocabDialog').showModal();renderFlashcard()
+function openSheet(html){$('#sheetContent').innerHTML=html;$('#sheetBackdrop').classList.add('show');$('#bottomSheet').classList.add('show')}
+function closeSheet(){$('#sheetBackdrop').classList.remove('show');$('#bottomSheet').classList.remove('show')}
+function sheetTitle(t,sub=''){return`<div class="sheet-title"><div><h2>${esc(t)}</h2>${sub?`<small class="muted">${esc(sub)}</small>`:''}</div><button data-action="close-sheet">×</button></div>`}
+function openQuickMenu(){openSheet(`${sheetTitle('Quick Add','最常用操作控制在 1–2 次點擊')}<div class="action-grid"><button class="action-card" data-action="focus-picker"><b>▶ Start Focus</b><small>先計時，完成後再記內容</small></button><button class="action-card" data-action="historical"><b>＋ 補記完成</b><small>今天 / 昨天 / 前天 / 其他日期</small></button><button class="action-card" data-action="add-plan"><b>◫ 新增 PLAN</b><small>安排今天或其他日期</small></button><button class="action-card" data-action="add-question"><b>✓ 刷題</b><small>快速記總題數與答對數</small></button><button class="action-card" data-action="vocab-add"><b>Aa 單字</b><small>先收字，細節之後再補</small></button><button class="action-card" data-action="manual-progress"><b>▤ 課程進度</b><small>補以前已完成的課</small></button></div>`)}
+function openFocusPicker(){openSheet(`${sheetTitle('Start Focus','可以先計時，結束後再決定做了什麼')}<div class="quick-picks">${[25,45,50,60,90].map(m=>`<button data-action="focus-preset" data-min="${m}">${m} min</button>`).join('')}</div><div class="spacer"></div><div class="form-row"><div class="field"><label>科目（可留空）</label><select id="focusPickSubject"><option value="">Quick Focus</option>${SUBJECTS.map(s=>`<option>${s}</option>`).join('')}</select></div><div class="field"><label>自訂分鐘</label><input id="focusCustomMin" type="number" min="1" max="240" value="50"></div></div><div class="form-actions"><button class="save" data-action="focus-custom">開始</button></div>`)}
+async function requestWakeLock(){try{if('wakeLock' in navigator&&document.visibilityState==='visible'){wakeLock=await navigator.wakeLock.request('screen')}}catch(e){console.debug('Wake Lock unavailable',e)}}
+async function releaseWakeLock(){try{if(wakeLock){await wakeLock.release();wakeLock=null}}catch{}}
+function startFocus(min,subject='',topic='',activity='專注',mode='quick'){
+  closeSheet();focus={running:true,paused:false,startedAt:new Date().toISOString(),durationMin:Number(min)||50,remainingSec:(Number(min)||50)*60,subject,topic,activity,mode,tick:null};saveFocus();showFocus();requestWakeLock();runFocusTick();
 }
-function renderFlashcard(){
-  if(!vocabSession)return;const v=vocabSession.queue[vocabSession.index];if(!v){finishVocabSession();return}const pct=(vocabSession.index/vocabSession.queue.length)*100;$('#vocabProgressBar').style.width=pct+'%';
-  $('#flashcard').innerHTML=`<div class="word">${esc(v.word)}</div><div class="ipa">${esc(v.ipa||'')}</div>${vocabSession.revealed?`<div class="meaning">${esc(v.definition||'')}</div><div class="source">${esc(v.source||'core bank')}</div><button class="line-button" id="speakWord">🔊 pronunciation</button>`:`<button class="ink-button" id="revealWord">show meaning</button>`}`;
-  $('#flashActions').hidden=!vocabSession.revealed;if($('#revealWord'))$('#revealWord').onclick=()=>{vocabSession.revealed=true;renderFlashcard()};if($('#speakWord'))$('#speakWord').onclick=()=>speak(v.word)
-}
-function speak(word){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(word);u.lang='en-US';u.rate=.82;speechSynthesis.speak(u)}catch{}}
-async function gradeWord(grade){
-  if(!vocabSession)return;const v=vocabSession.queue[vocabSession.index],old=state.vocabProgress[v.id]||{stage:0,reviews:0,correct:0};let stage=+old.stage||0,days=1,mastered=false;
-  if(grade==='again'){stage=Math.max(0,stage-1);days=0; if((old._again||0)<1){vocabSession.queue.push(v);old._again=(old._again||0)+1}}
-  if(grade==='hard'){stage=Math.max(1,stage);days=1}
-  if(grade==='good'){stage=Math.min(5,stage+1);days=[1,3,7,14,30,60][stage]||30}
-  if(grade==='easy'){stage=Math.min(5,stage+2);days=[1,3,7,14,30,60][stage]||60;mastered=stage>=5}
-  const due=dateAdd(new Date(),days);const p={word_id:String(v.id),word:v.word,state:mastered?'mastered':'learning',stage,due:localISO(due),last_reviewed:new Date().toISOString(),correct:(+old.correct||0)+(grade==='good'||grade==='easy'?1:0),reviews:(+old.reviews||0)+1,source:'Core Bank',mastered,updated_at:new Date().toISOString()};state.vocabProgress[v.id]=p;persist();postCloud('vocab_upsert',[p]);vocabSession.index++;vocabSession.reviewed++;vocabSession.revealed=false;renderFlashcard();renderTodayWords()
-}
-async function finishVocabSession(){const s=vocabSession;vocabSession=null;$('#vocabDialog').close();if(s?.reviewed){const mins=Math.max(1,Math.round((Date.now()-s.startedAt)/60000));await addQuickLog({subject:'英文',activity:'單字',topic:`Vocabulary · ${s.reviewed} cards`,minutes:mins,format:'Vocabulary'});toast(`單字完成 · ${s.reviewed} cards · ${mins}m`)}renderAll()}
+function saveFocus(){localStorage.setItem(LS.focus,JSON.stringify({...focus,tick:null,savedAt:Date.now()}))}
+function loadFocus(){const f=loadJSON(LS.focus,null);if(!f||!f.running)return;focus={...focus,...f};if(!focus.paused&&focus.startedAt){const end=new Date(f.startedAt).getTime()+f.durationMin*60000;focus.remainingSec=Math.max(0,Math.round((end-Date.now())/1000))}showFocus();requestWakeLock();runFocusTick()}
+function showFocus(){$('#focusLayer').classList.add('show');$('#focusLayer').setAttribute('aria-hidden','false');$('#focusSubject').textContent=focus.subject||'Quick Focus';$('#focusTopic').textContent=focus.topic||'結束後再紀錄內容';updateFocusUI()}
+function hideFocus(){$('#focusLayer').classList.remove('show');$('#focusLayer').setAttribute('aria-hidden','true')}
+function runFocusTick(){clearInterval(focus.tick);focus.tick=setInterval(()=>{if(!focus.paused&&focus.running){focus.remainingSec=Math.max(0,focus.remainingSec-1);updateFocusUI();if(focus.remainingSec<=0){clearInterval(focus.tick);try{navigator.vibrate?.([120,80,120])}catch{};finishFocus(true)}}},1000)}
+function updateFocusUI(){const m=Math.floor(focus.remainingSec/60),s=focus.remainingSec%60;$('#focusClock').textContent=`${pad(m)}:${pad(s)}`;const total=focus.durationMin*60;$('#focusProgress').style.width=`${Math.max(0,Math.min(100,focus.remainingSec/total*100))}%`;$('#focusPause').textContent=focus.paused?'Resume':'Pause'}
+function finishFocus(completed=false){clearInterval(focus.tick);const elapsed=Math.max(1,Math.round((focus.durationMin*60-focus.remainingSec)/60))||focus.durationMin;hideFocus();releaseWakeLock();localStorage.removeItem(LS.focus);openDoneForm({minutes:completed?focus.durationMin:elapsed,subject:focus.subject,topic:focus.topic,activity:focus.activity,focus:true});focus.running=false}
 
-function openReading(id){const r=state.readingLibrary.find(x=>x.id===id);if(!r)return;const p=state.readingProgress[id]||{},q=+r.questions||7;$('#readingDialogTitle').textContent=`Vol.${pad(r.volume)} · Day ${pad(r.day)} · ${r.title}`;$('#readingId').value=id;$('#readingCorrect').max=q;$('#readingCorrect').value=Math.min(q,p.correct??0);$('#readingTotalLabel').textContent=`/ ${q}`;$('#readingMinutes').value=p.minutes??0;$('#readingNote').value=p.note||'';$('#skillChips').innerHTML=SKILLS.map(s=>`<label><input type="checkbox" value="${esc(s)}" ${(p.error_types||[]).includes(s)?'checked':''}><span>${esc(s)}</span></label>`).join('');$('#readingDialog').showModal()}
-async function saveReading(){const id=$('#readingId').value,r=state.readingLibrary.find(x=>x.id===id);if(!r)return;const q=+r.questions||7,err=$$('#skillChips input:checked').map(x=>x.value),correct=Math.max(0,Math.min(q,+$('#readingCorrect').value||0)),p={id,volume:r.volume,day:r.day,title:r.title,status:'done',correct,total:q,minutes:+$('#readingMinutes').value||0,error_types:err,note:$('#readingNote').value.trim(),updated_at:new Date().toISOString()};state.readingProgress[id]=p;persist();$('#readingDialog').close();postCloud('reading_upsert',[{...p,error_types:err.join('|')}]);if(p.minutes>0)await addQuickLog({subject:'英文',activity:'閱讀',topic:`Vol.${pad(r.volume)} Day ${pad(r.day)} · ${r.title}`,minutes:p.minutes,format:'Reading',notes:`score=${p.correct}/${q};skills=${err.join(',')}`});renderAll();toast('閱讀紀錄已儲存')}
+function openDoneForm(pref={}){const today=isoDate(now()),d=pref.date||today,last=local.lastDone||{},subject=pref.subject??last.subject??'',activity=pref.activity||last.activity||'專注',minutes=Number(pref.minutes||last.minutes)||50;openSheet(`${sheetTitle(pref.focus?'Focus 完成':'補記完成','儲存後會算進該日與該週統計')}<div class="form"><div class="field"><label>日期</label><div class="quick-picks"><button data-set-date="${today}" class="${d===today?'active':''}">今天</button><button data-set-date="${isoDate(addDays(now(),-1))}" class="${d===isoDate(addDays(now(),-1))?'active':''}">昨天</button><button data-set-date="${isoDate(addDays(now(),-2))}" class="${d===isoDate(addDays(now(),-2))?'active':''}">前天</button></div><input id="doneDate" type="date" value="${d}"></div><div class="form-row"><div class="field"><label>科目</label><select id="doneSubject">${['',...SUBJECTS].map(s=>`<option ${s===subject?'selected':''}>${s||'其他'}</option>`).join('')}</select></div><div class="field"><label>類型</label><select id="doneActivity">${['看課','複習','刷題','英文閱讀','單字','專注','其他'].map(s=>`<option ${s===activity?'selected':''}>${s}</option>`).join('')}</select></div></div><div class="field"><label>內容</label><input id="doneTopic" value="${esc(pref.topic||'')}" placeholder="例如：正課 27 / Vol.06 Day 02"></div><div class="form-row"><div class="field"><label>實際分鐘</label><input id="doneMinutes" type="number" min="1" max="600" value="${minutes}"><div class="quick-picks compact">${[30,45,50,60,90].map(m=>`<button data-set-minutes="${m}">${m}</button>`).join('')}</div></div><div class="field"><label>理解度（選填）</label><select id="doneUnderstanding"><option value="">不填</option>${[1,2,3,4,5].map(x=>`<option>${x}</option>`).join('')}</select></div></div><div class="field"><label>備註（選填）</label><textarea id="doneNotes" placeholder="需要時再寫">${pref.focus?'[focus]':''}</textarea></div><div class="form-actions"><button data-action="close-sheet">取消</button>${pref.focus?'':`<button data-action="save-done-more">儲存＋再新增</button>`}<button class="save" data-action="save-done">儲存 DONE</button></div></div>`)}
 
-function jsonp(params){return new Promise((resolve,reject)=>{if(!settings.webAppUrl)return reject(new Error('no url'));const cb='pp_cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);const s=document.createElement('script'),tm=setTimeout(()=>{cleanup();reject(new Error('timeout'))},18000);const cleanup=()=>{clearTimeout(tm);delete window[cb];s.remove()};window[cb]=d=>{cleanup();resolve(d)};const u=new URL(settings.webAppUrl);Object.entries({...params,callback:cb,_:Date.now()}).forEach(([k,v])=>u.searchParams.set(k,v));s.src=u.toString();s.onerror=()=>{cleanup();reject(new Error('network'))};document.head.appendChild(s)})}
-async function syncCloud(show=true){
-  if(!settings.webAppUrl||!settings.token){setSync(false,'local');if(show)toast('請先在 Archive 填入同步設定');return}
-  setSync(false,'syncing…');try{const d=await jsonp({action:'sync',token:settings.token,refresh_calendar:'1'});if(!d?.ok)throw new Error(d?.error||'sync failed');state.activities=d.activityLog||state.activities;state.manualProgress=d.manualProgress||[];state.quickLog=d.quickLog||[];state.questionLog=d.questionLog||[];
-    if(Array.isArray(d.readingProgress)){d.readingProgress.forEach(x=>{const e={...x,correct:+x.correct||0,total:+x.total||7,minutes:+x.minutes||0,error_types:String(x.error_types||'').split('|').filter(Boolean)};state.readingProgress[e.id]=e})}
-    if(Array.isArray(d.vocabProgress)){d.vocabProgress.forEach(x=>{state.vocabProgress[+x.word_id||x.word_id]={...x,stage:+x.stage||0,reviews:+x.reviews||0,correct:+x.correct||0,mastered:truthy(x.mastered)}})}
-    persist();setSync(true,'synced');renderAll();if(show)toast('Page & Pace 已同步')
-  }catch(e){setSync(false,'local cache');if(show)toast(`同步失敗：${e.message||e}`)}
-}
-function setSync(ok,label){const box=$('.sync-state');box.classList.toggle('ok',ok);$('#syncLabel').textContent=label}
-async function postCloud(action,items){
-  if(!settings.webAppUrl||!settings.token)return false;try{const body=new URLSearchParams({payload:JSON.stringify({token:settings.token,action,items})});await fetch(settings.webAppUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body});setTimeout(()=>syncCloud(false),900);return true}catch{return false}
-}
+function openPlanForm(date=isoDate(now()),pref={}){openSheet(`${sheetTitle('新增 PLAN','只填必要欄位')}<div class="form"><div class="form-row"><div class="field"><label>日期</label><input id="planDate" type="date" value="${date}"></div><div class="field"><label>科目</label><select id="planSubject">${SUBJECTS.map(s=>`<option ${s===pref.subject?'selected':''}>${s}</option>`).join('')}</select></div></div><div class="field"><label>內容</label><input id="planTopic" value="${esc(pref.topic||'')}" placeholder="例如：物理正課 28"></div><div class="form-row"><div class="field"><label>類型</label><select id="planActivity">${['看課','複習','刷題','英文閱讀','單字','其他'].map(s=>`<option>${s}</option>`).join('')}</select></div><div class="field"><label>預計分鐘</label><input id="planMinutes" type="number" min="1" value="60"></div></div><div class="field"><label>開始時間</label><input id="planStartTime" type="time" value="09:00"></div><div class="form-actions"><button data-action="close-sheet">取消</button><button class="save" data-action="save-plan">儲存 PLAN</button></div><div class="muted" style="font-size:10px">若已設定 Apps Script，v7 會直接寫入既有「後西醫｜PLAN」Calendar；未設定時先存本機。</div></div>`)}
+function openQuestionForm(){openSheet(`${sheetTitle('記錄刷題','最少只需要總題數與答對數')}<div class="form"><div class="form-row"><div class="field"><label>日期</label><input id="qDate" type="date" value="${isoDate(now())}"></div><div class="field"><label>科目</label><select id="qSubject">${SUBJECTS.map(s=>`<option>${s}</option>`).join('')}</select></div></div><div class="field"><label>來源 / 主題</label><input id="qSource" placeholder="例如：112 高醫 / Chapter 3"></div><div class="form-row"><div class="field"><label>總題數</label><input id="qTotal" type="number" min="1" value="20"></div><div class="field"><label>答對</label><input id="qCorrect" type="number" min="0" value="0"></div></div><div class="field"><label>主要錯因（選填）</label><select id="qError"><option value="">不填</option><option>觀念錯</option><option>計算錯</option><option>看錯題</option><option>記憶錯</option><option>選項陷阱</option></select></div><div class="form-actions"><button data-action="close-sheet">取消</button><button class="save" data-action="save-question">儲存</button></div></div>`)}
+function openVocabForm(id=''){const v=mergedVocabulary().find(x=>String(x.id)===String(id))||{};openSheet(`${sheetTitle(id?'編輯單字':'Quick Vocabulary Capture','先快速收，再慢慢整理')}<div class="form"><div class="field"><label>Word</label><input id="vWord" value="${esc(v.word||'')}" autofocus placeholder="mitigate"></div><div class="field"><label>Meaning（可之後補）</label><input id="vMeaning" value="${esc(v.meaning||'')}" placeholder="減輕、緩和"></div><div class="field"><label>Source</label><input id="vSource" value="${esc(v.source||'')}" placeholder="Vol.06 Day 02"></div><div class="field"><label>Sentence / Note</label><textarea id="vSentence">${esc(v.sentence||'')}</textarea></div><input type="hidden" id="vId" value="${esc(v.id||'')}"><div class="form-actions"><button data-action="close-sheet">取消</button><button class="save" data-action="save-vocab">儲存</button></div></div>`)}
+function openVocabReview(){const due=vocabDue();if(!due.length){showToast('今天沒有到期單字 🎉');return}const v=due[0];openSheet(`${sheetTitle(`Vocabulary · ${due.length} due`,'點卡片顯示答案')}<div class="card flashcard" id="flashcard" data-id="${esc(v.id)}"><div><div class="word">${esc(v.word)}</div><div class="meaning">${esc(v.meaning||'尚未補意思')}<div class="muted" style="font-family:var(--font-body);font-size:11px;margin-top:12px">${esc(v.sentence||v.source||'')}</div></div></div></div><div class="grade-row"><button data-action="grade-vocab" data-grade="0">不會</button><button data-action="grade-vocab" data-grade="1">模糊</button><button data-action="grade-vocab" data-grade="2">會</button></div>`)}
+function openWeeklyTarget(){const ws=isoDate(startOfWeek(now())),current=currentWeekPlan();openSheet(`${sheetTitle('Weekly Targets',`${ws} 這一週`)}<div class="form">${SUBJECTS.map(s=>`<div class="field"><label>${s} 預計時數</label><input class="weekly-hour" data-subject="${s}" type="number" step="0.5" min="0" value="${((Number(current.find(x=>x.subject===s)?.planned_minutes)||0)/60)||0}"></div>`).join('')}<div class="form-actions"><button data-action="close-sheet">取消</button><button class="save" data-action="save-weekly-target">儲存</button></div></div>`)}
+function openManualProgress(){openSheet(`${sheetTitle('補課程進度','只改進度，不虛構讀書時間；可一次補多堂')}<div class="form"><div class="form-row"><div class="field"><label>科目</label><select id="mSubject">${SUBJECTS.slice(0,4).map(s=>`<option>${s}</option>`).join('')}</select></div><div class="field"><label>課程代碼（可批次）</label><input id="mCode" placeholder="027, 028, 029 或 27-30"></div></div><div class="field"><label>狀態</label><select id="mStatus"><option value="已看課">已看課</option><option value="第1次複習">第 1 次複習</option><option value="第2次複習">第 2 次複習</option><option value="第3次複習">第 3 次複習</option></select></div><div class="form-actions"><button data-action="close-sheet">取消</button><button class="save" data-action="save-manual">儲存進度</button></div></div>`)}
+
+function openDecisionForm(){openSheet(`${sheetTitle('Study Decision','只記會影響備考策略的決定')}<div class="form"><div class="field"><label>決策</label><input id="dTitle" placeholder="例如：物理 13–18 是否重做講義"></div><div class="field"><label>原因 / 判斷</label><textarea id="dReason"></textarea></div><div class="field"><label>回看日期（選填）</label><input id="dReview" type="date"></div><div class="form-actions"><button data-action="close-sheet">取消</button><button class="save" data-action="save-decision">儲存</button></div></div>`)}
+
+async function syncCloud(force=false){
+  if(!settings.apiUrl||!settings.token){setSyncUI('Local only','尚未設定 Apps Script');if(force)showToast('先到 More 設定 Apps Script URL 與同步密鑰');return false}
+  setSyncUI('Syncing…','正在讀取雲端');
+  await flushPending();
+  try{const cb=`studyOSv7_${Date.now()}`;const url=new URL(settings.apiUrl);url.searchParams.set('action','sync');url.searchParams.set('token',settings.token);url.searchParams.set('callback',cb);if(force)url.searchParams.set('refresh_calendar','1');const data=await jsonp(url.toString(),cb);if(!data.ok)throw new Error(data.error||'sync failed');cloud.activityLog=data.activityLog||[];cloud.manualProgress=data.manualProgress||[];cloud.quickLog=data.quickLog||[];cloud.questionLog=data.questionLog||[];cloud.vocabulary=data.vocabulary||[];cloud.weeklyPlan=data.weeklyPlan||[];cloud.decisionLog=data.decisionLog||[];cacheCloud();setSyncUI('Synced',`最新 ${new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`);render();if(force)showToast('同步完成');return true}catch(e){console.error(e);setSyncUI('Sync error',String(e.message||e));if(force)showToast('同步失敗：'+String(e.message||e));return false}}
+function jsonp(url,cb){return new Promise((resolve,reject)=>{const s=document.createElement('script');let timer=0;window[cb]=d=>{clearTimeout(timer);delete window[cb];s.remove();resolve(d)};s.src=url;s.onerror=()=>{delete window[cb];s.remove();reject(new Error('network error'))};timer=setTimeout(()=>{delete window[cb];s.remove();reject(new Error('sync timeout'))},15000);document.body.appendChild(s)})}
+async function apiPost(action,items){if(!settings.apiUrl||!settings.token)return{ok:false,localOnly:true};const body={token:settings.token,action,items},fd=new URLSearchParams();fd.set('payload',JSON.stringify(body));try{const r=await fetch(settings.apiUrl,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:fd,redirect:'follow'});return await r.json()}catch(first){try{await fetch(settings.apiUrl,{method:'POST',body:fd,mode:'no-cors',redirect:'follow'});return{ok:true,opaque:true}}catch(second){throw second}}}
+function queueAction(action,items){local.pendingActions=local.pendingActions||[];local.pendingActions.push({id:uid('pending'),action,items,created_at:new Date().toISOString()});saveLocal()}
+async function flushPending(){if(!settings.apiUrl||!settings.token||!(local.pendingActions||[]).length)return;const remain=[];for(const p of local.pendingActions){try{const r=await apiPost(p.action,p.items);if(!r.ok&&!r.opaque)remain.push(p)}catch{remain.push(p)}}local.pendingActions=remain;saveLocal()}
+
+function setSyncUI(a,b){$('#syncStatus').textContent=a;$('#lastSync').textContent=b;$('#syncDot').style.background=a.includes('error')?'var(--red)':a.includes('Syncing')?'var(--amber)':'var(--sage)'}
+
+async function commitDone(data,{keepOpen=false}={}){const {subject='其他',date=isoDate(now()),activity='專注',topic='',minutes=50,understanding='',notes=''}=data;if(!date||!Number(minutes)){showToast('請填日期與分鐘');return}const d=parseDate(date)||now(),sameDay=isoDate(d)===isoDate(now()),end=sameDay?now():new Date(d.getFullYear(),d.getMonth(),d.getDate(),20,0,0),start=new Date(end.getTime()-Number(minutes)*60000);const item={event_id:uid('web'),date,type:'DONE',subject,activity,topic,minutes:Number(minutes),status:'完成',format:'',source:'Study OS v7',platform:'web',domain:'',understanding,url:'',notes,updated_at:new Date().toISOString(),start_time:start.toISOString(),end_time:end.toISOString(),calendar_event_id:''};cloud.quickLog.push(item);cacheCloud();render();showToast(`已記錄 ${subject} · ${minFmt(minutes)}`,async()=>{cloud.quickLog=cloud.quickLog.filter(x=>x.event_id!==item.event_id);cacheCloud();render();try{await apiPost('quick_remove',[{event_id:item.event_id}])}catch{queueAction('quick_remove',[{event_id:item.event_id}])}});try{const res=await apiPost('quick_add',[item]);if(res.localOnly)showToast('已存本機；設定同步後可跨裝置');else if(!res.ok)throw new Error(res.error||'write failed')}catch(e){queueAction('quick_add',[item]);showToast('已存本機，待網路恢復後同步')}if(keepOpen)openDoneForm({date,subject,activity,minutes,topic:''});else closeSheet();return item}
+async function saveDone(keepOpen=false){const subject=$('#doneSubject').value||'其他',date=$('#doneDate').value,activity=$('#doneActivity').value,topic=$('#doneTopic').value.trim(),minutes=Number($('#doneMinutes').value)||0,understanding=$('#doneUnderstanding').value,notes=$('#doneNotes').value;if(!date||!minutes){showToast('請填日期與分鐘');return}local.lastDone={subject,activity,minutes};saveLocal();await commitDone({subject,date,activity,topic,minutes,understanding,notes},{keepOpen})}
+
+async function savePlan(){const date=$('#planDate').value,minutes=Number($('#planMinutes').value)||60,time=$('#planStartTime').value||'09:00',start=new Date(`${date}T${time}:00`),end=new Date(start.getTime()+minutes*60000);const item={id:uid('planlocal'),event_id:uid('webplan'),kind:'PLAN',date,subject:$('#planSubject').value,activity:$('#planActivity').value,topic:$('#planTopic').value.trim(),minutes,status:'預定',start_time:start.toISOString(),end_time:end.toISOString(),created_at:new Date().toISOString()};local.plans=local.plans||[];local.plans.push(item);saveLocal();closeSheet();render();showToast('PLAN 已建立');try{const res=await apiPost('plan_add',[item]);if(res.localOnly)showToast('PLAN 已存本機；設定同步後可寫入 Calendar');else if(res.ok){await syncCloud(false)}else throw new Error(res.error||'plan write failed')}catch(e){queueAction('plan_add',[item]);showToast('PLAN 已存本機，待網路恢復後同步')}}
+function planRecordsWithLocal(){return [...planRecords(),...((local.plans||[]).map(x=>({...x,source:'local'})))]}
+// Replace planRecords references for UI with local-aware proxy after declaration.
+const cloudPlanRecords=planRecords;planRecords=function(){const base=cloudPlanRecords();const lp=(local.plans||[]).map(x=>({...x,source:'local'}));const seen=new Set(base.map(x=>[x.date,x.subject,x.topic,x.minutes].join('|')));return [...base,...lp.filter(x=>!seen.has([x.date,x.subject,x.topic,x.minutes].join('|')))]};
+async function saveQuestion(){const total=Number($('#qTotal').value)||0,correct=Math.min(total,Number($('#qCorrect').value)||0);if(!total){showToast('請輸入總題數');return}const item={id:uid('q'),date:$('#qDate').value,subject:$('#qSubject').value,source:$('#qSource').value||'刷題',topic:$('#qSource').value,total_questions:total,correct,wrong:total-correct,accuracy:Math.round(correct/total*100),error_type:$('#qError').value,note:'',reviewed:false,reviewed_at:'',updated_at:new Date().toISOString()};cloud.questionLog.push(item);cacheCloud();closeSheet();render();showToast('刷題已記錄');try{await apiPost('question_upsert',[item])}catch{queueAction('question_upsert',[item]);showToast('已存本機，待網路恢復後同步')}}
+function parseCourseCodes(raw){const out=[];String(raw||'').split(/[，,\s]+/).filter(Boolean).forEach(tok=>{const m=tok.match(/^(\d+)-(\d+)$/);if(m&&Number(m[2])>=Number(m[1])&&(m[1].length>=2&&m[2].length>=2)){const a=Number(m[1]),b=Number(m[2]),width=Math.max(m[1].length,m[2].length);for(let i=a;i<=b&&out.length<100;i++)out.push(String(i).padStart(width,'0'))}else out.push(tok)});return[...new Set(out)]}
+async function saveManual(){const subject=$('#mSubject').value,codes=parseCourseCodes($('#mCode').value.trim()),status=$('#mStatus').value;if(!codes.length){showToast('請輸入課程代碼');return}const progress={'已看課':45,'第1次複習':65,'第2次複習':80,'第3次複習':95}[status]||45,items=codes.map(code=>({key:`${subject}|正課|${code}`,subject,course_type:'正課',code,status,progress,recent:isoDate(now()),updated_at:new Date().toISOString()}));const keys=new Set(items.map(x=>x.key));cloud.manualProgress=cloud.manualProgress.filter(x=>!keys.has(String(get(x,['key'],''))));cloud.manualProgress.push(...items);cacheCloud();closeSheet();render();showToast(`已更新 ${items.length} 堂課程進度`);try{const r=await apiPost('manual_upsert',items);if(!r.ok&&!r.localOnly)throw new Error('sync')}catch{queueAction('manual_upsert',items);showToast('已存本機，待網路恢復後同步')}}
+
+async function saveVocab(){const word=$('#vWord').value.trim();if(!word){showToast('先輸入單字');return}const id=$('#vId').value||uid('vocab'),old=mergedVocabulary().find(v=>String(v.id)===String(id))||{},item={...old,id,word,meaning:$('#vMeaning').value.trim(),source:$('#vSource').value.trim(),sentence:$('#vSentence').value.trim(),level:Number(old.level||0),due:old.due||isoDate(now()),mastered:!!old.mastered,interval_step:Number(old.interval_step||0),created_at:old.created_at||new Date().toISOString(),updated_at:new Date().toISOString()};local.vocabulary=(local.vocabulary||[]).filter(x=>String(x.id)!==String(id));local.vocabulary.push(item);saveLocal();closeSheet();render();showToast(`${word} 已加入單字庫`);try{await apiPost('vocab_upsert',[item])}catch{}}
+async function gradeVocab(grade){const id=$('#flashcard')?.dataset.id,item=mergedVocabulary().find(v=>String(v.id)===String(id));if(!item)return;const steps=[1,3,7,14,30];let step=Number(item.interval_step||0);if(Number(grade)===0)step=0;else if(Number(grade)===1)step=Math.max(0,step);else step=Math.min(steps.length,step+1);item.level=Number(grade);item.interval_step=step;item.last_reviewed=isoDate(now());item.mastered=Number(grade)===2&&step>=steps.length;item.due=item.mastered?'':isoDate(addDays(now(),steps[Math.min(step,steps.length-1)]));item.updated_at=new Date().toISOString();local.vocabulary=(local.vocabulary||[]).filter(x=>String(x.id)!==String(id));local.vocabulary.push(item);saveLocal();try{await apiPost('vocab_upsert',[item])}catch{};openVocabReview();render()}
+async function saveWeeklyTargets(){const ws=isoDate(startOfWeek(now())),items=$$('.weekly-hour').map(inp=>({id:`${ws}|${inp.dataset.subject}`,week_start:ws,subject:inp.dataset.subject,planned_minutes:Math.round((Number(inp.value)||0)*60),goal:'',updated_at:new Date().toISOString()}));local.weeklyPlan=(local.weeklyPlan||[]).filter(x=>x.week_start!==ws);local.weeklyPlan.push(...items);saveLocal();closeSheet();render();showToast('本週科目目標已更新');try{await apiPost('weekly_upsert',items)}catch{}}
+async function saveDecision(){const title=$('#dTitle').value.trim();if(!title){showToast('請輸入決策');return}const item={id:uid('decision'),title,reason:$('#dReason').value.trim(),review_date:$('#dReview').value,status:'active',created_at:new Date().toISOString(),updated_at:new Date().toISOString()};local.decisionLog.push(item);saveLocal();closeSheet();render();showToast('Decision 已儲存');try{await apiPost('decision_upsert',[item])}catch{}}
+async function finishReview(subject,topic){openDoneForm({subject,topic,activity:'複習',minutes:30})}
+async function completePlan(index){const p=todayStats().plan[index];if(!p)return;await commitDone({subject:p.subject,topic:p.topic,activity:p.activity||'學習',minutes:p.minutes||60,date:isoDate(now()),notes:'[plan quick complete]'})}
+function moveTomorrow(index){const p=todayStats().plan[index];if(!p)return;openPlanForm(isoDate(addDays(now(),1)),p);showToast('先建立明天的 PLAN；原 Calendar PLAN 不會自動刪除')}
+function saveSettingsFromForm(){settings.apiUrl=$('#settingUrl').value.trim();settings.token=$('#settingToken').value.trim();settings.examDate=$('#settingExam').value;settings.weekTarget=Number($('#settingWeekTarget').value)||25;settings.reviewReminders=$('#reviewToggle').checked;saveSettings();render();showToast('設定已儲存')}
+function exportBackup(){const blob=new Blob([JSON.stringify({version:VERSION,exported_at:new Date().toISOString(),settings:{...settings,token:''},cloud,local},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Study_OS_v7_backup_${isoDate(now())}.json`;a.click();URL.revokeObjectURL(a.href)}
+
+function showToast(text,undo){clearTimeout(toastTimer);$('#toastText').textContent=text;$('#toastUndo').hidden=!undo;undoAction=undo||null;$('#toast').classList.add('show');toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),4200)}
 
 function bind(){
-  $$('[data-nav]').forEach(b=>b.onclick=e=>{e.preventDefault();setNav(b.dataset.nav)});$('#syncBtn').onclick=()=>syncCloud(true);$('#themeBtn').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;localStorage.setItem(STORE+'theme',t)};
-  $('#quickFocusBtn').onclick=()=>openFocus('focus');$('#quickLogBtn').onclick=()=>{$('#logDialog').dataset.planId='';$('#logDialog').showModal()};$('#confirmFocus').onclick=()=>{const ctx={mode:$('#focusMode').value,subject:$('#focusSubject').value,activity:$('#focusActivity').value,topic:$('#focusTopic').value.trim()};$('#focusDialog').close();startTimer(ctx)};
-  $$('#timerModes button').forEach(b=>b.onclick=()=>{if(timerState){toast('先完成或結束目前 session');return}const m=b.dataset.mode;openFocus(m)});$('#timerStart').onclick=()=>{if(!timerState)openFocus('focus');else if(!timerState.running)resumeTimer()};$('#timerPause').onclick=pauseTimer;$('#timerFinish').onclick=finishTimer;$('#miniTimerOpen').onclick=()=>{setNav('today');document.querySelector('#focusCard').scrollIntoView({behavior:'smooth',block:'center'})};
-  $('#saveQuickLog').onclick=async()=>{const planId=$('#logDialog').dataset.planId||'';await addQuickLog({subject:$('#logSubject').value,activity:$('#logActivity').value,topic:$('#logTopic').value.trim(),minutes:+$('#logMinutes').value||1,notes:planId?`plan_event_id=${planId}`:''});$('#logDialog').close();renderAll();toast('完成紀錄已儲存')};
-  $$('#flashActions button').forEach(b=>b.onclick=()=>gradeWord(b.dataset.grade));$('#saveReading').onclick=saveReading;
-  $('#saveSettings').onclick=async()=>{settings.webAppUrl=$('#webAppUrl').value.trim();settings.token=$('#syncToken').value.trim();settings.newWordCount=Math.max(0,+$('#newWordCount').value||0);settings.weekStart=+$('#weekStart').value||0;saveSettingsLocal();renderAll();await syncCloud(true)};
-  $('#exportBackup').onclick=exportBackup;$('#importBackup').onchange=importBackup;
-  window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(['today','week','study','review','archive'].includes(h))setNav(h)});
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){renderTimer();renderToday()}})
+  document.addEventListener('click',async e=>{
+    const nav=e.target.closest('[data-nav]');if(nav){currentView=nav.dataset.nav;render();window.scrollTo({top:0,behavior:'smooth'});return}
+    const st=e.target.closest('[data-study-tab]');if(st){local.ui.studyTab=st.dataset.studyTab;saveLocal();renderStudy();return}
+    const rg=e.target.closest('[data-range]');if(rg){local.ui.insightRange=rg.dataset.range;saveLocal();renderInsights();return}
+    const dateBtn=e.target.closest('[data-set-date]');if(dateBtn){$('#doneDate').value=dateBtn.dataset.setDate;$$('[data-set-date]').forEach(x=>x.classList.toggle('active',x===dateBtn));return}
+    const minBtn=e.target.closest('[data-set-minutes]');if(minBtn){const inp=$('#doneMinutes');if(inp)inp.value=minBtn.dataset.setMinutes;return}
+    const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;
+    if(a==='close-sheet')closeSheet(); else if(a==='focus-picker')openFocusPicker(); else if(a==='focus-preset'){const sub=$('#focusPickSubject')?.value||'';startFocus(Number(b.dataset.min),sub)} else if(a==='focus-custom')startFocus(Number($('#focusCustomMin').value)||50,$('#focusPickSubject').value); else if(a==='historical')openDoneForm(); else if(a==='add-plan')openPlanForm(); else if(a==='plan-day')openPlanForm(b.dataset.date); else if(a==='save-done')await saveDone(); else if(a==='save-done-more')await saveDone(true); else if(a==='save-plan')await savePlan(); else if(a==='add-question')openQuestionForm(); else if(a==='save-question')await saveQuestion(); else if(a==='manual-progress')openManualProgress(); else if(a==='save-manual')await saveManual(); else if(a==='vocab-add')openVocabForm(); else if(a==='vocab-edit')openVocabForm(b.dataset.id); else if(a==='save-vocab')await saveVocab(); else if(a==='vocab-review')openVocabReview(); else if(a==='grade-vocab')await gradeVocab(Number(b.dataset.grade)); else if(a==='weekly-target')openWeeklyTarget(); else if(a==='save-weekly-target')await saveWeeklyTargets(); else if(a==='add-decision')openDecisionForm(); else if(a==='save-decision')await saveDecision(); else if(a==='finish-review')finishReview(b.dataset.subject,b.dataset.topic); else if(a==='complete-plan')await completePlan(Number(b.dataset.index)); else if(a==='move-tomorrow')moveTomorrow(Number(b.dataset.index)); else if(a==='task-focus'){const p=todayStats().plan[Number(b.dataset.index)];if(p)startFocus(p.minutes||50,p.subject,p.topic,p.activity,'task')} else if(a==='next-focus'){const n=nextAction();startFocus(50,n.subject,n.topic,n.activity,'task')} else if(a==='course-focus')startFocus(50,b.dataset.subject,`${b.dataset.code}`,'看課','course'); else if(a==='course-review')openDoneForm({subject:b.dataset.subject,topic:b.dataset.topic||b.dataset.code,activity:'複習',minutes:30}); else if(a==='toggle-review'){settings.reviewReminders=!settings.reviewReminders;saveSettings();render()} else if(a==='save-settings')saveSettingsFromForm(); else if(a==='test-sync'){saveSettingsFromForm();await syncCloud(true)} else if(a==='export-backup')exportBackup();
+  });
+  document.addEventListener('change',e=>{if(e.target.id==='courseSubject'){local.ui.courseSubject=e.target.value;saveLocal();renderStudyBody('courses')}if(e.target.id==='reviewToggle'){settings.reviewReminders=e.target.checked}});
+  document.addEventListener('input',e=>{if(e.target.id==='courseSearch'){const q=e.target.value.toLowerCase(),items=trackedCourses().filter(x=>x.subject===(local.ui.courseSubject||'物理')).filter(x=>`${x.code} ${x.topic}`.toLowerCase().includes(q));$('#courseGrid').innerHTML=courseCards(items)}});
+  $('#quickAddBtn').onclick=openQuickMenu;$('#fabBtn').onclick=openQuickMenu;$('#sheetBackdrop').onclick=closeSheet;$('#syncBtn').onclick=()=>syncCloud(true);$('#syncBtnSide').onclick=()=>syncCloud(true);$('#themeBtn').onclick=()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+  $('#focusClose').onclick=()=>{if(confirm('要關閉這次 Focus 嗎？目前進度仍可先完成並記錄。'))finishFocus(false)};$('#focusPause').onclick=()=>{focus.paused=!focus.paused;if(!focus.paused){focus.startedAt=new Date(Date.now()-(focus.durationMin*60-focus.remainingSec)*1000).toISOString()}saveFocus();updateFocusUI()};$('#focusPlus').onclick=()=>{focus.remainingSec+=600;focus.durationMin+=10;saveFocus();updateFocusUI()};$('#focusMinus').onclick=()=>{focus.remainingSec=Math.max(60,focus.remainingSec-300);focus.durationMin=Math.max(1,focus.durationMin-5);saveFocus();updateFocusUI()};$('#focusFinish').onclick=()=>finishFocus(false);$('#toastUndo').onclick=async()=>{if(undoAction)await undoAction();undoAction=null;$('#toast').classList.remove('show')};
+  document.addEventListener('click',e=>{if(e.target.closest('#flashcard'))e.target.closest('#flashcard').classList.add('revealed')});
+  document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;if(e.key.toLowerCase()==='n')openQuickMenu();if(e.key.toLowerCase()==='f')openFocusPicker();if(e.key==='/'){e.preventDefault();currentView='study';local.ui.studyTab='courses';render();setTimeout(()=>$('#courseSearch')?.focus(),50)}});
 }
-function exportBackup(){const payload={version:'Page & Pace v7 build01',exported_at:new Date().toISOString(),settings:{newWordCount:settings.newWordCount,weekStart:settings.weekStart},quickLog:state.quickLog,readingProgress:state.readingProgress,vocabProgress:state.vocabProgress,skippedPlans:state.skippedPlans};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));a.download=`Page_and_Pace_backup_${localISO()}.json`;a.click();URL.revokeObjectURL(a.href)}
-function importBackup(e){const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);state.quickLog=d.quickLog||state.quickLog;state.readingProgress=d.readingProgress||state.readingProgress;state.vocabProgress=d.vocabProgress||state.vocabProgress;state.skippedPlans=d.skippedPlans||state.skippedPlans;if(d.settings){settings.newWordCount=d.settings.newWordCount??settings.newWordCount;settings.weekStart=d.settings.weekStart??settings.weekStart;saveSettingsLocal()}persist();renderAll();toast('備份已匯入')}catch{toast('備份格式無法讀取')}};r.readAsText(f)}
 
-async function init(){
-  document.documentElement.dataset.theme=localStorage.getItem(STORE+'theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');bind();renderAll();await loadStatic();const h=location.hash.slice(1);if(['week','study','review','archive'].includes(h))setNav(h);else setNav('today');if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});if(settings.webAppUrl&&settings.token)syncCloud(false)
-}
-init().catch(e=>{console.error(e);toast('初始化失敗，請重新整理')});
-})();
+async function init(){initTheme();loadCache();bind();render();loadFocus();if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});setTimeout(()=>syncCloud(false),300)}
+init();
