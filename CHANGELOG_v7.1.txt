@@ -1,0 +1,18 @@
+Pace & Page v7.1.0
+
+- 品牌正式改為 Pace & Page
+- 藍灰 Study OS 視覺 × 拼貼手帳風
+- Display font 加強
+- Review 預設 OFF，啟用日後才排程
+- 修正 Weekly Plan 統計邏輯：Weekly Targets 與 Calendar PLAN 分離
+- Today / Tomorrow / Inbox / This Week / Next Week
+- List / Timeline planning mode
+- Daily Capacity + Day Close
+- 真正鐘面感 Focus + mini floating clock
+- Quick Focus / Task Focus
+- 歷史補記 / History Center
+- 紀錄修改 / 刪除
+- Vocabulary Workspace + spaced review
+- Insight 可讀性重做：水平條圖、比較值、摘要、drill-down、heatmap
+- 原始課程名稱清理
+- Dark Mode / PWA / keyboard shortcuts

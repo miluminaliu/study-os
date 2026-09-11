@@ -1,0 +1,24 @@
+Pace & Page v7.1｜Static QA
+2026-09-11
+
+PASS  app.js JavaScript syntax (node --check)
+PASS  Apps Script patch JavaScript syntax (node --check)
+PASS  index.html ID uniqueness (42 IDs / no duplicates)
+PASS  index.html local references all exist
+PASS  styles.css brace balance
+PASS  no legacy sync secret embedded in package
+PASS  PWA manifest + service worker files present
+PASS  Pace & Page user-facing brand in index / manifest
+PASS  Review defaults OFF and only starts from activation date
+PASS  Weekly execution uses Weekly Targets instead of raw Calendar PLAN
+PASS  Focus supports minimize / expand / pause / +10 / +15 / finish / persistence
+PASS  Plan List / Timeline modes have different rendering
+PASS  History / Question / Vocabulary edit-delete flows wired
+PASS  Apps Script supports activity_update / activity_remove / PlanBoard Calendar sync
+
+Runtime browser note:
+- Static code validation completed.
+- This execution environment blocked a reliable headless-browser screenshot run, so the final visual/interaction acceptance test must be done on the GitHub Pages test URL on Mac + iPhone before replacing the production site.
+
+Known migration note:
+- Legacy course names that never appeared in ActivityLog / ManualProgress are not fabricated. Exact 1:1 zero-state legacy catalog migration should be verified before production cutover.

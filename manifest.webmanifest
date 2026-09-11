@@ -1,10 +1,10 @@
 {
-  "name":"Study OS v7｜後西醫備考",
-  "short_name":"Study OS",
+  "name":"Pace & Page｜後西醫備考",
+  "short_name":"Pace & Page",
   "start_url":"./",
   "display":"standalone",
-  "background_color":"#f3f6fa",
-  "theme_color":"#f3f6fa",
+  "background_color":"#eef3f8",
+  "theme_color":"#eef3f8",
   "icons":[
     {"src":"icon-180.png","sizes":"180x180","type":"image/png"},
     {"src":"icon-512.png","sizes":"512x512","type":"image/png"}

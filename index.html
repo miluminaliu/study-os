@@ -3,10 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#f3f6fa">
+  <meta name="theme-color" content="#eef3f8">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Study OS v7｜後西醫備考</title>
+  <meta name="description" content="Pace & Page｜後西醫備考 Planner、Focus 與進度追蹤">
+  <title>Pace & Page｜後西醫備考</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-180.png">
   <link rel="stylesheet" href="styles.css">
@@ -15,15 +16,15 @@
 <div id="appShell" class="app-shell">
   <aside class="sidebar">
     <button class="brand" data-nav="today" aria-label="回到 Today">
-      <span class="brand-mark">S</span>
-      <span><b class="display-font">Study OS</b><small>後西醫備考 · v7</small></span>
+      <span class="brand-mark"><i>P</i><em>&</em><i>P</i></span>
+      <span class="brand-copy"><b class="display-font">Pace & Page</b><small>後西醫備考 · v7.1</small></span>
     </button>
-    <nav class="side-nav" id="sideNav">
-      <button class="nav-item active" data-nav="today" data-icon="home"><span class="nav-ico">⌂</span><span>Today</span></button>
-      <button class="nav-item" data-nav="plan" data-icon="plan"><span class="nav-ico">◫</span><span>Plan</span></button>
-      <button class="nav-item" data-nav="study" data-icon="study"><span class="nav-ico">▤</span><span>Study</span></button>
-      <button class="nav-item" data-nav="insights" data-icon="insights"><span class="nav-ico">⌁</span><span>Insights</span></button>
-      <button class="nav-item" data-nav="more" data-icon="more"><span class="nav-ico">•••</span><span>More</span></button>
+    <nav class="side-nav">
+      <button class="nav-item active" data-nav="today"><span class="nav-ico">⌂</span><span>Today</span></button>
+      <button class="nav-item" data-nav="plan"><span class="nav-ico">◫</span><span>Plan</span></button>
+      <button class="nav-item" data-nav="study"><span class="nav-ico">▤</span><span>Study</span></button>
+      <button class="nav-item" data-nav="insights"><span class="nav-ico">⌁</span><span>Insights</span></button>
+      <button class="nav-item" data-nav="more"><span class="nav-ico">•••</span><span>More</span></button>
     </nav>
     <div class="sidebar-foot">
       <button class="sync-card" id="syncBtnSide">
@@ -36,10 +37,11 @@
   <main class="main">
     <header class="topbar">
       <div class="top-title">
-        <p id="eyebrow">STUDY OS · TODAY</p>
+        <p id="eyebrow">PACE & PAGE · TODAY</p>
         <h1 class="display-font" id="pageTitle">今天，只看下一步。</h1>
       </div>
       <div class="top-actions">
+        <button class="icon-btn" id="searchBtn" title="搜尋">⌕</button>
         <button class="icon-btn" id="themeBtn" title="切換深色模式">◐</button>
         <button class="soft-btn desktop-only" id="syncBtn">同步</button>
         <button class="primary-btn" id="quickAddBtn">＋ 新增</button>
@@ -53,7 +55,7 @@
     <section class="view" id="view-more"></section>
   </main>
 
-  <nav class="mobile-nav" id="mobileNav">
+  <nav class="mobile-nav">
     <button class="active" data-nav="today"><span>⌂</span><small>Today</small></button>
     <button data-nav="plan"><span>◫</span><small>Plan</small></button>
     <button data-nav="study"><span>▤</span><small>Study</small></button>
@@ -70,19 +72,39 @@
   </section>
 
   <div class="focus-layer" id="focusLayer" aria-hidden="true">
-    <div class="focus-shell">
-      <button class="focus-close" id="focusClose">×</button>
-      <div class="focus-meta"><span id="focusSubject">Quick Focus</span><small id="focusTopic">結束後再紀錄內容</small></div>
-      <div class="focus-clock display-font" id="focusClock">50:00</div>
-      <div class="focus-progress"><i id="focusProgress"></i></div>
-      <div class="focus-controls">
-        <button class="focus-btn ghost" id="focusMinus">−5</button>
-        <button class="focus-btn primary" id="focusPause">Pause</button>
-        <button class="focus-btn ghost" id="focusPlus">+10</button>
+    <div class="focus-shell paper-focus">
+      <div class="focus-top">
+        <div class="focus-meta"><span id="focusSubject">Quick Focus</span><small id="focusTopic">結束後再紀錄內容</small></div>
+        <div class="focus-window-actions">
+          <button class="focus-window-btn" id="focusMinimize" title="縮小">⌄</button>
+          <button class="focus-window-btn danger" id="focusCancel" title="取消">×</button>
+        </div>
       </div>
-      <button class="text-btn danger" id="focusFinish">提前完成並記錄</button>
+      <div class="clock-face" id="clockFace">
+        <div class="clock-progress" id="clockProgress"></div>
+        <div class="clock-inner">
+          <div class="clock-kicker display-font">Focus</div>
+          <div class="focus-clock" id="focusClock">50:00</div>
+          <div class="clock-status" id="focusStatus">專注中</div>
+        </div>
+      </div>
+      <div class="focus-controls">
+        <button class="focus-btn ghost" id="focusPlus10">+10</button>
+        <button class="focus-btn primary" id="focusPause">Pause</button>
+        <button class="focus-btn ghost" id="focusPlus15">+15</button>
+      </div>
+      <button class="finish-focus" id="focusFinish">完成這段 Focus</button>
     </div>
   </div>
+
+  <aside class="mini-focus" id="miniFocus" aria-hidden="true">
+    <button class="mini-main" id="miniExpand">
+      <span class="mini-clock-icon">◷</span>
+      <span><b id="miniFocusTime">50:00</b><small id="miniFocusLabel">Quick Focus</small></span>
+    </button>
+    <button id="miniPause" title="暫停">Ⅱ</button>
+    <button id="miniFinish" title="完成">✓</button>
+  </aside>
 
   <div class="toast" id="toast"><span id="toastText"></span><button id="toastUndo" hidden>UNDO</button></div>
 </div>
