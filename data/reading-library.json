@@ -1,0 +1,1628 @@
+[
+  {
+    "id": "v01-d01",
+    "volume": 1,
+    "day": 1,
+    "title": "Selective Sound",
+    "category": "Neuroscience / Psychiatry",
+    "wordCount": 706,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "18 min",
+    "source": "Scientific American | February 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v01-d02",
+    "volume": 1,
+    "day": 2,
+    "title": "Fiery Amoeba",
+    "category": "Microbiology / Cell Biology",
+    "wordCount": 582,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "17 min",
+    "source": "Scientific American | February 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v01-d03",
+    "volume": 1,
+    "day": 3,
+    "title": "Pressing Paws",
+    "category": "Evolution / Genetics",
+    "wordCount": 799,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "20 min",
+    "source": "Scientific American | February 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v01-d04",
+    "volume": 1,
+    "day": 4,
+    "title": "Growing Story",
+    "category": "Evolution / Ecology / Mycology",
+    "wordCount": 561,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "17 min",
+    "source": "Scientific American | February 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v01-d05",
+    "volume": 1,
+    "day": 5,
+    "title": "Athletic Drill",
+    "category": "Biomechanics / Physiology",
+    "wordCount": 391,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "15 min",
+    "source": "Scientific American | February 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v01-d06",
+    "volume": 1,
+    "day": 6,
+    "title": "Smoke Detector",
+    "category": "Sensory Biology / Animal Behavior",
+    "wordCount": 416,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "16 min",
+    "source": "Scientific American | February 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v01-d07",
+    "volume": 1,
+    "day": 7,
+    "title": "Parenting Paradox",
+    "category": "Neuroscience / Psychology",
+    "wordCount": 1239,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "25 min",
+    "source": "Scientific American | February 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v01-d08",
+    "volume": 1,
+    "day": 8,
+    "title": "Heal Injuries Faster",
+    "category": "Rehabilitation / Pain Physiology",
+    "wordCount": 891,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "22 min",
+    "source": "Scientific American | February 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v01-d09",
+    "volume": 1,
+    "day": 9,
+    "title": "The Hardest Problem",
+    "category": "Neuroscience / Consciousness",
+    "wordCount": 4520,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "38 min",
+    "source": "Scientific American | February 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v01-d10",
+    "volume": 1,
+    "day": 10,
+    "title": "Deadly Mirror",
+    "category": "Synthetic Biology / Immunology",
+    "wordCount": 3084,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "34 min",
+    "source": "Scientific American | February 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v02-d01",
+    "volume": 2,
+    "day": 1,
+    "title": "Regrowth Record",
+    "category": "",
+    "wordCount": 450,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "10–12 min",
+    "source": "Scientific American | March 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v02-d02",
+    "volume": 2,
+    "day": 2,
+    "title": "Earthquake Life",
+    "category": "",
+    "wordCount": 422,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "10–12 min",
+    "source": "Scientific American | March 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v02-d03",
+    "volume": 2,
+    "day": 3,
+    "title": "Language Gaps",
+    "category": "",
+    "wordCount": 490,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "11–13 min",
+    "source": "Scientific American | March 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v02-d04",
+    "volume": 2,
+    "day": 4,
+    "title": "Path to Excellence",
+    "category": "",
+    "wordCount": 618,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "12–14 min",
+    "source": "Scientific American | March 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v02-d05",
+    "volume": 2,
+    "day": 5,
+    "title": "Fire Starters",
+    "category": "",
+    "wordCount": 766,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "15–17 min",
+    "source": "Scientific American | March 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v02-d06",
+    "volume": 2,
+    "day": 6,
+    "title": "Care for Family Caregivers",
+    "category": "",
+    "wordCount": 908,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "17–20 min",
+    "source": "Scientific American | March 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v02-d07",
+    "volume": 2,
+    "day": 7,
+    "title": "Navigating Our Social Worlds",
+    "category": "",
+    "wordCount": 1226,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "20–23 min",
+    "source": "Scientific American | March 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v02-d08",
+    "volume": 2,
+    "day": 8,
+    "title": "When Care Becomes Code",
+    "category": "",
+    "wordCount": 2822,
+    "questions": 8,
+    "questionRange": "1-8",
+    "suggestedTime": "35–40 min",
+    "source": "Scientific American | March 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v03-d01",
+    "volume": 3,
+    "day": 1,
+    "title": "Trunk Sense",
+    "category": "",
+    "wordCount": 570,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "16–20 min",
+    "source": "Scientific American | May 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v03-d02",
+    "volume": 3,
+    "day": 2,
+    "title": "Love Island",
+    "category": "",
+    "wordCount": 664,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "17–21 min",
+    "source": "Scientific American | May 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v03-d03",
+    "volume": 3,
+    "day": 3,
+    "title": "Upright Heart",
+    "category": "",
+    "wordCount": 443,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "16–20 min",
+    "source": "Scientific American | May 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v03-d04",
+    "volume": 3,
+    "day": 4,
+    "title": "Discerning Chicks",
+    "category": "",
+    "wordCount": 722,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "18–22 min",
+    "source": "Scientific American | May 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v03-d05",
+    "volume": 3,
+    "day": 5,
+    "title": "Flower Forger",
+    "category": "",
+    "wordCount": 317,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "14–18 min",
+    "source": "Scientific American | May 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v03-d06",
+    "volume": 3,
+    "day": 6,
+    "title": "A Tale of Two Supplements",
+    "category": "",
+    "wordCount": 960,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "20–25 min",
+    "source": "Scientific American | May 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v03-d07",
+    "volume": 3,
+    "day": 7,
+    "title": "How Birds Survived the Dinosaurs' Doomsday",
+    "category": "",
+    "wordCount": 3407,
+    "questions": 8,
+    "questionRange": "1-8",
+    "suggestedTime": "38–45 min",
+    "source": "Scientific American | May 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v03-d08",
+    "volume": 3,
+    "day": 8,
+    "title": "Your Heart in Flames",
+    "category": "",
+    "wordCount": 3316,
+    "questions": 8,
+    "questionRange": "1-8",
+    "suggestedTime": "42–50 min",
+    "source": "Scientific American | May 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v04-d01",
+    "volume": 4,
+    "day": 1,
+    "title": "Huntington's Hopes",
+    "category": "MEDICINE / GENE THERAPY",
+    "wordCount": 983,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "26–31 min",
+    "source": "Scientific American | January 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v04-d02",
+    "volume": 4,
+    "day": 2,
+    "title": "Probiotic Hope and Hype",
+    "category": "MICROBIOME / EVIDENCE-BASED MEDICINE",
+    "wordCount": 870,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "24–29 min",
+    "source": "Scientific American | January 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v04-d03",
+    "volume": 4,
+    "day": 3,
+    "title": "Boosting the Immune Response to Brain Cancer",
+    "category": "NIH / ONCOLOGY / IMMUNOMETABOLISM",
+    "wordCount": 520,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "18–23 min",
+    "source": "NIH Research Matters | April 28, 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v04-d04",
+    "volume": 4,
+    "day": 4,
+    "title": "Think Again",
+    "category": "ANIMAL COGNITION / EVOLUTION",
+    "wordCount": 705,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "20–25 min",
+    "source": "Scientific American | January 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v04-d05",
+    "volume": 4,
+    "day": 5,
+    "title": "Weakened Gut-Brain Connection May Contribute to Memory Loss",
+    "category": "NIH / NEUROSCIENCE / MICROBIOME",
+    "wordCount": 603,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "19–24 min",
+    "source": "NIH Research Matters | April 28, 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v04-d06",
+    "volume": 4,
+    "day": 6,
+    "title": "Bundibugyo Ebola Outbreak: Investigation and Public-Health Response",
+    "category": "CDC MMWR / INFECTIOUS DISEASE / EPIDEMIOLOGY",
+    "wordCount": 491,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "17–22 min",
+    "source": "CDC MMWR | June 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v04-d07",
+    "volume": 4,
+    "day": 7,
+    "title": "Green Crab: The Tiny Invader with a Big Appetite",
+    "category": "USGS / INVASION BIOLOGY / EDNA",
+    "wordCount": 514,
+    "questions": 6,
+    "questionRange": "1-6",
+    "suggestedTime": "17–22 min",
+    "source": "U.S. Geological Survey | July 28, 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v04-d08",
+    "volume": 4,
+    "day": 8,
+    "title": "Sleep, Exercise, and Mutation-Driven Inflammation",
+    "category": "CURRENT BIOMEDICAL NEWS / HEMATOLOGY / CARDIOVASCULAR",
+    "wordCount": 652,
+    "questions": 7,
+    "questionRange": "1-7",
+    "suggestedTime": "20–25 min",
+    "source": "NIH Research Matters | July 14, 2026",
+    "highYieldVocab": []
+  },
+  {
+    "id": "v05-d01",
+    "volume": 5,
+    "day": 1,
+    "title": "Ovaries, Aging, and the Causal Question",
+    "category": "MEDICINE / AGING",
+    "wordCount": 573,
+    "questions": 7,
+    "questionRange": "1-7",
+    "source": "The New York Times | June 24, 2024",
+    "highYieldVocab": [
+      {
+        "word": "decline",
+        "gloss": "衰退；下降｜詞族：declining / decline｜搭配：functional decline",
+        "group": "Core Academic"
+      },
+      {
+        "word": "deplete",
+        "gloss": "耗減｜詞族：depletion / depleted｜搭配：deplete a reserve",
+        "group": "Core Academic"
+      },
+      {
+        "word": "retain",
+        "gloss": "保留｜詞族：retention / retained｜搭配：retain a protective role",
+        "group": "Core Academic"
+      },
+      {
+        "word": "regulate",
+        "gloss": "調節｜詞族：regulation / regulatory｜搭配：regulate development",
+        "group": "Core Academic"
+      },
+      {
+        "word": "investigate",
+        "gloss": "研究；調查｜詞族：investigation / investigator｜搭配：investigate an effect",
+        "group": "Core Academic"
+      },
+      {
+        "word": "tractable",
+        "gloss": "易於處理或研究的｜詞族：tractability｜搭配：a tractable model",
+        "group": "Core Academic"
+      },
+      {
+        "word": "trajectory",
+        "gloss": "變化軌跡｜詞族：trajectories｜搭配：an altered trajectory",
+        "group": "Context"
+      },
+      {
+        "word": "correlational",
+        "gloss": "相關性的｜詞族：correlate / correlation｜搭配：correlational evidence",
+        "group": "Context"
+      },
+      {
+        "word": "blinded",
+        "gloss": "盲態的｜詞族：blind / blinding｜搭配：a blinded trial",
+        "group": "Context"
+      },
+      {
+        "word": "placebo",
+        "gloss": "安慰劑｜詞族：placebo-controlled｜搭配：receive a placebo",
+        "group": "Domain"
+      },
+      {
+        "word": "ovarian reserve",
+        "gloss": "卵巢儲備｜詞族：ovary / ovarian｜搭配：preserve ovarian reserve",
+        "group": "Domain"
+      },
+      {
+        "word": "follicle",
+        "gloss": "濾泡｜詞族：follicular｜搭配：follicles mature",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v05-d02",
+    "volume": 5,
+    "day": 2,
+    "title": "Baby Talk and the Origins of Language",
+    "category": "LANGUAGE / EVOLUTION",
+    "wordCount": 524,
+    "questions": 7,
+    "questionRange": "8-14",
+    "source": "The New York Times | June 25, 2025",
+    "highYieldVocab": [
+      {
+        "word": "capacity",
+        "gloss": "能力｜詞族：capable / capability｜搭配：a capacity for learning",
+        "group": "Core Academic"
+      },
+      {
+        "word": "substantial",
+        "gloss": "相當大的｜詞族：substantially｜搭配：a substantial gap",
+        "group": "Core Academic"
+      },
+      {
+        "word": "comparable",
+        "gloss": "可比較的｜詞族：compare / comparison｜搭配：comparable observations",
+        "group": "Core Academic"
+      },
+      {
+        "word": "adequate",
+        "gloss": "足夠的｜詞族：adequacy / adequately｜搭配：adequate for learning",
+        "group": "Core Academic"
+      },
+      {
+        "word": "contribute",
+        "gloss": "促成；有貢獻｜詞族：contribution｜搭配：contribute to development",
+        "group": "Core Academic"
+      },
+      {
+        "word": "warrant",
+        "gloss": "有理由需要｜詞族：warranted｜搭配：warrant further study",
+        "group": "Core Academic"
+      },
+      {
+        "word": "stark",
+        "gloss": "鮮明的｜詞族：starkly｜搭配：a stark contrast",
+        "group": "Context"
+      },
+      {
+        "word": "address",
+        "gloss": "對…說話｜詞族：addressed｜搭配：address an infant",
+        "group": "Context"
+      },
+      {
+        "word": "overhear",
+        "gloss": "無意間聽到；旁聽｜詞族：overheard｜搭配：overhear adults",
+        "group": "Context"
+      },
+      {
+        "word": "plasticity",
+        "gloss": "可塑性｜詞族：plastic｜搭配：developmental plasticity",
+        "group": "Domain"
+      },
+      {
+        "word": "infant-directed speech",
+        "gloss": "對嬰幼兒說的話｜詞族：infant / infancy｜搭配：use infant-directed speech",
+        "group": "Domain"
+      },
+      {
+        "word": "caregiver",
+        "gloss": "照顧者｜詞族：caregiving｜搭配：contact with caregivers",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v05-d03",
+    "volume": 5,
+    "day": 3,
+    "title": "A Face for the Denisovans",
+    "category": "ANTHROPOLOGY / ANCIENT DNA",
+    "wordCount": 537,
+    "questions": 7,
+    "questionRange": "15-21",
+    "source": "The New York Times | June 18, 2025",
+    "highYieldVocab": [
+      {
+        "word": "subsequent",
+        "gloss": "後續的｜詞族：subsequently｜搭配：subsequent discoveries",
+        "group": "Core Academic"
+      },
+      {
+        "word": "accumulate",
+        "gloss": "累積｜詞族：accumulation｜搭配：accumulate evidence",
+        "group": "Core Academic"
+      },
+      {
+        "word": "identify",
+        "gloss": "辨識｜詞族：identification / identity｜搭配：identify a specimen",
+        "group": "Core Academic"
+      },
+      {
+        "word": "constrain",
+        "gloss": "限制｜詞族：constraint / constrained｜搭配：constrain a claim",
+        "group": "Core Academic"
+      },
+      {
+        "word": "framework",
+        "gloss": "判斷架構｜詞族：frameworks｜搭配：a taxonomic framework",
+        "group": "Core Academic"
+      },
+      {
+        "word": "distinct",
+        "gloss": "不同的；可區辨的｜詞族：distinction / distinctly｜搭配：distinct branches",
+        "group": "Core Academic"
+      },
+      {
+        "word": "retrieve",
+        "gloss": "取回；取得｜詞族：retrieval｜搭配：retrieve DNA",
+        "group": "Context"
+      },
+      {
+        "word": "representative",
+        "gloss": "具代表性的｜詞族：represent / representation｜搭配：representative of a population",
+        "group": "Context"
+      },
+      {
+        "word": "pronounced",
+        "gloss": "明顯的｜詞族：pronounce｜搭配：a pronounced brow",
+        "group": "Context"
+      },
+      {
+        "word": "lineage",
+        "gloss": "演化支系｜詞族：lineages｜搭配：a human lineage",
+        "group": "Domain"
+      },
+      {
+        "word": "dental plaque",
+        "gloss": "牙菌斑；本文為硬化牙結石材料｜詞族：plaque｜搭配：hardened dental plaque",
+        "group": "Domain"
+      },
+      {
+        "word": "interbreeding",
+        "gloss": "不同群體間交配繁殖｜詞族：interbreed｜搭配：evidence of interbreeding",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v05-d04",
+    "volume": 5,
+    "day": 4,
+    "title": "Water Conservation and an Unfinished Transition",
+    "category": "ENVIRONMENT / URBAN POLICY",
+    "wordCount": 528,
+    "questions": 7,
+    "questionRange": "22-28",
+    "source": "The New York Times | June 27, 2025",
+    "highYieldVocab": [
+      {
+        "word": "transition",
+        "gloss": "轉變｜詞族：transitional｜搭配：an unfinished transition",
+        "group": "Core Academic"
+      },
+      {
+        "word": "incentive",
+        "gloss": "誘因｜詞族：incentivize｜搭配：financial incentives",
+        "group": "Core Academic"
+      },
+      {
+        "word": "implement",
+        "gloss": "實施｜詞族：implementation｜搭配：a route to implementation",
+        "group": "Core Academic"
+      },
+      {
+        "word": "coordinate",
+        "gloss": "協調｜詞族：coordination｜搭配：coordinate resources",
+        "group": "Core Academic"
+      },
+      {
+        "word": "obtain",
+        "gloss": "取得｜詞族：obtainable｜搭配：obtain more water",
+        "group": "Core Academic"
+      },
+      {
+        "word": "incremental",
+        "gloss": "逐步累積的｜詞族：increment / incrementally｜搭配：incremental progress",
+        "group": "Core Academic"
+      },
+      {
+        "word": "mundane",
+        "gloss": "平凡、不起眼的｜詞族：mundanely｜搭配：mundane improvements",
+        "group": "Context"
+      },
+      {
+        "word": "restraint",
+        "gloss": "節制｜詞族：restrain｜搭配：a model of restraint",
+        "group": "Context"
+      },
+      {
+        "word": "rebate",
+        "gloss": "回饋金；補助退款｜詞族：rebates｜搭配：offer rebates",
+        "group": "Context"
+      },
+      {
+        "word": "impermeable",
+        "gloss": "不透水的｜詞族：permeable / permeability｜搭配：impermeable surfaces",
+        "group": "Domain"
+      },
+      {
+        "word": "desalination",
+        "gloss": "海水淡化｜詞族：desalinate｜搭配：desalination plants",
+        "group": "Domain"
+      },
+      {
+        "word": "self-sufficient",
+        "gloss": "自給自足的｜詞族：self-sufficiency｜搭配：become self-sufficient",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v05-d05",
+    "volume": 5,
+    "day": 5,
+    "title": "When Photographs Become Part of Memory",
+    "category": "PSYCHOLOGY / DIGITAL LIFE",
+    "wordCount": 550,
+    "questions": 7,
+    "questionRange": "29-35",
+    "source": "National Geographic | Archive captured June 21, 2025; publication date not shown",
+    "highYieldVocab": [
+      {
+        "word": "coherent",
+        "gloss": "連貫的｜詞族：coherence｜搭配：a coherent narrative",
+        "group": "Core Academic"
+      },
+      {
+        "word": "retrieve",
+        "gloss": "提取記憶；取回｜進階再遇：Day 03 已出現。對照本次搭配 retrieve a detail，辨識兩篇中的受詞或",
+        "group": "Core Academic"
+      },
+      {
+        "word": "subsequently",
+        "gloss": "隨後｜詞族：subsequent｜搭配：subsequently revisit",
+        "group": "Core Academic"
+      },
+      {
+        "word": "exploit",
+        "gloss": "善加利用｜詞族：exploitation｜搭配：exploit a benefit",
+        "group": "Core Academic"
+      },
+      {
+        "word": "neutral",
+        "gloss": "中立的；無偏向的｜詞族：neutrality｜搭配：a neutral reflection",
+        "group": "Core Academic"
+      },
+      {
+        "word": "illustrate",
+        "gloss": "舉例說明｜詞族：illustration / illustrative｜搭配：illustrate a trade-off",
+        "group": "Core Academic"
+      },
+      {
+        "word": "offload",
+        "gloss": "轉移負荷｜詞族：offloading｜搭配：offload information",
+        "group": "Context"
+      },
+      {
+        "word": "cue",
+        "gloss": "提示線索｜詞族：cues｜搭配：memory cues",
+        "group": "Context"
+      },
+      {
+        "word": "vivid",
+        "gloss": "鮮明的｜詞族：vividly / vividness｜搭配：vivid recollection",
+        "group": "Context"
+      },
+      {
+        "word": "autobiographical",
+        "gloss": "自傳式的｜詞族：autobiography｜搭配：autobiographical memory",
+        "group": "Domain"
+      },
+      {
+        "word": "consolidate",
+        "gloss": "鞏固記憶｜詞族：consolidation｜搭配：consolidate experience",
+        "group": "Domain"
+      },
+      {
+        "word": "cognitive burden",
+        "gloss": "認知負荷｜詞族：cognition / cognitive｜搭配：reduce cognitive burden",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v05-d06",
+    "volume": 5,
+    "day": 6,
+    "title": "Tapping and the Search for an Active Ingredient",
+    "category": "MENTAL HEALTH / EVIDENCE",
+    "wordCount": 531,
+    "questions": 7,
+    "questionRange": "36-42",
+    "source": "The New York Times | June 20, 2025",
+    "highYieldVocab": [
+      {
+        "word": "component",
+        "gloss": "成分；組成部分｜詞族：components｜搭配：an active component",
+        "group": "Core Academic"
+      },
+      {
+        "word": "rigor",
+        "gloss": "嚴謹性｜詞族：rigorous / rigorously｜搭配：scientific rigor",
+        "group": "Core Academic"
+      },
+      {
+        "word": "establish",
+        "gloss": "確立｜詞族：established / establishment｜搭配：establish an effect",
+        "group": "Core Academic"
+      },
+      {
+        "word": "interpret",
+        "gloss": "解讀｜詞族：interpretation｜搭配：interpret experience",
+        "group": "Core Academic"
+      },
+      {
+        "word": "distinctive",
+        "gloss": "特有的｜詞族：distinct / distinction｜搭配：a distinctive component",
+        "group": "Core Academic"
+      },
+      {
+        "word": "enhance",
+        "gloss": "增進｜詞族：enhancement｜搭配：enhance established care",
+        "group": "Core Academic"
+      },
+      {
+        "word": "robust",
+        "gloss": "可靠扎實的｜詞族：robustness｜搭配：robust evidence",
+        "group": "Context"
+      },
+      {
+        "word": "testimonial",
+        "gloss": "個人見證｜詞族：testimonials｜搭配：a personal testimonial",
+        "group": "Context"
+      },
+      {
+        "word": "bundle",
+        "gloss": "結合成一組｜詞族：bundled｜搭配：bundled activities",
+        "group": "Context"
+      },
+      {
+        "word": "exposure therapy",
+        "gloss": "暴露療法｜詞族：expose / exposure｜搭配：a form of exposure therapy",
+        "group": "Domain"
+      },
+      {
+        "word": "meridian",
+        "gloss": "經絡｜詞族：meridians｜搭配：proposed energy meridians",
+        "group": "Domain"
+      },
+      {
+        "word": "active ingredient",
+        "gloss": "真正產生效果的成分｜詞族：active / activity｜搭配：identify the active ingredient",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v05-d07",
+    "volume": 5,
+    "day": 7,
+    "title": "Heat Preparedness Beyond the Climate Debate",
+    "category": "PUBLIC HEALTH / SOCIETY",
+    "wordCount": 536,
+    "questions": 7,
+    "questionRange": "43-49",
+    "source": "The New York Times, Opinion | June 25, 2025",
+    "highYieldVocab": [
+      {
+        "word": "anticipate",
+        "gloss": "預先考慮｜詞族：anticipation / anticipated｜搭配：anticipate harm",
+        "group": "Core Academic"
+      },
+      {
+        "word": "incorporate",
+        "gloss": "納入｜詞族：incorporation｜搭配：incorporate health outcomes",
+        "group": "Core Academic"
+      },
+      {
+        "word": "adequate",
+        "gloss": "足夠的｜進階再遇：Day 02 已出現。對照本次搭配 adequate protection，辨識兩篇中的受詞或語境",
+        "group": "Core Academic"
+      },
+      {
+        "word": "consensus",
+        "gloss": "共識｜詞族：consensual｜搭配：political consensus",
+        "group": "Core Academic"
+      },
+      {
+        "word": "consequence",
+        "gloss": "後果｜詞族：consequent / consequently｜搭配：present consequences",
+        "group": "Core Academic"
+      },
+      {
+        "word": "scale",
+        "gloss": "擴大推行｜詞族：scalable / scaling｜搭配：scale preparedness",
+        "group": "Core Academic"
+      },
+      {
+        "word": "threshold",
+        "gloss": "門檻｜詞族：thresholds｜搭配：a temperature threshold",
+        "group": "Context"
+      },
+      {
+        "word": "absorb shocks",
+        "gloss": "承受衝擊｜詞族：absorption / absorb｜搭配：help firms absorb shocks",
+        "group": "Context"
+      },
+      {
+        "word": "readiness",
+        "gloss": "準備狀態｜詞族：ready｜搭配：personnel readiness",
+        "group": "Context"
+      },
+      {
+        "word": "parametric insurance",
+        "gloss": "參數型保險｜詞族：parameter / parametric｜搭配：a parametric insurance policy",
+        "group": "Domain"
+      },
+      {
+        "word": "heat stress",
+        "gloss": "熱壓力｜詞族：heat-stressed｜搭配：early signs of heat stress",
+        "group": "Domain"
+      },
+      {
+        "word": "logistics",
+        "gloss": "後勤；物流｜詞族：logistical｜搭配：military logistics",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v05-d08",
+    "volume": 5,
+    "day": 8,
+    "title": "What Long-Lived Animals Can-and Cannot-Tell Us",
+    "category": "BIOLOGY / COMPARATIVE AGING",
+    "wordCount": 544,
+    "questions": 7,
+    "questionRange": "50-56",
+    "source": "Scientific American, Science Quickly | Archive captured June 22, 2025; publication date not shown",
+    "highYieldVocab": [
+      {
+        "word": "viability",
+        "gloss": "存活能力｜詞族：viable｜搭配：decreasing viability",
+        "group": "Core Academic"
+      },
+      {
+        "word": "persistent",
+        "gloss": "持續存在的｜詞族：persist / persistence｜搭配：a persistent difference",
+        "group": "Core Academic"
+      },
+      {
+        "word": "alter",
+        "gloss": "改變｜詞族：alteration / altered｜搭配：alter a gene",
+        "group": "Core Academic"
+      },
+      {
+        "word": "complementary",
+        "gloss": "互補的｜詞族：complement / complementarity｜搭配：complementary approaches",
+        "group": "Core Academic"
+      },
+      {
+        "word": "substitute",
+        "gloss": "替代｜詞族：substitution｜搭配：substitute one claim for another",
+        "group": "Core Academic"
+      },
+      {
+        "word": "contribution",
+        "gloss": "促成作用｜詞族：contribute / contributor｜搭配：genetic contributions",
+        "group": "Core Academic"
+      },
+      {
+        "word": "deteriorate",
+        "gloss": "惡化；衰退｜詞族：deterioration｜搭配：physiological deterioration",
+        "group": "Context"
+      },
+      {
+        "word": "radically",
+        "gloss": "根本地；大幅地｜詞族：radical｜搭配：challenge an idea radically",
+        "group": "Context"
+      },
+      {
+        "word": "mortality",
+        "gloss": "死亡率；死亡｜詞族：mortal / immortal｜搭配：a rise in mortality",
+        "group": "Context"
+      },
+      {
+        "word": "predation",
+        "gloss": "捕食｜詞族：predator / predatory｜搭配：protection from predation",
+        "group": "Domain"
+      },
+      {
+        "word": "comparative genomics",
+        "gloss": "比較基因體學｜詞族：genome / genomic｜搭配：use comparative genomics",
+        "group": "Domain"
+      },
+      {
+        "word": "life history",
+        "gloss": "生命史｜詞族：life histories｜搭配：a slower life history",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v06-d01",
+    "volume": 6,
+    "day": 1,
+    "title": "Search Terms Can Quietly Reinforce Beliefs",
+    "category": "TECH / COGNITION",
+    "wordCount": 513,
+    "questions": 7,
+    "questionRange": "1-7",
+    "source": "Scientific American | October 2025",
+    "highYieldVocab": [
+      {
+        "word": "reinforce",
+        "gloss": "強化；鞏固｜詞族：reinforcement / reinforcing｜搭配：reinforce a belief",
+        "group": "Core Academic"
+      },
+      {
+        "word": "relevance",
+        "gloss": "相關性｜詞族：relevant / irrelevance｜搭配：search relevance",
+        "group": "Core Academic"
+      },
+      {
+        "word": "intervention",
+        "gloss": "介入措施｜詞族：intervene｜搭配：design an intervention",
+        "group": "Core Academic"
+      },
+      {
+        "word": "assign",
+        "gloss": "分派；指定｜詞族：assignment / assigned｜搭配：randomly assign participants",
+        "group": "Core Academic"
+      },
+      {
+        "word": "preserve",
+        "gloss": "保留；維持｜詞族：preservation｜搭配：preserve relevance",
+        "group": "Core Academic"
+      },
+      {
+        "word": "mitigate",
+        "gloss": "減輕｜詞族：mitigation｜搭配：mitigate an effect",
+        "group": "Core Academic"
+      },
+      {
+        "word": "framing",
+        "gloss": "框架化；呈現框架｜詞族：frame / framed｜搭配：a framing effect",
+        "group": "Context"
+      },
+      {
+        "word": "polarize",
+        "gloss": "使兩極化｜詞族：polarization / polarized｜搭配：polarize opinion",
+        "group": "Context"
+      },
+      {
+        "word": "deliberately",
+        "gloss": "刻意地｜詞族：deliberate｜搭配：act deliberately",
+        "group": "Context"
+      },
+      {
+        "word": "alternate",
+        "gloss": "交替｜詞族：alternation / alternative｜搭配：alternate between results",
+        "group": "Context"
+      },
+      {
+        "word": "echo chamber",
+        "gloss": "同溫層；回音室｜詞族：echo / chamber｜搭配：online echo chamber",
+        "group": "Domain"
+      },
+      {
+        "word": "search algorithm",
+        "gloss": "搜尋演算法｜詞族：algorithmic｜搭配：modify a search algorithm",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v06-d02",
+    "volume": 6,
+    "day": 2,
+    "title": "Microlightning and the Chemistry of Ghostly Fire",
+    "category": "CHEMISTRY / PHYSICS",
+    "wordCount": 521,
+    "questions": 7,
+    "questionRange": "8-14",
+    "source": "Scientific American | December 2025",
+    "highYieldVocab": [
+      {
+        "word": "initiate",
+        "gloss": "啟動；引發｜詞族：initiation / initial｜搭配：initiate a reaction",
+        "group": "Core Academic"
+      },
+      {
+        "word": "plausible",
+        "gloss": "合理可信的｜詞族：plausibility / plausibly｜搭配：a plausible mechanism",
+        "group": "Core Academic"
+      },
+      {
+        "word": "convert",
+        "gloss": "轉換｜詞族：conversion｜搭配：convert gases into compounds",
+        "group": "Core Academic"
+      },
+      {
+        "word": "unresolved",
+        "gloss": "未解決的｜詞族：resolve / resolution｜搭配：an unresolved issue",
+        "group": "Core Academic"
+      },
+      {
+        "word": "establish",
+        "gloss": "建立；證實到某程度｜詞族：establishment｜搭配：establish a mechanism",
+        "group": "Core Academic"
+      },
+      {
+        "word": "speculative",
+        "gloss": "推測性的｜詞族：speculate / speculation｜搭配：a speculative proposal",
+        "group": "Core Academic"
+      },
+      {
+        "word": "interface",
+        "gloss": "界面｜詞族：interfacial｜搭配：liquid-air interface",
+        "group": "Context"
+      },
+      {
+        "word": "discharge",
+        "gloss": "放電｜詞族：discharge｜搭配：electrical discharge",
+        "group": "Context"
+      },
+      {
+        "word": "acquire",
+        "gloss": "獲得；取得｜詞族：acquisition｜搭配：acquire charge",
+        "group": "Context"
+      },
+      {
+        "word": "microscopic",
+        "gloss": "微觀的｜詞族：microscope / microscopy｜搭配：microscopic scale",
+        "group": "Context"
+      },
+      {
+        "word": "microdroplet",
+        "gloss": "微液滴｜詞族：droplet｜搭配：charged microdroplets",
+        "group": "Domain"
+      },
+      {
+        "word": "mass spectrometry",
+        "gloss": "質譜法｜詞族：spectrometer｜搭配：use mass spectrometry",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v06-d03",
+    "volume": 6,
+    "day": 3,
+    "title": "A Nonhormonal Male Contraceptive Reaches Humans",
+    "category": "MEDICINE / REPRODUCTIVE BIOLOGY",
+    "wordCount": 511,
+    "questions": 7,
+    "questionRange": "15-21",
+    "source": "Scientific American | October 2025",
+    "highYieldVocab": [
+      {
+        "word": "tolerability",
+        "gloss": "耐受性｜詞族：tolerate / tolerable｜搭配：assess tolerability",
+        "group": "Core Academic"
+      },
+      {
+        "word": "efficacy",
+        "gloss": "效力；療效｜詞族：effective / effectiveness｜搭配：demonstrate efficacy",
+        "group": "Core Academic"
+      },
+      {
+        "word": "attribute",
+        "gloss": "歸因於｜詞族：attribution / attributable｜搭配：attribute an effect to",
+        "group": "Core Academic"
+      },
+      {
+        "word": "suppress",
+        "gloss": "抑制｜詞族：suppression / suppressive｜搭配：suppress sperm production",
+        "group": "Core Academic"
+      },
+      {
+        "word": "reversible",
+        "gloss": "可逆的｜詞族：reverse / reversibility｜搭配：reversible method",
+        "group": "Core Academic"
+      },
+      {
+        "word": "consistent with",
+        "gloss": "與…相符｜詞族：consistency / consistent｜搭配：consistent with daily dosing",
+        "group": "Core Academic"
+      },
+      {
+        "word": "pharmacokinetic",
+        "gloss": "藥物動力學的｜詞族：pharmacokinetics｜搭配：pharmacokinetic pattern",
+        "group": "Context"
+      },
+      {
+        "word": "subset",
+        "gloss": "子群｜詞族：set｜搭配：a subset of participants",
+        "group": "Context"
+      },
+      {
+        "word": "diverse",
+        "gloss": "多樣的｜詞族：diversity｜搭配：a diverse population",
+        "group": "Context"
+      },
+      {
+        "word": "milestone",
+        "gloss": "里程碑｜詞族：milestone｜搭配：a development milestone",
+        "group": "Context"
+      },
+      {
+        "word": "vasectomy",
+        "gloss": "輸精管結紮術｜詞族：vas deferens｜搭配：undergo vasectomy",
+        "group": "Domain"
+      },
+      {
+        "word": "placebo",
+        "gloss": "安慰劑｜詞族：placebo-controlled｜搭配：receive placebo",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v06-d04",
+    "volume": 6,
+    "day": 4,
+    "title": "Can Reptiles Adjust Fast Enough to a Warming World?",
+    "category": "ECOLOGY / EVOLUTION",
+    "wordCount": 514,
+    "questions": 7,
+    "questionRange": "22-28",
+    "source": "Scientific American | January 2026",
+    "highYieldVocab": [
+      {
+        "word": "skew",
+        "gloss": "使偏斜；偏斜｜詞族：skewed / skewness｜搭配：a skewed sex ratio",
+        "group": "Core Academic"
+      },
+      {
+        "word": "constraint",
+        "gloss": "限制條件｜詞族：constrain / constrained｜搭配：habitat constraint",
+        "group": "Core Academic"
+      },
+      {
+        "word": "sufficient",
+        "gloss": "足夠的｜詞族：sufficiency / sufficiently｜搭配：sufficient flexibility",
+        "group": "Core Academic"
+      },
+      {
+        "word": "intensify",
+        "gloss": "加劇｜詞族：intensity / intensive｜搭配：pressures intensify",
+        "group": "Core Academic"
+      },
+      {
+        "word": "rigid",
+        "gloss": "僵化的；固定不變的｜詞族：rigidity｜搭配：a rigid program",
+        "group": "Core Academic"
+      },
+      {
+        "word": "viable",
+        "gloss": "可行的；可存活的｜詞族：viability｜搭配：viable nesting options",
+        "group": "Core Academic"
+      },
+      {
+        "word": "incubation",
+        "gloss": "孵化期；孵育｜詞族：incubate｜搭配：incubation temperature",
+        "group": "Context"
+      },
+      {
+        "word": "inbreeding",
+        "gloss": "近親繁殖｜詞族：inbreed｜搭配：risk of inbreeding",
+        "group": "Context"
+      },
+      {
+        "word": "substrate",
+        "gloss": "基質；底材｜詞族：substrate｜搭配：nesting substrate",
+        "group": "Context"
+      },
+      {
+        "word": "track",
+        "gloss": "跟隨變化；追蹤｜詞族：tracking｜搭配：behavior tracks climate",
+        "group": "Context"
+      },
+      {
+        "word": "tuatara",
+        "gloss": "喙頭蜥｜詞族：tuatara｜搭配：tuatara population",
+        "group": "Domain"
+      },
+      {
+        "word": "temperature-dependent sex determination",
+        "gloss": "溫度依賴型性別決定｜詞族：sex determination｜搭配：TSD",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v06-d05",
+    "volume": 6,
+    "day": 5,
+    "title": "Pig Kidneys and the Next Test for Xenotransplantation",
+    "category": "BIOTECH / TRANSPLANTATION",
+    "wordCount": 513,
+    "questions": 7,
+    "questionRange": "29-35",
+    "source": "National Geographic | June 2025",
+    "highYieldVocab": [
+      {
+        "word": "compatible",
+        "gloss": "相容的｜詞族：compatibility / incompatible｜搭配：compatible with a recipient",
+        "group": "Core Academic"
+      },
+      {
+        "word": "provoke",
+        "gloss": "引發｜詞族：provocation / provocative｜搭配：provoke rejection",
+        "group": "Core Academic"
+      },
+      {
+        "word": "reproducible",
+        "gloss": "可重現的｜詞族：reproduce / reproducibility｜搭配：reproducible production",
+        "group": "Core Academic"
+      },
+      {
+        "word": "refinement",
+        "gloss": "改良；精修｜詞族：refine｜搭配：further refinement",
+        "group": "Core Academic"
+      },
+      {
+        "word": "consequential",
+        "gloss": "影響重大的｜詞族：consequence｜搭配：a consequential boundary",
+        "group": "Core Academic"
+      },
+      {
+        "word": "dependable",
+        "gloss": "可靠的｜詞族：depend / dependability｜搭配：dependable practice",
+        "group": "Core Academic"
+      },
+      {
+        "word": "recipient",
+        "gloss": "受贈者；接受者｜詞族：receive / reception｜搭配：transplant recipient",
+        "group": "Context"
+      },
+      {
+        "word": "rejection",
+        "gloss": "排斥反應｜詞族：reject｜搭配：immune rejection",
+        "group": "Context"
+      },
+      {
+        "word": "protocol",
+        "gloss": "標準程序；處置規範｜詞族：protocol｜搭配：clinical protocol",
+        "group": "Context"
+      },
+      {
+        "word": "forecast",
+        "gloss": "預測｜詞族：forecast｜搭配：a future forecast",
+        "group": "Context"
+      },
+      {
+        "word": "xenotransplantation",
+        "gloss": "異種移植｜詞族：xenograft｜搭配：xenotransplantation trial",
+        "group": "Domain"
+      },
+      {
+        "word": "immunosuppressive",
+        "gloss": "免疫抑制的｜詞族：immunosuppression｜搭配：immunosuppressive medicine",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v06-d06",
+    "volume": 6,
+    "day": 6,
+    "title": "Why Falling Vaccination Rates Affect More Than the Unvaccinated",
+    "category": "PUBLIC HEALTH / EPIDEMIOLOGY",
+    "wordCount": 508,
+    "questions": 7,
+    "questionRange": "36-42",
+    "source": "CNN / supplied article compilation | 2025",
+    "highYieldVocab": [
+      {
+        "word": "circulate",
+        "gloss": "流行；傳播｜詞族：circulation / circulating｜搭配：disease circulates",
+        "group": "Core Academic"
+      },
+      {
+        "word": "susceptible",
+        "gloss": "易受感染／影響的｜詞族：susceptibility｜搭配：become susceptible",
+        "group": "Core Academic"
+      },
+      {
+        "word": "project",
+        "gloss": "預測；推估｜詞族：projection / projected｜搭配：project disease burden",
+        "group": "Core Academic"
+      },
+      {
+        "word": "disproportionate",
+        "gloss": "不成比例地高的｜詞族：proportion / disproportionately｜搭配：disproportionate risk",
+        "group": "Core Academic"
+      },
+      {
+        "word": "interdependent",
+        "gloss": "相互依賴的｜詞族：interdependence｜搭配：interdependent effects",
+        "group": "Core Academic"
+      },
+      {
+        "word": "maintain",
+        "gloss": "維持｜詞族：maintenance｜搭配：maintain coverage",
+        "group": "Core Academic"
+      },
+      {
+        "word": "wane",
+        "gloss": "逐漸減弱｜詞族：waning｜搭配：immunity wanes",
+        "group": "Context"
+      },
+      {
+        "word": "breakthrough infection",
+        "gloss": "突破性感染｜詞族：break through｜搭配：risk of breakthrough infection",
+        "group": "Context"
+      },
+      {
+        "word": "live-attenuated",
+        "gloss": "減毒活的｜詞族：attenuation｜搭配：live-attenuated vaccine",
+        "group": "Context"
+      },
+      {
+        "word": "scenario",
+        "gloss": "情境；假設情境｜詞族：scenario｜搭配：scenario estimate",
+        "group": "Context"
+      },
+      {
+        "word": "herd immunity",
+        "gloss": "群體免疫｜詞族：population immunity｜搭配：herd immunity threshold",
+        "group": "Domain"
+      },
+      {
+        "word": "congenital rubella syndrome",
+        "gloss": "先天性德國麻疹症候群｜詞族：congenital｜搭配：prevent congenital rubella syndrome",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v06-d07",
+    "volume": 6,
+    "day": 7,
+    "title": "Birth Order, Personality, and the Problem of Easy Stories",
+    "category": "PSYCHOLOGY / BEHAVIOR",
+    "wordCount": 524,
+    "questions": 7,
+    "questionRange": "43-49",
+    "source": "BBC Future | June 2025",
+    "highYieldVocab": [
+      {
+        "word": "isolate",
+        "gloss": "分離；單獨辨識｜詞族：isolation｜搭配：isolate a causal influence",
+        "group": "Core Academic"
+      },
+      {
+        "word": "systematic",
+        "gloss": "系統性的；一致規律的｜詞族：system / systematically｜搭配：systematic effect",
+        "group": "Core Academic"
+      },
+      {
+        "word": "pervasive",
+        "gloss": "普遍滲透的；廣泛的｜詞族：pervade｜搭配：a pervasive pattern",
+        "group": "Core Academic"
+      },
+      {
+        "word": "association",
+        "gloss": "關聯｜詞族：associate / associated｜搭配：detect an association",
+        "group": "Core Academic"
+      },
+      {
+        "word": "shrink",
+        "gloss": "縮小｜詞族：shrinkage｜搭配：differences shrink",
+        "group": "Core Academic"
+      },
+      {
+        "word": "shortcut",
+        "gloss": "捷徑｜詞族：shortcut｜搭配：a predictive shortcut",
+        "group": "Core Academic"
+      },
+      {
+        "word": "confounding",
+        "gloss": "混雜的｜詞族：confound / confounder｜搭配：confounding variable",
+        "group": "Context"
+      },
+      {
+        "word": "entangled",
+        "gloss": "糾纏在一起的｜詞族：entangle｜搭配：be entangled with",
+        "group": "Context"
+      },
+      {
+        "word": "developmental",
+        "gloss": "發展階段的｜詞族：develop / development｜搭配：developmental stage",
+        "group": "Context"
+      },
+      {
+        "word": "effect size",
+        "gloss": "效應量｜詞族：effect｜搭配：small effect size",
+        "group": "Context"
+      },
+      {
+        "word": "primogeniture",
+        "gloss": "長子繼承制｜詞族：first-born｜搭配：primogeniture culture",
+        "group": "Domain"
+      },
+      {
+        "word": "honesty-humility",
+        "gloss": "誠實-謙遜人格向度｜詞族：humility｜搭配：Honesty-Humility scale",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  },
+  {
+    "id": "v06-d08",
+    "volume": 6,
+    "day": 8,
+    "title": "Fracking: Energy Gains, Environmental Costs, and Causal Complexity",
+    "category": "ENVIRONMENT / PUBLIC HEALTH",
+    "wordCount": 534,
+    "questions": 7,
+    "questionRange": "50-56",
+    "source": "National Geographic | June 2025",
+    "highYieldVocab": [
+      {
+        "word": "evaluate",
+        "gloss": "評估｜詞族：evaluation / evaluative｜搭配：evaluate separately",
+        "group": "Core Academic"
+      },
+      {
+        "word": "erode",
+        "gloss": "削弱｜詞族：erosion｜搭配：erode an advantage",
+        "group": "Core Academic"
+      },
+      {
+        "word": "induce",
+        "gloss": "誘發｜詞族：induced / induction｜搭配：induce seismicity",
+        "group": "Core Academic"
+      },
+      {
+        "word": "distinction",
+        "gloss": "區別｜詞族：distinct / distinguish｜搭配：draw a distinction",
+        "group": "Core Academic"
+      },
+      {
+        "word": "collapse",
+        "gloss": "混為一談；壓縮｜詞族：collapse｜搭配：collapse questions into one",
+        "group": "Core Academic"
+      },
+      {
+        "word": "trade-off",
+        "gloss": "取捨｜詞族：trade-off｜搭配：evaluate trade-offs",
+        "group": "Core Academic"
+      },
+      {
+        "word": "proximity",
+        "gloss": "鄰近；距離接近｜詞族：proximate｜搭配：proximity to wells",
+        "group": "Context"
+      },
+      {
+        "word": "observational",
+        "gloss": "觀察性的｜詞族：observe / observation｜搭配：observational dataset",
+        "group": "Context"
+      },
+      {
+        "word": "seismic",
+        "gloss": "地震的｜詞族：seismicity｜搭配：seismic event",
+        "group": "Context"
+      },
+      {
+        "word": "perforate",
+        "gloss": "打孔｜詞族：perforation｜搭配：perforate the casing",
+        "group": "Context"
+      },
+      {
+        "word": "hydraulic fracturing",
+        "gloss": "水力壓裂｜詞族：fracture / fracturing｜搭配：hydraulic fracturing well",
+        "group": "Domain"
+      },
+      {
+        "word": "wastewater disposal",
+        "gloss": "廢水處置｜詞族：dispose / disposal｜搭配：deep wastewater disposal",
+        "group": "Domain"
+      }
+    ],
+    "suggestedTime": ""
+  }
+]

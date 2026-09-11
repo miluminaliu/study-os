@@ -1,11 +1,10 @@
 {
-  "name": "後西醫 Study OS",
-  "short_name": "Study OS",
+  "name": "Page & Pace · Study Journal",
+  "short_name": "Page & Pace",
   "start_url": "./",
-  "scope": "./",
   "display": "standalone",
-  "background_color": "#f7f6fb",
-  "theme_color": "#f7f6fb",
+  "background_color": "#f0eee7",
+  "theme_color": "#455a84",
   "icons": [
     {
       "src": "icon-180.png",
@@ -15,7 +14,8 @@
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

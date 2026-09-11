@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="108" fill="#f5f2ea"/>
+<path d="M112 83h288v346H112z" fill="#e6ebf3" stroke="#1d222a" stroke-width="14"/>
+<path d="M166 83v346" stroke="#526789" stroke-width="10"/>
+<path d="M198 154h153M198 204h126M198 254h153M198 304h108" stroke="#1d222a" stroke-width="9" stroke-linecap="round" opacity=".7"/>
+<text x="201" y="382" font-size="66" font-family="Georgia,serif" font-weight="700" fill="#1d222a">P&amp;P</text>
+</svg>
